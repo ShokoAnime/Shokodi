@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
 
-import nakamoritools as nt
+import nakamori_utils.nakamoritools as nt
 
 
 def populate_tag_setting_flags():

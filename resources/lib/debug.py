@@ -4,7 +4,7 @@ import cProfile
 import pstats
 import xbmc
 import sys
-import nakamoritools as nt
+import nakamori_utils.nakamoritools as nt
 
 has_pydev = False
 has_line_profiler = False

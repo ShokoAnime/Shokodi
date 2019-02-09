@@ -9,7 +9,7 @@ import xbmcgui
 
 from resources.lib import model_utils
 
-import nakamoritools as nt
+import nakamori_utils.nakamoritools as nt
 import nakamoriplayer as nplayer
 
 try:

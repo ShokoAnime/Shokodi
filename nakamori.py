@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 import resources.lib.debug as dbg
 import resources.lib.guibuilder as gb
-import nakamoritools as nt
+import nakamori_utils.nakamoritools as nt
 from resources.lib import kodi_utils
 from resources.lib import shoko_utils
 from resources.lib import search

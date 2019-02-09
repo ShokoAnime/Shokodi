@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import nakamoritools as nt
+import nakamori_utils.nakamoritools as nt
 from resources.lib import kodi_utils
 
 import xbmc

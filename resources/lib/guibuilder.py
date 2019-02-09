@@ -3,7 +3,7 @@
 here are functions needed to create dirs/files
 """
 
-import nakamoritools as nt
+import nakamori_utils.nakamoritools as nt
 from resources.lib import model_utils
 from resources.lib import kodi_utils
 from resources.lib import search
