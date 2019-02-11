@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
 
-import nakamori_utils.nakamoritools as nt
+from nakamori_utils import nakamoritools as nt
+from nakamori_utils.globalvars import *
 
 
 def populate_tag_setting_flags():
@@ -11,12 +12,12 @@ def populate_tag_setting_flags():
     :return: setting_flags
     """
     tag_setting_flags = 0
-    tag_setting_flags |= 0b000001 if nt.addon.getSetting('hideMiscTags') == 'true' else 0
-    tag_setting_flags |= 0b000010 if nt.addon.getSetting('hideArtTags') == 'true' else 0
-    tag_setting_flags |= 0b000100 if nt.addon.getSetting('hideSourceTags') == 'true' else 0
-    tag_setting_flags |= 0b001000 if nt.addon.getSetting('hideUsefulMiscTags') == 'true' else 0
-    tag_setting_flags |= 0b010000 if nt.addon.getSetting('hideSpoilerTags') == 'true' else 0
-    tag_setting_flags |= 0b100000 if nt.addon.getSetting('hideSettingTags') == 'true' else 0
+    tag_setting_flags |= 0b000001 if plugin_addon.getSetting('hideMiscTags') == 'true' else 0
+    tag_setting_flags |= 0b000010 if plugin_addon.getSetting('hideArtTags') == 'true' else 0
+    tag_setting_flags |= 0b000100 if plugin_addon.getSetting('hideSourceTags') == 'true' else 0
+    tag_setting_flags |= 0b001000 if plugin_addon.getSetting('hideUsefulMiscTags') == 'true' else 0
+    tag_setting_flags |= 0b010000 if plugin_addon.getSetting('hideSpoilerTags') == 'true' else 0
+    tag_setting_flags |= 0b100000 if plugin_addon.getSetting('hideSettingTags') == 'true' else 0
     return tag_setting_flags
 
 
@@ -62,7 +63,7 @@ def get_cast_and_role_new(data):
         for char in data:
             char_charname = char.get("character", "")
             char_seiyuuname = char.get("staff", "")
-            char_seiyuupic = nt.server + char.get("character_image", "")
+            char_seiyuupic = server + char.get("character_image", "")
 
             # only add it if it has data
             # reorder these to match the convention (Actor is cast, character is role, in that order)
@@ -142,7 +143,7 @@ def get_title(data):
 
     """
     try:
-        if 'titles' not in data or nt.addon.getSetting('use_server_title') == 'true':
+        if 'titles' not in data or plugin_addon.getSetting('use_server_title') == 'true':
             return nt.decode(data.get('name', ''))
         # xbmc.log(data.get('title', 'Unknown'))
         title = nt.decode(data.get('name', '').lower())
@@ -155,8 +156,8 @@ def get_title(data):
                 or title == 'other' or title == 'others':
             return nt.decode(data.get('name', ''))
 
-        lang = nt.addon.getSetting("displaylang")
-        title_type = nt.addon.getSetting("title_type")
+        lang = plugin_addon.getSetting("displaylang")
+        title_type = plugin_addon.getSetting("title_type")
         try:
             for titleTag in data.get("titles", []):
                 if titleTag.get("Type", "").lower() == title_type.lower():

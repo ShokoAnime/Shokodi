@@ -145,12 +145,12 @@ msgstr "Использовать короткий список тегов"
 
 #: settings.xml
 msgctxt "#30029"
-msgid "Cache"
+msgid "cache"
 msgstr "Кэш"
 
 #: settings.xml
 msgctxt "#30030"
-msgid "Enable Cache"
+msgid "Enable cache"
 msgstr "Включить кэш"
 
 #: settings.xml

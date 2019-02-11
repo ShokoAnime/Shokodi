@@ -144,12 +144,12 @@ msgstr ""
 
 #: settings.xml
 msgctxt "#30029"
-msgid "Cache"
+msgid "cache"
 msgstr ""
 
 #: settings.xml
 msgctxt "#30030"
-msgid "Enable Cache"
+msgid "Enable cache"
 msgstr ""
 
 #: settings.xml

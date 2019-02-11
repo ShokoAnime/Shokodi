@@ -2,11 +2,14 @@
 """
 here are functions needed to create dirs/files
 """
+import json
+from distutils.version import LooseVersion
 
-import nakamori_utils.nakamoritools as nt
-from resources.lib import model_utils
-from resources.lib import kodi_utils
-from resources.lib import search
+from nakamori_utils import nakamoritools as nt
+from nakamori_utils.globalvars import *
+from lib import model_utils
+from lib import kodi_utils
+from lib import search
 
 import xbmcaddon
 import xbmcgui
@@ -21,8 +24,7 @@ from collections import defaultdict
 list_items = []
 handle = int(sys.argv[1])
 busy = xbmcgui.DialogProgress()
-addon = xbmcaddon.Addon()
-_img = os.path.join(xbmcaddon.Addon(nt.addon.getSetting('icon_pack')).getAddonInfo('path'), 'resources', 'media')
+_img = os.path.join(xbmcaddon.Addon(plugin_addon.getSetting('icon_pack')).getAddonInfo('path'), 'resources', 'media')
 
 map_types = {
                     "Credits": "Credits",
@@ -55,28 +57,28 @@ def title_coloring(title, episode_count, total_count, special_count, total_speci
     :return: colorized title
     """
     color_title = title
-    if addon.getSetting('color_title') == "true":
+    if plugin_addon.getSetting('color_title') == "true":
         if airing:
             if episode_count == total_count:
                 if total_special_count == 0:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (addon.getSetting('title_color_airing'), title)
+                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_airing'), title)
                 elif special_count == total_special_count:
                     # its possible if set to local_size in setting
-                    color_title = "[COLOR %s]%s[/COLOR]" % (addon.getSetting('title_color_airing_special'), title)
+                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_airing_special'), title)
                 elif special_count < total_special_count:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (addon.getSetting('title_color_airing'), title)
+                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_airing'), title)
             elif episode_count < total_count:
-                color_title = "[COLOR %s]%s[/COLOR]" % (addon.getSetting('title_color_airing_missing'), title)
+                color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_airing_missing'), title)
         else:
             if episode_count == total_count:
                 if total_special_count == 0:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (addon.getSetting('title_color_finish'), title)
+                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_finish'), title)
                 elif special_count == total_special_count:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (addon.getSetting('title_color_finish_special'), title)
+                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_finish_special'), title)
                 elif special_count < total_special_count:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (addon.getSetting('title_color_finish'), title)
+                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_finish'), title)
             elif episode_count < total_count:
-                color_title = "[COLOR %s]%s[/COLOR]" % (addon.getSetting('title_color_finish_missing'), title)
+                color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_finish_missing'), title)
 
     return color_title
 
@@ -121,7 +123,7 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
                 f_data = str(details['date']).split('.')
                 details['aired'] = f_data[2] + '-' + f_data[1] + '-' + f_data[0]  # aired y-m-d
 
-        if nt.addon.getSetting("spamLog") == 'true':
+        if plugin_addon.getSetting("spamLog") == 'true':
             xbmc.log("add_gui_item - url: " + gui_url, xbmc.LOGWARNING)
             nt.dump_dictionary(details, 'details')
             nt.dump_dictionary(extra_data, 'extra data')
@@ -232,76 +234,76 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
                     url_peep = nt.set_parameter(url_peep, 'file_id', str(file_id))
 
                     # Play
-                    if nt.addon.getSetting('context_show_play') == 'true':
-                        context.append((nt.addon.getLocalizedString(30065), 'Action(Select)'))
+                    if plugin_addon.getSetting('context_show_play') == 'true':
+                        context.append((plugin_addon.getLocalizedString(30065), 'Action(Select)'))
 
                     # Resume
                     if 'resume' in extra_data:
-                        if nt.addon.getSetting("file_resume") == "true":
+                        if plugin_addon.getSetting("file_resume") == "true":
                             if str(extra_data.get('resume')) != "0":
                                 liz.setProperty('ResumeTime', str(extra_data.get('resume')))
-                                context.append((nt.addon.getLocalizedString(30141) + ' (%s)' %
+                                context.append((plugin_addon.getLocalizedString(30141) + ' (%s)' %
                                                 time.strftime('%H:%M:%S', time.gmtime(int(extra_data.get('resume')))),
                                                 'RunPlugin(%s&cmd=resume)' % url_peep))
 
                     # Play (No Scrobble)
-                    if nt.addon.getSetting('context_show_play_no_watch') == 'true':
-                        context.append((nt.addon.getLocalizedString(30132),
+                    if plugin_addon.getSetting('context_show_play_no_watch') == 'true':
+                        context.append((plugin_addon.getLocalizedString(30132),
                                         'RunPlugin(%s&cmd=no_mark)' % url_peep))
 
                     # Inspect
-                    if nt.addon.getSetting('context_pick_file') == 'true':
+                    if plugin_addon.getSetting('context_pick_file') == 'true':
                         if extra_data.get('multiep', False):
-                            context.append((nt.addon.getLocalizedString(30133),
+                            context.append((plugin_addon.getLocalizedString(30133),
                                             'RunPlugin(%s&cmd=pickFile)' % url_peep))
 
                     # Mark as watched/unwatched
                     if extra_data.get('jmmepisodeid') != '':
-                        if nt.addon.getSetting('context_krypton_watched') == 'true':
+                        if plugin_addon.getSetting('context_krypton_watched') == 'true':
                             if details.get('playcount', 0) == 0:
-                                context.append((nt.addon.getLocalizedString(30128),
+                                context.append((plugin_addon.getLocalizedString(30128),
                                                 'RunPlugin(%s&cmd=watched)' % url_peep))
                             else:
-                                context.append((nt.addon.getLocalizedString(30129),
+                                context.append((plugin_addon.getLocalizedString(30129),
                                                 'RunPlugin(%s&cmd=unwatched)' % url_peep))
                         else:
-                            context.append((nt.addon.getLocalizedString(30128),
+                            context.append((plugin_addon.getLocalizedString(30128),
                                             'RunPlugin(%s&cmd=watched)' % url_peep))
-                            context.append((nt.addon.getLocalizedString(30129),
+                            context.append((plugin_addon.getLocalizedString(30129),
                                             'RunPlugin(%s&cmd=unwatched)' % url_peep))
 
                     # Playlist Mode
-                    if nt.addon.getSetting('context_playlist') == 'true':
-                        context.append((nt.addon.getLocalizedString(30130),
+                    if plugin_addon.getSetting('context_playlist') == 'true':
+                        context.append((plugin_addon.getLocalizedString(30130),
                                         'RunPlugin(%s&cmd=createPlaylist)' % url_peep))
 
                     # Vote Episode
-                    if nt.addon.getSetting('context_show_vote_Episode') == 'true' and ep_id != '':
-                        context.append((nt.addon.getLocalizedString(30125),
+                    if plugin_addon.getSetting('context_show_vote_Episode') == 'true' and ep_id != '':
+                        context.append((plugin_addon.getLocalizedString(30125),
                                         'RunPlugin(%s&cmd=voteEp)' % url_peep))
 
                     # Vote Series
-                    if nt.addon.getSetting('context_show_vote_Series') == 'true' and series_id != '':
-                        context.append((nt.addon.getLocalizedString(30124),
+                    if plugin_addon.getSetting('context_show_vote_Series') == 'true' and series_id != '':
+                        context.append((plugin_addon.getLocalizedString(30124),
                                         'RunPlugin(%s&cmd=voteSer)' % url_peep))
 
                     # Metadata
-                    if nt.addon.getSetting('context_show_info') == 'true':
-                        context.append((nt.addon.getLocalizedString(30123),
+                    if plugin_addon.getSetting('context_show_info') == 'true':
+                        context.append((plugin_addon.getLocalizedString(30123),
                                         'Action(Info)'))
 
-                    if nt.addon.getSetting('context_view_cast') == 'true':
+                    if plugin_addon.getSetting('context_view_cast') == 'true':
                         if series_id != '':
-                            context.append((nt.addon.getLocalizedString(30134),
+                            context.append((plugin_addon.getLocalizedString(30134),
                                             'ActivateWindow(Videos, %s&cmd=viewCast)' % url_peep))
 
-                    if nt.addon.getSetting('context_refresh') == 'true':
-                        context.append((nt.addon.getLocalizedString(30131),
+                    if plugin_addon.getSetting('context_refresh') == 'true':
+                        context.append((plugin_addon.getLocalizedString(30131),
                                         'RunPlugin(%s&cmd=refresh)' % url_peep))
 
                     context.append(('  ', 'empty'))
-                    context.append((nt.addon.getLocalizedString(30147), 'empty'))
-                    context.append((nt.addon.getLocalizedString(30148), 'empty'))
+                    context.append((plugin_addon.getLocalizedString(30147), 'empty'))
+                    context.append((plugin_addon.getLocalizedString(30148), 'empty'))
 
         liz.addContextMenuItems(context)
         liz.select(force_select)
@@ -314,7 +316,7 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
 def set_stream_info(liz, extra_data):
     if extra_data.get('type', 'video').lower() == "video":
         liz.setProperty('TotalTime', str(extra_data['VideoStreams'][0].get('duration', 0)))
-        if nt.addon.getSetting("file_resume") == "true":
+        if plugin_addon.getSetting("file_resume") == "true":
             liz.setProperty('ResumeTime', str(extra_data.get('resume')))
 
         video_codec = extra_data.get('VideoStreams', {})
@@ -376,8 +378,8 @@ def add_raw_files(node):
         name = nt.decode(node.get("filename", ''))
         file_id = str(node["id"])
         key = node["url"]
-        raw_url = nt.server + "/api/file?id=" + file_id
-        title = nt.os.path.split(str(name))[1]
+        raw_url = server + "/api/file?id=" + file_id
+        title = os.path.split(str(name))[1]
         # it's an unsorted file, but we can still use basic metadata and watched status
         # when it is scanned, it'll take the watched status with it
 
@@ -392,7 +394,7 @@ def add_raw_files(node):
         else:
             duration = int(tmp_duration) / 1000
 
-        if nt.addon.getSetting('kodi18') == 1:
+        if plugin_addon.getSetting('kodi18') == 1:
             duration = str(datetime.timedelta(seconds=duration))
 
         details = {
@@ -440,9 +442,9 @@ def add_raw_files(node):
         u = nt.set_parameter(u, 'ep_id', '0')
         # this is used for rescan and rehash, which takes the VideoLocalID
         u = nt.set_parameter(u, 'vl', file_id)
-        context = [(nt.addon.getLocalizedString(30120), 'RunPlugin(%s&cmd=rescan)' % u),
-                   (nt.addon.getLocalizedString(30121), 'RunPlugin(%s&cmd=rehash)' % u),
-                   (nt.addon.getLocalizedString(30122), 'RunPlugin(%s&cmd=missing)' % u)]
+        context = [(plugin_addon.getLocalizedString(30120), 'RunPlugin(%s&cmd=rescan)' % u),
+                   (plugin_addon.getLocalizedString(30121), 'RunPlugin(%s&cmd=rehash)' % u),
+                   (plugin_addon.getLocalizedString(30122), 'RunPlugin(%s&cmd=missing)' % u)]
         liz.addContextMenuItems(context)
         list_items.append((u, liz, False))
     except:  # Sometimes a file is deleted or invalid, but we should just skip it
@@ -459,7 +461,7 @@ def add_content_typ_dir(name, serie_id, total_size=0, watched=0, unwatched=0):
     :param unwatched: how many files haven't been watched
     :return: add new directory
     """
-    dir_url = nt.server + "/api/serie"
+    dir_url = server + "/api/serie"
     dir_url = nt.set_parameter(dir_url, 'id', str(serie_id))
     dir_url = nt.set_parameter(dir_url, 'level', 4)
     title = str(name)
@@ -555,7 +557,7 @@ def add_serie_item(node, parent_title, destination_playlist=False):
                 list_cast_and_role = result_list[1]
 
     local_sizes = node.get("local_sizes", {})
-    if nt.addon.getSetting("local_total") == "true":
+    if plugin_addon.getSetting("local_total") == "true":
         if len(local_sizes) > 0:
             total = nt.safe_int(local_sizes.get("Episodes", 0)) + nt.safe_int(local_sizes.get("Specials", 0))
         else:
@@ -625,40 +627,40 @@ def add_serie_item(node, parent_title, destination_playlist=False):
         'dateadded':        node.get('added', '')
     }
 
-    if nt.addon.getSetting('hide_rating') == 'Always':
-        if nt.addon.getSetting('hide_rating_type') != 'Episodes':  # Series|Both
+    if plugin_addon.getSetting('hide_rating') == 'Always':
+        if plugin_addon.getSetting('hide_rating_type') != 'Episodes':  # Series|Both
             details['rating'] = 0
-    elif nt.addon.getSetting('hide_rating') == 'Unwatched':
-        if nt.addon.getSetting('hide_rating_type') != 'Episodes' and watched < total:  # Series|Both
+    elif plugin_addon.getSetting('hide_rating') == 'Unwatched':
+        if plugin_addon.getSetting('hide_rating_type') != 'Episodes' and watched < total:  # Series|Both
             details['rating'] = 0
-    elif nt.addon.getSetting('hide_rating') == 'All Unwatched':
-        if nt.addon.getSetting('hide_rating_type') != 'Episodes' and watched < 1:  # Series|Both
+    elif plugin_addon.getSetting('hide_rating') == 'All Unwatched':
+        if plugin_addon.getSetting('hide_rating_type') != 'Episodes' and watched < 1:  # Series|Both
             details['rating'] = 0
 
     directory_type = str(node.get('type', ''))
     key_id = str(node.get('id', ''))
-    key = nt.server + "/api/serie"
+    key = server + "/api/serie"
     key = nt.set_parameter(key, 'id', key_id)
     key = nt.set_parameter(key, 'level', 2)
     key = nt.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
-    if nt.addon.getSetting('request_nocast') == 'true':
+    if plugin_addon.getSetting('request_nocast') == 'true':
         key = nt.set_parameter(key, 'nocast', 1)
 
     thumb = ''
     if len(node["art"]["thumb"]) > 0:
         thumb = node["art"]["thumb"][0]["url"]
         if thumb is not None and ":" not in thumb:
-            thumb = nt.server + thumb
+            thumb = server + thumb
     fanart = ''
     if len(node["art"]["fanart"]) > 0:
         fanart = node["art"]["fanart"][0]["url"]
         if fanart is not None and ":" not in fanart:
-            fanart = nt.server + fanart
+            fanart = server + fanart
     banner = ''
     if len(node["art"]["banner"]) > 0:
         banner = node["art"]["banner"][0]["url"]
         if banner is not None and ":" not in banner:
-            banner = nt.server + banner
+            banner = server + banner
 
     extra_data = {
         'type':                 'video',
@@ -695,22 +697,22 @@ def add_serie_item(node, parent_title, destination_playlist=False):
     url_peep = nt.set_parameter(url_peep, 'serie_id', key_id)
 
     # Watch
-    context.append((nt.addon.getLocalizedString(30126), 'RunPlugin(%s&cmd=watched)' % url_peep))
-    context.append((nt.addon.getLocalizedString(30127), 'RunPlugin(%s&cmd=unwatched)' % url_peep))
+    context.append((plugin_addon.getLocalizedString(30126), 'RunPlugin(%s&cmd=watched)' % url_peep))
+    context.append((plugin_addon.getLocalizedString(30127), 'RunPlugin(%s&cmd=unwatched)' % url_peep))
 
     # Vote
-    if nt.addon.getSetting('context_show_vote_Series') == 'true':
-        context.append((nt.addon.getLocalizedString(30124), 'RunPlugin(%s&cmd=voteSer)' % url_peep))
+    if plugin_addon.getSetting('context_show_vote_Series') == 'true':
+        context.append((plugin_addon.getLocalizedString(30124), 'RunPlugin(%s&cmd=voteSer)' % url_peep))
 
     # Metadata
-    if nt.addon.getSetting('context_show_info') == 'true':
-        context.append((nt.addon.getLocalizedString(30123), 'Action(Info)'))
+    if plugin_addon.getSetting('context_show_info') == 'true':
+        context.append((plugin_addon.getLocalizedString(30123), 'Action(Info)'))
 
-    if nt.addon.getSetting('context_view_cast') == 'true':
-        context.append((nt.addon.getLocalizedString(30134), 'ActivateWindow(Videos, %s&cmd=viewCast)' % url_peep))
+    if plugin_addon.getSetting('context_view_cast') == 'true':
+        context.append((plugin_addon.getLocalizedString(30134), 'ActivateWindow(Videos, %s&cmd=viewCast)' % url_peep))
 
-    if nt.addon.getSetting('context_refresh') == 'true':
-        context.append((nt.addon.getLocalizedString(30131), 'RunPlugin(%s&cmd=refresh)' % url_peep))
+    if plugin_addon.getSetting('context_refresh') == 'true':
+        context.append((plugin_addon.getLocalizedString(30131), 'RunPlugin(%s&cmd=refresh)' % url_peep))
 
     if destination_playlist:
         return details
@@ -739,7 +741,7 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
     else:
         watched = nt.safe_int(node.get("watchedsize", ''))
 
-    if nt.addon.getSetting("local_total") == "true":
+    if plugin_addon.getSetting("local_total") == "true":
         local_sizes = node.get("local_sizes", {})
         if len(local_sizes) > 0:
             total = nt.safe_int(local_sizes.get("Episodes", 0)) + nt.safe_int(local_sizes.get("Specials", 0))
@@ -788,43 +790,43 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
         'aired':            str(air),
     }
 
-    if nt.addon.getSetting('hide_rating') == 'Always':
-        if nt.addon.getSetting('hide_rating_type') != 'Episodes':  # Series|Both
+    if plugin_addon.getSetting('hide_rating') == 'Always':
+        if plugin_addon.getSetting('hide_rating_type') != 'Episodes':  # Series|Both
             details['rating'] = 0
-    elif nt.addon.getSetting('hide_rating') == 'Unwatched':
-        if nt.addon.getSetting('hide_rating_type') != 'Episodes' and watched < total:  # Series|Both
+    elif plugin_addon.getSetting('hide_rating') == 'Unwatched':
+        if plugin_addon.getSetting('hide_rating_type') != 'Episodes' and watched < total:  # Series|Both
             details['rating'] = 0
-    elif nt.addon.getSetting('hide_rating') == 'All Unwatched':
-        if nt.addon.getSetting('hide_rating_type') != 'Episodes' and watched < 1:  # Series|Both
+    elif plugin_addon.getSetting('hide_rating') == 'All Unwatched':
+        if plugin_addon.getSetting('hide_rating_type') != 'Episodes' and watched < 1:  # Series|Both
             details['rating'] = 0
 
     key_id = str(node.get("id", ''))
     if is_filter:
-        key = nt.server + "/api/filter"
+        key = server + "/api/filter"
     else:
-        key = nt.server + "/api/group"
+        key = server + "/api/group"
     key = nt.set_parameter(key, 'id', key_id)
     key = nt.set_parameter(key, 'filter', filter_id)
     key = nt.set_parameter(key, 'level', 1)
     key = nt.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
-    if nt.addon.getSetting('request_nocast') == 'true':
+    if plugin_addon.getSetting('request_nocast') == 'true':
         key = nt.set_parameter(key, 'nocast', 1)
 
     thumb = ''
     if len(node["art"]["thumb"]) > 0:
         thumb = node["art"]["thumb"][0]["url"]
         if thumb is not None and ":" not in thumb:
-            thumb = nt.server + thumb
+            thumb = server + thumb
     fanart = ''
     if len(node["art"]["fanart"]) > 0:
         fanart = node["art"]["fanart"][0]["url"]
         if fanart is not None and ":" not in fanart:
-            fanart = nt.server + fanart
+            fanart = server + fanart
     banner = ''
     if len(node["art"]["banner"]) > 0:
         banner = node["art"]["banner"][0]["url"]
         if banner is not None and ":" not in banner:
-            banner = nt.server + banner
+            banner = server + banner
 
     extra_data = {
         'type':                 'video',
@@ -857,16 +859,16 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
     url_peep = nt.set_parameter(url_peep, 'mode', 1)
     url_peep = nt.set_parameter(url_peep, 'group_id', key_id)
 
-    context = [(nt.addon.getLocalizedString(30126), 'RunPlugin(%s&cmd=watched)' % url_peep),
-               (nt.addon.getLocalizedString(30127), 'RunPlugin(%s&cmd=unwatched)' % url_peep)]
+    context = [(plugin_addon.getLocalizedString(30126), 'RunPlugin(%s&cmd=watched)' % url_peep),
+               (plugin_addon.getLocalizedString(30127), 'RunPlugin(%s&cmd=unwatched)' % url_peep)]
     # Watch
 
     # Metadata
-    if nt.addon.getSetting('context_show_info') == 'true' and not is_filter:
-        context.append((nt.addon.getLocalizedString(30123), 'Action(Info)'))
+    if plugin_addon.getSetting('context_show_info') == 'true' and not is_filter:
+        context.append((plugin_addon.getLocalizedString(30123), 'Action(Info)'))
 
-    if nt.addon.getSetting('context_refresh') == 'true':
-        context.append((nt.addon.getLocalizedString(30131), 'RunPlugin(%s&cmd=refresh)' % url_peep))
+    if plugin_addon.getSetting('context_refresh') == 'true':
+        context.append((plugin_addon.getLocalizedString(30131), 'RunPlugin(%s&cmd=refresh)' % url_peep))
 
     add_gui_item(u, details, extra_data, context)
 
@@ -887,10 +889,10 @@ def add_filter_item(menu):
         title = 'Unsorted'
         use_mode = 8
 
-    if nt.addon.getSetting("spamLog") == "true":
+    if plugin_addon.getSetting("spamLog") == "true":
         xbmc.log("build_filters_menu - key = " + key, xbmc.LOGWARNING)
 
-    if nt.addon.getSetting('request_nocast') == 'true' and title != 'Unsorted':
+    if plugin_addon.getSetting('request_nocast') == 'true' and title != 'Unsorted':
         key = nt.set_parameter(key, 'nocast', 1)
     key = nt.set_parameter(key, 'level', 2)
     if title == "Airing Today":
@@ -903,7 +905,7 @@ def add_filter_item(menu):
         if len(menu["art"]["thumb"]) > 0:
             thumb = menu["art"]["thumb"][0]["url"]
             if ":" not in thumb:
-                thumb = nt.server + thumb
+                thumb = server + thumb
     except:
         pass
 
@@ -912,7 +914,7 @@ def add_filter_item(menu):
         if len(menu["art"]["fanart"]) > 0:
             fanart = menu["art"]["fanart"][0]["url"]
             if ":" not in fanart:
-                fanart = nt.server + fanart
+                fanart = server + fanart
     except:
         pass
     banner = ''
@@ -920,7 +922,7 @@ def add_filter_item(menu):
         if len(menu["art"]["banner"]) > 0:
             banner = menu["art"]["banner"][0]["url"]
             if ":" not in banner:
-                banner = nt.server + banner
+                banner = server + banner
     except:
         pass
 
@@ -957,11 +959,11 @@ def build_filters_menu():
 
     filters_sorting = {'Airing Today': 0, 'Seasons': 1, 'Years': 2, 'Tags': 3, 'Unsort': 4}
     try:
-        filters_key = nt.server + "/api/filter"
+        filters_key = server + "/api/filter"
         filters_key = nt.set_parameter(filters_key, "level", 0)
         retrieved_json = nt.get_json(filters_key)
         if retrieved_json is not None:
-            json_menu = nt.json.loads(retrieved_json)
+            json_menu = json.loads(retrieved_json)
             kodi_utils.set_window_heading(json_menu['name'])
             try:
                 menu_append = []
@@ -969,15 +971,15 @@ def build_filters_menu():
                     title = menu['name']
                     if title == 'Seasons':
                         airing = dict({
-                            "name": nt.addon.getLocalizedString(30223),
-                            "url": nt.server + "/api/serie/today",
+                            "name": plugin_addon.getLocalizedString(30223),
+                            "url": server + "/api/serie/today",
                         })
                         airing['art'] = {}
                         airing['art']['fanart'] = []
                         airing['art']['thumb'] = []
                         airing['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'airing.jpg')})
                         airing['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'airing.png')})
-                        if nt.get_version() >= nt.LooseVersion("3.8.0.0"):
+                        if nt.get_version() >= LooseVersion("3.8.0.0"):
                             menu_append.insert(filters_sorting[title], airing)
                         menu['art'] = {}
                         menu['art']['fanart'] = []
@@ -993,7 +995,7 @@ def build_filters_menu():
                         menu['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'tags.png')})
                         menu_append.insert(filters_sorting[title], menu)
                     elif title == 'Unsort':
-                        if nt.addon.getSetting("show_unsort") == "true":
+                        if plugin_addon.getSetting("show_unsort") == "true":
                             menu['art'] = {}
                             menu['art']['fanart'] = []
                             menu['art']['thumb'] = []
@@ -1008,7 +1010,7 @@ def build_filters_menu():
                         menu['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'years.png')})
                         menu_append.insert(filters_sorting[title], menu)
                 for menu in json_menu["filters"]:
-                    if filters_sorting.has_key(menu['name']):
+                    if menu['name'] in filters_sorting:
                         continue
                     add_filter_item(menu)
 
@@ -1016,9 +1018,9 @@ def build_filters_menu():
                     add_filter_item(menu)
 
                 # region Calendar
-                if nt.addon.getSetting("show_calendar") == "true":
-                    soon_url = nt.server + "/api/serie/soon"
-                    title = nt.addon.getLocalizedString(30222)
+                if plugin_addon.getSetting("show_calendar") == "true":
+                    soon_url = server + "/api/serie/soon"
+                    title = plugin_addon.getLocalizedString(30222)
                     liz = xbmcgui.ListItem(label=title, label2=title, path=soon_url)
                     thumb = os.path.join(_img, 'icons', 'calendar.png')
                     liz.setArt({"icon": thumb, "poster": thumb, "thumb": thumb,
@@ -1032,9 +1034,9 @@ def build_filters_menu():
                 # endregion
 
                 # region Search
-                if nt.addon.getSetting("show_search") == "true":
-                    search_url = nt.server + "/api/search"
-                    title = nt.addon.getLocalizedString(30221)
+                if plugin_addon.getSetting("show_search") == "true":
+                    search_url = server + "/api/search"
+                    title = plugin_addon.getLocalizedString(30221)
                     liz = xbmcgui.ListItem(label=title, label2=title, path=search_url)
                     thumb = os.path.join(_img, 'icons', 'search.png')
                     liz.setArt({"icon": thumb, "poster": thumb, "thumb": thumb,
@@ -1048,8 +1050,8 @@ def build_filters_menu():
                 # endregion
 
                 # region Settings
-                if nt.addon.getSetting("show_settings") == "true":
-                    title = nt.addon.getLocalizedString(30107)
+                if plugin_addon.getSetting("show_settings") == "true":
+                    title = plugin_addon.getLocalizedString(30107)
                     liz = xbmcgui.ListItem(label=title, label2=title)
                     thumb = os.path.join(_img, 'icons', 'settings.png')
                     liz.setArt({"icon": thumb, "poster": thumb, "thumb": thumb,
@@ -1063,8 +1065,8 @@ def build_filters_menu():
                 # endregion
 
                 # region Shoko
-                if nt.addon.getSetting("show_shoko") == "true":
-                    title = nt.addon.getLocalizedString(30115)
+                if plugin_addon.getSetting("show_shoko") == "true":
+                    title = plugin_addon.getLocalizedString(30115)
                     liz = xbmcgui.ListItem(label=title, label2=title)
                     thumb = os.path.join(_img, 'icons', 'settings.png')
                     liz.setArt({"icon": thumb, "poster": thumb, "thumb": thumb,
@@ -1078,7 +1080,7 @@ def build_filters_menu():
                 # endregion
 
                 # region Experiment
-                if nt.addon.getSetting("onepunchmen") == "true":
+                if plugin_addon.getSetting("onepunchmen") == "true":
                     title = 'Experiment'
                     liz = xbmcgui.ListItem(label=title, label2=title)
                     thumb = os.path.join(_img, 'icons', 'settings.png')
@@ -1099,7 +1101,7 @@ def build_filters_menu():
 
         else:
             xbmc.log('---> retrived_json = None, Network Error, wizard = 0', xbmc.LOGERROR)
-            nt.addon.setSetting(id='wizard', value='0')
+            plugin_addon.setSetting(id='wizard', value='0')
             build_network_menu()
 
     except Exception as e:
@@ -1125,7 +1127,7 @@ def build_groups_menu(params, json_body=None):
     xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_VIDEO_YEAR)
 
     try:
-        busy.create(nt.addon.getLocalizedString(30160), nt.addon.getLocalizedString(30161))
+        busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30161))
         parent_title = ''
         if 'name' in params:
             parent_title = params['name']
@@ -1140,11 +1142,11 @@ def build_groups_menu(params, json_body=None):
             temp_url = nt.set_parameter(temp_url, 'level', 0)
             busy.update(20)
             html = nt.get_json(temp_url)
-            busy.update(50, nt.addon.getLocalizedString(30162))
-            if nt.addon.getSetting("spamLog") == "true":
+            busy.update(50, plugin_addon.getLocalizedString(30162))
+            if plugin_addon.getSetting("spamLog") == "true":
                 xbmc.log(params['url'], xbmc.LOGWARNING)
                 xbmc.log(html, xbmc.LOGWARNING)
-            html_body = nt.json.loads(html)
+            html_body = json.loads(html)
             busy.update(70)
             directory_type = html_body['type']
             if directory_type != "filters":
@@ -1152,13 +1154,13 @@ def build_groups_menu(params, json_body=None):
                 temp_url = params['url']
                 temp_url = nt.set_parameter(temp_url, 'level', 2)
                 html = nt.get_json(temp_url)
-                body = nt.json.loads(html)
+                body = json.loads(html)
             else:
                 # level 1 will fill group and series (for filter)
                 temp_url = params['url']
                 temp_url = nt.set_parameter(temp_url, 'level', 1)
                 html = nt.get_json(temp_url)
-                body = nt.json.loads(html)
+                body = json.loads(html)
         else:
             body = json_body
         busy.update(100)
@@ -1232,9 +1234,9 @@ def build_serie_episodes_types(params):
 
     try:
         html = nt.get_json(params['url'])
-        if nt.addon.getSetting("spamLog") == "true":
+        if plugin_addon.getSetting("spamLog") == "true":
             xbmc.log(html, xbmc.LOGWARNING)
-        body = nt.json.loads(html)
+        body = json.loads(html)
 
         try:
             parent_title = ''
@@ -1272,7 +1274,7 @@ def build_serie_episodes_types(params):
                 for content in content_type:
                     try:
                         type_of = map_types[content]
-                        if nt.addon.getSetting("local_total") == "true":
+                        if plugin_addon.getSetting("local_total") == "true":
                             total_size = body['local_sizes'][type_of]
                         else:
                             total_size = body['total_sizes'][type_of]
@@ -1281,7 +1283,7 @@ def build_serie_episodes_types(params):
                         add_content_typ_dir(content, body.get("id", ''), total_size, watched, unwatched)
                     except Exception as ex:
                         add_content_typ_dir(content, body.get("id", ''))
-                        xbmc.log('-- is %s supported? error: %s' % (content, ex.message), xbmc.LOGWARNING)
+                        xbmc.log('-- is %s supported? error: %s' % (content, ex), xbmc.LOGWARNING)
                 end_of_directory(place='group')
                 return
 
@@ -1306,15 +1308,15 @@ def build_serie_episodes(params):
     episode_count = 0
     is_fake = 0
 
-    busy.create(nt.addon.getLocalizedString(30160), nt.addon.getLocalizedString(30163))
+    busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30163))
     try:
         if 'fake' in params:
             is_fake = params['fake']
         item_count = 0
         html = nt.get_json(params['url'])
-        busy.update(50, nt.addon.getLocalizedString(30162))
-        body = nt.json.loads(html)
-        if nt.addon.getSetting("spamLog") == "true":
+        busy.update(50, plugin_addon.getLocalizedString(30162))
+        body = json.loads(html)
+        if plugin_addon.getSetting("spamLog") == "true":
             xbmc.log(html, xbmc.LOGWARNING)
 
         try:
@@ -1355,7 +1357,7 @@ def build_serie_episodes(params):
                         list_cast = result_list[0]
                         list_cast_and_role = result_list[1]
 
-            short_tag = nt.addon.getSetting("short_tag_list") == "true"
+            short_tag = plugin_addon.getSetting("short_tag_list") == "true"
             temp_genre = model_utils.get_tags(body.get('tags', {}))
             if short_tag:
                 temp_genre = temp_genre[:50]
@@ -1371,7 +1373,7 @@ def build_serie_episodes(params):
                     if len(body["art"]["thumb"]) > 0:
                         thumb = body["art"]["thumb"][0]["url"]
                         if thumb is not None and ":" not in thumb:
-                            thumb = nt.server + thumb
+                            thumb = server + thumb
                     details = {
                         'mediatype': 'episode',
                         'plot': nt.remove_anidb_links(nt.decode(body['summary'])),
@@ -1410,15 +1412,15 @@ def build_serie_episodes(params):
 
             elif len(body.get('eps', {})) > 0:
                 # add item to move to next not played item (not marked as watched)
-                if nt.addon.getSetting("show_continue") == "true":
+                if plugin_addon.getSetting("show_continue") == "true":
                     if nt.decode(parent_title).lower() != "unsort":
-                        if nt.addon.getSetting("replace_continue") == "false":
+                        if plugin_addon.getSetting("replace_continue") == "false":
                             nt.add_dir("-continue-", '', '7', os.path.join(_img, 'thumb', 'other.png'),
                                        "Next episode", os.path.join(_img, 'poster', 'other.png'), "4",
                                        str(next_episode))
                         else:
                             # show status for only one type when set to local size
-                            if nt.addon.getSetting("local_total") == "true":
+                            if plugin_addon.getSetting("local_total") == "true":
                                 if "type" in params:  # type folder
                                     types = str(params['type'])
                                     row_type = map_types[types]
@@ -1465,7 +1467,7 @@ def build_serie_episodes(params):
                             else:
                                 duration = int(tmp_duration) / 1000
 
-                            if nt.addon.getSetting('kodi18') == 1:
+                            if plugin_addon.getSetting('kodi18') == 1:
                                 duration = str(datetime.timedelta(seconds=duration))
 
                             # filter out invalid date
@@ -1562,19 +1564,19 @@ def build_serie_episodes(params):
                             if len(video["art"]["thumb"]) > 0:
                                 thumb = video["art"]["thumb"][0]["url"]
                                 if thumb is not None and ":" not in thumb:
-                                    thumb = nt.server + thumb
+                                    thumb = server + thumb
                             fanart = ''
                             if len(video["art"]["fanart"]) > 0:
                                 fanart = video["art"]["fanart"][0]["url"]
                                 if fanart is not None and ":" not in fanart:
-                                    fanart = nt.server + fanart
+                                    fanart = server + fanart
                             banner = ''
                             if len(video["art"]["banner"]) > 0:
                                 banner = video["art"]["banner"][0]["url"]
                                 if banner is not None and ":" not in banner:
-                                    banner = nt.server + banner
+                                    banner = server + banner
 
-                            if nt.addon.getSetting('hide_images') == "true" and is_watched == 0:
+                            if plugin_addon.getSetting('hide_images') == "true" and is_watched == 0:
                                 # TODO add default spoiler_protected images to resources package
                                 thumb = ''
                                 fanart = ''
@@ -1634,27 +1636,27 @@ def build_serie_episodes(params):
                                     extra_data['fanart_image'] = fanart
 
                             # handle these after watched stuff is handled
-                            if nt.addon.getSetting('hide_rating') == 'Always':
-                                if nt.addon.getSetting('hide_rating_type') != 'Series':  # Episodes|Both
+                            if plugin_addon.getSetting('hide_rating') == 'Always':
+                                if plugin_addon.getSetting('hide_rating_type') != 'Series':  # Episodes|Both
                                     details['rating'] = 0
-                            elif nt.addon.getSetting('hide_rating') == 'Unwatched':
-                                if nt.addon.getSetting(
+                            elif plugin_addon.getSetting('hide_rating') == 'Unwatched':
+                                if plugin_addon.getSetting(
                                         'hide_rating_type') != 'Series' and is_watched < 1:  # Episodes|Both
                                     details['rating'] = 0
-                            elif nt.addon.getSetting('hide_rating') == 'All Unwatched':
-                                if nt.addon.getSetting('hide_rating_type') != 'Series' and next_episode <= 1:  # Episodes|Both
+                            elif plugin_addon.getSetting('hide_rating') == 'All Unwatched':
+                                if plugin_addon.getSetting('hide_rating_type') != 'Series' and next_episode <= 1:  # Episodes|Both
                                     details['rating'] = 0
 
-                            if nt.addon.getSetting('hide_title') != 'Never' and is_watched < 1:
+                            if plugin_addon.getSetting('hide_title') != 'Never' and is_watched < 1:
                                 if str(video['eptype']) == "Special":
-                                    if nt.addon.getSetting('hide_title') != 'Episodes':  # both,specials
-                                        details['title'] = nt.addon.getLocalizedString(30076)
+                                    if plugin_addon.getSetting('hide_title') != 'Episodes':  # both,specials
+                                        details['title'] = plugin_addon.getLocalizedString(30076)
                                 elif str(video['eptype']) == "Episode":
-                                    if nt.addon.getSetting('hide_title') != 'Specials':  # both,episodes
-                                        details['title'] = nt.addon.getLocalizedString(30076)
+                                    if plugin_addon.getSetting('hide_title') != 'Specials':  # both,episodes
+                                        details['title'] = plugin_addon.getLocalizedString(30076)
 
-                            if nt.addon.getSetting('hide_plot') == "true" and is_watched < 1:
-                                details['plot'] = nt.addon.getLocalizedString(30079)
+                            if plugin_addon.getSetting('hide_plot') == "true" and is_watched < 1:
+                                details['plot'] = plugin_addon.getLocalizedString(30079)
 
                             context = None
 
@@ -1679,7 +1681,7 @@ def build_serie_episodes(params):
         end_of_directory(place='episode')
     # settings / media / videos / {advanced} / Select first unwatched tv show season,episode (always)
     if nt.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') > 0 or \
-            nt.addon.getSetting("select_unwatched") == "true":
+            plugin_addon.getSetting("select_unwatched") == "true":
         try:
             xbmc.sleep(150)
             new_window = xbmcgui.Window(xbmcgui.getCurrentWindowId())
@@ -1696,17 +1698,17 @@ def build_cast_menu(params):
     :return:
     """
     try:
-        search_url = nt.server + "/api/cast/byseries"
+        search_url = server + "/api/cast/byseries"
         if params.get("serie_id", "") == "":
             return
         search_url = nt.set_parameter(search_url, 'id', params.get("serie_id", ""))
         search_url = nt.set_parameter(search_url, 'notag', 1)
         search_url = nt.set_parameter(search_url, 'level', 0)
-        cast_nodes = nt.json.loads(nt.get_json(search_url))
-        if nt.addon.getSetting("spamLog") == "true":
+        cast_nodes = json.loads(nt.get_json(search_url))
+        if plugin_addon.getSetting("spamLog") == "true":
             nt.dump_dictionary(cast_nodes, "cast_nodes")
 
-        base_search_url = nt.server + "/api/cast/search"
+        base_search_url = server + "/api/cast/search"
         base_search_url = nt.set_parameter(base_search_url, "fuzzy", 0)
 
         if len(cast_nodes) > 0:
@@ -1716,10 +1718,10 @@ def build_cast_menu(params):
             xbmcplugin.setContent(handle, 'tvshows')
             for cast in cast_nodes:
                 character = cast.get(u"character", u"")
-                character_image = nt.server + cast.get("character_image", "")
+                character_image = server + cast.get("character_image", "")
                 character_description = cast.get("character_description")
                 staff = cast.get("staff", "")
-                staff_image = nt.server + cast.get("staff_image", "")
+                staff_image = server + cast.get("staff_image", "")
 
                 liz = xbmcgui.ListItem(staff)
                 new_search_url = nt.set_parameter(base_search_url, "query", staff)
@@ -1765,8 +1767,8 @@ def build_search_directory():
     :return:
     """
     items = [{
-        "title": nt.addon.getLocalizedString(30224),
-        "url": nt.server + "/api/serie",
+        "title": plugin_addon.getLocalizedString(30224),
+        "url": server + "/api/serie",
         "mode": 3,
         "poster": "none",
         "icon": os.path.join(_img, 'icons', 'new-search.png'),
@@ -1794,7 +1796,7 @@ def build_search_directory():
             if len(ss[0]) > 0:
                 items.append({
                     "title": ss[0],
-                    "url": nt.server + "/api/search",
+                    "url": server + "/api/search",
                     "query": ss[0],
                     "mode": 3,
                     "poster": "none",
@@ -1838,7 +1840,7 @@ def build_serie_soon(params):
     xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_UNSORTED)
 
     try:
-        busy.create(nt.addon.getLocalizedString(30160), nt.addon.getLocalizedString(30161))
+        busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30161))
         busy.update(20)
         temp_url = params['url']
         temp_url = nt.set_parameter(temp_url, 'level', 2)
@@ -1849,15 +1851,15 @@ def build_serie_soon(params):
         temp_url = nt.set_parameter(temp_url, 'level', 0)
         busy.update(20)
         html = nt.get_json(temp_url)
-        busy.update(50, nt.addon.getLocalizedString(30162))
-        if nt.addon.getSetting("spamLog") == "true":
+        busy.update(50, plugin_addon.getLocalizedString(30162))
+        if plugin_addon.getSetting("spamLog") == "true":
             xbmc.log(params['url'], xbmc.LOGWARNING)
             xbmc.log(html, xbmc.LOGWARNING)
         busy.update(70)
         temp_url = params['url']
         temp_url = nt.set_parameter(temp_url, 'level', 2)
         html = nt.get_json(temp_url)
-        body = nt.json.loads(html)
+        body = json.loads(html)
         busy.update(100)
         busy.close()
 
@@ -1865,7 +1867,7 @@ def build_serie_soon(params):
         try:
             kodi_utils.set_window_heading(body.get('name', ''))
         except:
-            kodi_utils.set_window_heading(nt.addon.getLocalizedString(30222))
+            kodi_utils.set_window_heading(plugin_addon.getLocalizedString(30222))
 
         try:
             item_count = 0
@@ -1877,7 +1879,7 @@ def build_serie_soon(params):
                     pass
                 else:
                     used_dates.append(sers.get('air', ''))
-                    soon_url = nt.server + "/api/serie/soon"
+                    soon_url = server + "/api/serie/soon"
                     details = {'aired': sers.get('air', ''), 'title': sers.get('air', '')}
                     u = sys.argv[0]
                     u = nt.set_parameter(u, 'url', soon_url)
@@ -1904,11 +1906,11 @@ def build_raw_list(params):
     :return:
     """
     xbmcplugin.setContent(handle, 'videos')
-    kodi_utils.set_window_heading(nt.addon.getLocalizedString(30106))
+    kodi_utils.set_window_heading(plugin_addon.getLocalizedString(30106))
     try:
         html = nt.get_json(params['url'])
-        body = nt.json.loads(html)
-        if nt.addon.getSetting("spamLog") == "true":
+        body = json.loads(html)
+        if plugin_addon.getSetting("spamLog") == "true":
             xbmc.log(html, xbmc.LOGWARNING)
 
         try:
@@ -1926,8 +1928,8 @@ def build_network_menu():
     """
     Build fake menu that will alert user about network util.error (unable to connect to api)
     """
-    network_url = nt.server + "/api/version"
-    title = nt.addon.getLocalizedString(30197)
+    network_url = server + "/api/version"
+    title = plugin_addon.getLocalizedString(30197)
     liz = xbmcgui.ListItem(label=title, label2=title, path=network_url)
     liz.setArt({"icon": os.path.join(_img, 'icons', 'settings.png'),
                 "fanart": os.path.join(_img, 'backgrounds', 'settings.jpg')})
@@ -1947,13 +1949,13 @@ def search_for(search_url):
     try:
         search_url = nt.set_parameter(search_url, 'tags', 2)
         search_url = nt.set_parameter(search_url, 'level', 1)
-        search_url = nt.set_parameter(search_url, 'limit', nt.addon.getSetting('maxlimit'))
-        search_url = nt.set_parameter(search_url, 'limit_tag', nt.addon.getSetting('maxlimit_tag'))
-        json_body = nt.json.loads(nt.get_json(search_url))
+        search_url = nt.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
+        search_url = nt.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
+        json_body = json.loads(nt.get_json(search_url))
         if json_body["groups"][0]["size"] == 0:
-            xbmc.executebuiltin("XBMC.Notification(%s, %s %s, 7500, %s)" % (nt.addon.getLocalizedString(30180),
-                                                                            nt.addon.getLocalizedString(30181),
-                                                                            '!', nt.addon.getAddonInfo('icon')))
+            xbmc.executebuiltin("XBMC.Notification(%s, %s %s, 7500, %s)" % (plugin_addon.getLocalizedString(30180),
+                                                                            plugin_addon.getLocalizedString(30181),
+                                                                            '!', plugin_addon.getAddonInfo('icon')))
         else:
             search_url = nt.parse_parameters(search_url)
             build_groups_menu(search_url, json_body)
@@ -1974,7 +1976,7 @@ def execute_search_and_add_query():
         # if its not add to history & refresh
         search.add_search_history(find)
         xbmc.executebuiltin('Container.Refresh')
-    search_url = nt.server + "/api/search"
+    search_url = server + "/api/search"
     search_url = nt.set_parameter(search_url, "query", find)
     search_for(search_url)
 
@@ -1985,8 +1987,8 @@ def create_playlist(serie_id):
     :param serie_id:
     :return:
     """
-    serie_url = nt.server + "/api/serie?id=" + str(serie_id) + "&level=2&nocast=1&notag=1"
-    serie_body = nt.json.loads(nt.get_json(serie_url))
+    serie_url = server + "/api/serie?id=" + str(serie_id) + "&level=2&nocast=1&notag=1"
+    serie_body = json.loads(nt.get_json(serie_url))
     # playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     # playlist.clear()
     item_count = 0
@@ -2028,43 +2030,43 @@ def build_shoko_menu():
     :return:
     """
     xbmcplugin.setContent(handle, 'tvshows')
-    kodi_utils.set_window_heading(nt.addon.getLocalizedString(30115))
+    kodi_utils.set_window_heading(plugin_addon.getLocalizedString(30115))
 
     items = [{
-        "title": nt.addon.getLocalizedString(30122),
+        "title": plugin_addon.getLocalizedString(30122),
         "cmd": "missing",
         "poster": "none",
         "icon": os.path.join(_img, 'icons', 'new-search.png'),
         "fanart": os.path.join(_img, 'backgrounds', 'new-search.jpg'),
         "type": "video",
-        "plot": nt.addon.getLocalizedString(30135),
+        "plot": plugin_addon.getLocalizedString(30135),
         "extras": ""
     }, {
-        "title": nt.addon.getLocalizedString(30117),
+        "title": plugin_addon.getLocalizedString(30117),
         "cmd": "statsupdate",
         "poster": "none",
         "icon": os.path.join(_img, 'icons', 'new-search.png'),
         "fanart": os.path.join(_img, 'backgrounds', 'new-search.jpg'),
         "type": "video",
-        "plot": nt.addon.getLocalizedString(30136),
+        "plot": plugin_addon.getLocalizedString(30136),
         "extras": ""
     }, {
-        "title": nt.addon.getLocalizedString(30118),
+        "title": plugin_addon.getLocalizedString(30118),
         "cmd": "mediainfo",
         "poster": "none",
         "icon": os.path.join(_img, 'icons', 'new-search.png'),
         "fanart": os.path.join(_img, 'backgrounds', 'new-search.jpg'),
         "type": "video",
-        "plot": nt.addon.getLocalizedString(30137),
+        "plot": plugin_addon.getLocalizedString(30137),
         "extras": ""
     }, {
-        "title": nt.addon.getLocalizedString(30116),
+        "title": plugin_addon.getLocalizedString(30116),
         "cmd": "folderlist",
         "poster": "none",
         "icon": os.path.join(_img, 'icons', 'new-search.png'),
         "fanart": os.path.join(_img, 'backgrounds', 'new-search.jpg'),
         "type": "video",
-        "plot": nt.addon.getLocalizedString(30140),
+        "plot": plugin_addon.getLocalizedString(30140),
         "extras": "",
     }]
 

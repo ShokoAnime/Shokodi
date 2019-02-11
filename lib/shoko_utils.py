@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-import nakamori_utils.nakamoritools as nt
-from resources.lib import kodi_utils
+from nakamori_utils import nakamoritools as nt
+from nakamori_utils.globalvars import *
+from lib import kodi_utils
 
 import xbmc
 
 
 localization_notification_map = {
-    'rescan': nt.addon.getLocalizedString(30190),
-    'rehash': nt.addon.getLocalizedString(30189),
-    'runimport': nt.addon.getLocalizedString(30198),
-    'folderscan': nt.addon.getLocalizedString(30199),
+    'rescan': plugin_addon.getLocalizedString(30190),
+    'rehash': plugin_addon.getLocalizedString(30189),
+    'runimport': plugin_addon.getLocalizedString(30198),
+    'folderscan': plugin_addon.getLocalizedString(30199),
 }
 
 localization_refresh_map = {
-    'refresh10': nt.addon.getLocalizedString(30191),
-    'awhile': nt.addon.getLocalizedString(30193),
+    'refresh10': plugin_addon.getLocalizedString(30191),
+    'awhile': plugin_addon.getLocalizedString(30193),
 }
 
 
@@ -27,10 +28,10 @@ def perform_server_action(command, object_id=None, refresh='refresh10', post=Fal
         refresh: whether to refresh
         post: is it a POST endpoint
     """
-    key_url = nt.server + "/api/" + command
+    key_url = server + "/api/" + command
     if object_id is not None and object_id != 0 and object_id != '':
         key_url = nt.set_parameter(key_url, 'id', object_id)
-    if nt.addon.getSetting('spamLog') == 'true':
+    if plugin_addon.getSetting('spamLog') == 'true':
         xbmc.log('object_id: ' + str(object_id), xbmc.LOGWARNING)
         xbmc.log('key: ' + key_url, xbmc.LOGWARNING)
 
@@ -39,13 +40,13 @@ def perform_server_action(command, object_id=None, refresh='refresh10', post=Fal
     else:
         response = nt.get_json(key_url)
 
-    if nt.addon.getSetting('spamLog') == 'true':
+    if plugin_addon.getSetting('spamLog') == 'true':
         xbmc.log('response: ' + response, xbmc.LOGWARNING)
 
     refresh_message = localization_refresh_map.get(refresh, '')
     xbmc.executebuiltin("XBMC.Notification(%s, %s, 2000, %s)" % (
         localization_notification_map.get(command, command),
-        refresh_message, nt.addon.getAddonInfo('icon')))
+        refresh_message, plugin_addon.getAddonInfo('icon')))
 
     # there's a better way to do this, but I don't feel like trying to make it work in Python
     if refresh != '' and refresh != 'awhile':

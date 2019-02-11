@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
+import json
 import sys
 import os
 import traceback
 
 import xbmc
-import xbmcaddon
 import xbmcgui
 
-from resources.lib import model_utils
+from lib import model_utils
 
-import nakamori_utils.nakamoritools as nt
-import nakamoriplayer as nplayer
+from nakamori_utils import nakamoritools as nt
+from nakamori_utils.globalvars import *
+import nakamori_player as nplayer
 
 try:
     from sqlite3 import dbapi2 as database
@@ -78,7 +79,7 @@ def error(msg, error_type='Error', silent=False):
         traceback.print_exc()
     if not silent:
         xbmc.executebuiltin('XBMC.Notification(%s, %s %s, 2000, %s)' % (error_type, ' ', msg,
-                                                                        nt.addon.getAddonInfo('icon')))
+                                                                        plugin_addon.getAddonInfo('icon')))
 
 
 def play_continue_item():
@@ -91,7 +92,7 @@ def play_continue_item():
         offset = params['offset']
         pos = int(offset)
         if pos == 1:
-            xbmcgui.Dialog().ok(nt.addon.getLocalizedString(30182), nt.addon.getLocalizedString(30183))
+            xbmcgui.Dialog().ok(plugin_addon.getLocalizedString(30182), plugin_addon.getLocalizedString(30183))
         else:
             wind = xbmcgui.Window(xbmcgui.getCurrentWindowId())
             control_id = wind.getFocusId()
@@ -115,7 +116,7 @@ def file_list_gui(ep_body):
             filename = os.path.basename(body['filename'])
             pick_filename.append(filename)
             get_fileid.append(str(body['id']))
-        my_file = xbmcgui.Dialog().select(nt.addon.getLocalizedString(30196), pick_filename)
+        my_file = xbmcgui.Dialog().select(plugin_addon.getLocalizedString(30196), pick_filename)
         if my_file > -1:
             return get_fileid[my_file]
         else:
@@ -134,13 +135,13 @@ def import_folder_list():
     """
     pick_folder = []
     get_id = []
-    import_list = nt.json.loads(nt.get_json(nt.server + "/api/folder/list"))
+    import_list = json.loads(nt.get_json(nt.server + "/api/folder/list"))
     if len(import_list) > 1:
         for body in import_list:
             location = str(body['ImportFolderLocation'])
             pick_folder.append(location)
             get_id.append(str(body['ImportFolderID']))
-        my_folder = xbmcgui.Dialog().select(nt.addon.getLocalizedString(30119), pick_folder)
+        my_folder = xbmcgui.Dialog().select(plugin_addon.getLocalizedString(30119), pick_folder)
         if my_folder > -1:
             return get_id[my_folder]
         else:
@@ -190,18 +191,18 @@ def play_video(ep_id, raw_id, movie):
     offset = 0
     item = ''
 
-    resume = nt.addon.getSetting('resume') == '1'
-    nt.addon.setSetting('resume', '0')
+    resume = plugin_addon.getSetting('resume') == '1'
+    plugin_addon.setSetting('resume', '0')
 
     try:
         if ep_id != "0":
-            episode_url = nt.server + "/api/ep?id=" + str(ep_id)
+            episode_url = server + "/api/ep?id=" + str(ep_id)
             episode_url = nt.set_parameter(episode_url, "level", "1")
             html = nt.get_json(nt.encode(episode_url))
-            if nt.addon.getSetting("spamLog") == "true":
+            if plugin_addon.getSetting("spamLog") == "true":
                 xbmc.log(html, xbmc.LOGWARNING)
-            episode_body = nt.json.loads(html)
-            if nt.addon.getSetting("pick_file") == "true":
+            episode_body = json.loads(html)
+            if plugin_addon.getSetting("pick_file") == "true":
                 file_id = file_list_gui(episode_body)
             else:
                 file_id = episode_body["files"][0]["id"]
@@ -210,8 +211,8 @@ def play_video(ep_id, raw_id, movie):
 
         if file_id is not None and file_id != 0:
             details['fileid'] = file_id
-            file_url = nt.server + "/api/file?id=" + str(file_id)
-            file_body = nt.json.loads(nt.get_json(file_url))
+            file_url = server + "/api/file?id=" + str(file_id)
+            file_body = json.loads(nt.get_json(file_url))
 
             file_url = file_body['url']
             server_path = file_body.get('server_path', '')
@@ -246,7 +247,7 @@ def play_video(ep_id, raw_id, movie):
                 offset = file_body.get('offset', 0)
                 if offset != 0:
                     offset = int(offset) / 1000
-                    if nt.addon.getSetting("file_resume") == "true" and resume:
+                    if plugin_addon.getSetting("file_resume") == "true" and resume:
                         item.setProperty('ResumeTime', str(offset))
                         item.setProperty('StartOffset', str(offset))
 
@@ -263,7 +264,7 @@ def play_video(ep_id, raw_id, movie):
                     continue
                 item.addStreamInfo('subtitle', codecs["SubStreams"][stream_index])
         else:
-            if nt.addon.getSetting("pick_file") == "false":
+            if plugin_addon.getSetting("pick_file") == "false":
                 nt.error("file_id not retrieved")
             return 0
     except Exception as exc:
@@ -274,9 +275,9 @@ def play_video(ep_id, raw_id, movie):
 
     # region Eigakan
     try:
-        if nt.addon.getSetting("enableEigakan") == "true":
-            eigakan_url = nt.addon.getSetting("ipEigakan")
-            eigakan_port = nt.addon.getSetting("portEigakan")
+        if plugin_addon.getSetting("enableEigakan") == "true":
+            eigakan_url = plugin_addon.getSetting("ipEigakan")
+            eigakan_port = plugin_addon.getSetting("portEigakan")
             eigakan_host = 'http://' + eigakan_url + ':' + eigakan_port
             video_url = eigakan_host + '/api/transcode/' + str(file_id)
             post_data = '"file":"' + file_url + '"'
@@ -289,7 +290,7 @@ def play_video(ep_id, raw_id, movie):
                 if 'eigakan' in eigakan_data:
                     audio_stream_id = -1
                     stream_index = -1
-                    for audio_code in nt.addon.getSetting("audiolangEigakan").split(","):
+                    for audio_code in plugin_addon.getSetting("audiolangEigakan").split(","):
                         for audio_stream in file_body['media']['audios']:
                             stream_index += 1
                             if 'Language' in file_body['media']['audios'][audio_stream]:
@@ -309,7 +310,7 @@ def play_video(ep_id, raw_id, movie):
 
                     sub_stream_id = -1
                     stream_index = -1
-                    for sub_code in nt.addon.getSetting("subEigakan").split(","):
+                    for sub_code in plugin_addon.getSetting("subEigakan").split(","):
                         for sub_stream in file_body['media']['subtitles']:
                             stream_index += 1
                             if 'Language' in file_body['media']['subtitles'][sub_stream]:
@@ -327,26 +328,26 @@ def play_video(ep_id, raw_id, movie):
                         if sub_stream_id != -1:
                             break
 
-                    busy.create(nt.addon.getLocalizedString(30160), nt.addon.getLocalizedString(30165))
+                    busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30165))
 
                     if audio_stream_id != -1:
                         post_data += ',"audio_stream":"' + str(audio_stream_id) + '"'
                     if sub_stream_id != -1:
                         post_data += ',"subtitles_stream":"' + str(sub_stream_id) + '"'
 
-                    if nt.addon.getSetting("advEigakan") == "true":
-                        post_data += ',"resolution":"' + nt.addon.getSetting("resolutionEigakan") + '"'
-                        post_data += ',"audio_codec":"' + nt.addon.getSetting("audioEigakan") + '"'
-                        post_data += ',"video_bitrate":"' + nt.addon.getSetting("vbitrateEigakan") + '"'
-                        post_data += ',"x264_profile":"' + nt.addon.getSetting("profileEigakan") + '"'
+                    if plugin_addon.getSetting("advEigakan") == "true":
+                        post_data += ',"resolution":"' + plugin_addon.getSetting("resolutionEigakan") + '"'
+                        post_data += ',"audio_codec":"' + plugin_addon.getSetting("audioEigakan") + '"'
+                        post_data += ',"video_bitrate":"' + plugin_addon.getSetting("vbitrateEigakan") + '"'
+                        post_data += ',"x264_profile":"' + plugin_addon.getSetting("profileEigakan") + '"'
                     nt.post_json(video_url, post_data)
                     xbmc.sleep(1000)
                     busy.close()
 
-                    busy.create(nt.addon.getLocalizedString(30160), nt.addon.getLocalizedString(30164))
+                    busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30164))
                     while True:
                         if nt.head(url_in=ts_url) is False:
-                            x_try = int(nt.addon.getSetting("tryEigakan"))
+                            x_try = int(plugin_addon.getSetting("tryEigakan"))
                             if try_count > x_try:
                                 break
                             if busy.iscanceled():
@@ -358,9 +359,9 @@ def play_video(ep_id, raw_id, movie):
                             break
                     busy.close()
 
-                    postpone_seconds = int(nt.addon.getSetting("postponeEigakan"))
+                    postpone_seconds = int(plugin_addon.getSetting("postponeEigakan"))
                     if postpone_seconds > 0:
-                        busy.create(nt.addon.getLocalizedString(30160), nt.addon.getLocalizedString(30166))
+                        busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30166))
                         while postpone_seconds > 0:
                             xbmc.sleep(1000)
                             postpone_seconds -= 1
@@ -382,7 +383,7 @@ def play_video(ep_id, raw_id, movie):
         pass
     # endregion
 
-    player = nplayer.Service()
+    player = nplayer.Player()
     player.feed(details)
 
     try:
@@ -398,20 +399,21 @@ def play_video(ep_id, raw_id, movie):
         pass
 
     # leave player alive so we can handle onPlayBackStopped/onPlayBackEnded
-    xbmc.sleep(int(nt.addon.getSetting("player_sleep")))
+    xbmc.sleep(int(plugin_addon.getSetting("player_sleep")))
 
     # while player.isPlaying():
     #     xbmc.sleep(500)
+    monitor = xbmc.Monitor()
     while player.PlaybackStatus != 'Stopped' and player.PlaybackStatus != 'Ended':
         xbmc.sleep(500)
 
     if player.PlaybackStatus == 'Ended':
-        xbmc.log(' Ended -------~ ~~ ~ ----> ' + str(xbmc.abortRequested), xbmc.LOGWARNING)
+        xbmc.log(' Ended -------~ ~~ ~ ----> ' + str(monitor.abortRequested()), xbmc.LOGWARNING)
         return -1
     else:
         xbmc.log('player.PlaybackStatus=============' + str(player.PlaybackStatus))
 
-    xbmc.log('-------~ ~~ ~ ----> ' + str(xbmc.abortRequested), xbmc.LOGWARNING)
+    xbmc.log('-------~ ~~ ~ ----> ' + str(monitor.abortRequested()), xbmc.LOGWARNING)
     return 0
 
 
@@ -420,7 +422,7 @@ def wizard():
     Run wizard if there weren't any before
     :return: nothing, set ip/port user/password in settings
     """
-    if nt.addon.getSetting('wizard') == '0':
+    if plugin_addon.getSetting('wizard') == '0':
         xbmc.executebuiltin('RunScript(script.module.nakamori,?info=wizard)', True)
 
 
@@ -430,14 +432,14 @@ def detect_kodi18():
     check if '3' (unknown), set 1 if kodi18, set 0 if anything else
     :return: this function dont return anything, only set 'kodi18' in settings
     """
-    if nt.addon.getSetting('kodi18') == '3':
+    if plugin_addon.getSetting('kodi18') == '3':
         python = xbmcaddon.Addon('xbmc.addon')
         if python is not None:
             # kodi18 return 17.9.xxx as for now later it will be 18.x
             if str(python.getAddonInfo('version')).startswith('17.9.') or str(python.getAddonInfo('version')).startswith('18.0'):
-                nt.addon.setSetting(id='kodi18', value='1')
+                plugin_addon.setSetting(id='kodi18', value='1')
             else:
-                nt.addon.setSetting(id='kodi18', value='0')
+                plugin_addon.setSetting(id='kodi18', value='0')
 
 
 def fix_mark_watch_in_kodi_db():
@@ -445,8 +447,8 @@ def fix_mark_watch_in_kodi_db():
     Clear mark for nakamori files in kodi db
     :return:
     """
-    ret = xbmcgui.Dialog().yesno(nt.addon.getLocalizedString(30104),
-                                 nt.addon.getLocalizedString(30081), nt.addon.getLocalizedString(30112))
+    ret = xbmcgui.Dialog().yesno(plugin_addon.getLocalizedString(30104),
+                                 plugin_addon.getLocalizedString(30081), plugin_addon.getLocalizedString(30112))
     if ret:
         db_files = []
         db_path = os.path.join(nt.decode(xbmc.translatePath('special://home')), 'userdata')
@@ -462,7 +464,7 @@ def fix_mark_watch_in_kodi_db():
             db_connection.commit()
             db_connection.close()
         if len(db_files) > 0:
-            xbmcgui.Dialog().ok('', nt.addon.getLocalizedString(30138))
+            xbmcgui.Dialog().ok('', plugin_addon.getLocalizedString(30138))
 
 
 def clear_image_cache_in_kodi_db():
@@ -470,8 +472,8 @@ def clear_image_cache_in_kodi_db():
     Clear image cache in kodi db
     :return:
     """
-    ret = xbmcgui.Dialog().yesno(nt.addon.getLocalizedString(30104),
-                                 nt.addon.getLocalizedString(30081), nt.addon.getLocalizedString(30112))
+    ret = xbmcgui.Dialog().yesno(plugin_addon.getLocalizedString(30104),
+                                 plugin_addon.getLocalizedString(30081), plugin_addon.getLocalizedString(30112))
     if ret:
         db_files = []
         db_path = os.path.join(nt.decode(xbmc.translatePath('special://home')), 'userdata')
@@ -483,10 +485,10 @@ def clear_image_cache_in_kodi_db():
         for db_file in db_files:
             db_connection = database.connect(os.path.join(db_path, db_file))
             db_cursor = db_connection.cursor()
-            db_cursor.execute('DELETE FROM texture WHERE url LIKE "%' + nt.addon.getSetting('port') + '/api/%"')
+            db_cursor.execute('DELETE FROM texture WHERE url LIKE "%' + plugin_addon.getSetting('port') + '/api/%"')
             db_connection.commit()
             db_cursor.execute('DELETE FROM texture WHERE url LIKE "%nakamori%"')
             db_connection.commit()
             db_connection.close()
         if len(db_files) > 0:
-            xbmcgui.Dialog().ok('', nt.addon.getLocalizedString(30138))
+            xbmcgui.Dialog().ok('', plugin_addon.getLocalizedString(30138))

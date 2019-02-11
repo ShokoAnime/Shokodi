@@ -144,13 +144,13 @@ msgstr "Use short Tag list"
 
 #: settings.xml
 msgctxt "#30029"
-msgid "Cache"
-msgstr "Cache"
+msgid "cache"
+msgstr "cache"
 
 #: settings.xml
 msgctxt "#30030"
-msgid "Enable Cache"
-msgstr "Enable Cache"
+msgid "Enable cache"
+msgstr "Enable cache"
 
 #: settings.xml
 msgctxt "#30032"

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, unicode_literals
 
-import resources.lib.debug as dbg
-import resources.lib.guibuilder as gb
-import nakamori_utils.nakamoritools as nt
-from resources.lib import kodi_utils
-from resources.lib import shoko_utils
-from resources.lib import search
+import json
+
+import lib.debug as dbg
+import lib.guibuilder as gb
+from nakamori_utils import nakamoritools as nt
+from nakamori_utils.globalvars import *
+from lib import kodi_utils, shoko_utils, search
 
 import xbmcplugin
 import xbmcaddon
@@ -54,10 +55,10 @@ def play_video(video_parameters):
         pass
 
 
-if nt.addon.getSetting('skip_information') == 'false':
+if plugin_addon.getSetting('skip_information') == 'false':
     nt.show_information()
 
-if nt.addon.getSetting('wizard') != '0' and nt.get_server_status():
+if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
     try:
         auth, apikey = nt.valid_user()
         if auth:
@@ -95,7 +96,7 @@ if nt.addon.getSetting('wizard') != '0' and nt.get_server_status():
                     gb.search_for(parameters.get('url', ''))
                 elif cmd == "watched":
                     if nt.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') == 0 or \
-                            nt.addon.getSetting("select_unwatched") == "true":
+                            plugin_addon.getSetting("select_unwatched") == "true":
                         try:
                             win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
                             ctl = win.getControl(win.getFocusId())
@@ -108,7 +109,7 @@ if nt.addon.getSetting('wizard') != '0' and nt.get_server_status():
                             pass
                     parameters['watched'] = True
                     nt.mark_watch_status(parameters)
-                    if nt.addon.getSetting("vote_always") == "true":
+                    if plugin_addon.getSetting("vote_always") == "true":
                         if parameters.get('userrate', 0) == 0:
                             nt.vote_episode(parameters['ep_id'])
                 elif cmd == "unwatched":
@@ -117,13 +118,13 @@ if nt.addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif cmd == "playlist":
                     kodi_utils.play_continue_item()
                 elif cmd == "no_mark":
-                    nt.addon.setSetting('no_mark', '1')
+                    plugin_addon.setSetting('no_mark', '1')
                     # noinspection PyTypeChecker
                     play_video(parameters)
                 elif cmd == "pickFile":
                     if str(parameters['ep_id']) != "0":
-                        ep_url = nt.server + "/api/ep?id=" + str(parameters['ep_id']) + "&level=2"
-                        kodi_utils.file_list_gui(nt.json.loads(nt.get_json(ep_url)))
+                        ep_url = server + "/api/ep?id=" + str(parameters['ep_id']) + "&level=2"
+                        kodi_utils.file_list_gui(json.loads(nt.get_json(ep_url)))
                 elif cmd == 'rescan':
                     shoko_utils.rescan_file(parameters.get('vl', ''))
                 elif cmd == 'rehash':
@@ -141,17 +142,17 @@ if nt.addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif cmd == 'refresh':
                     nt.refresh()
                 elif cmd == 'resume':
-                    nt.addon.setSetting('resume', '1')
+                    plugin_addon.setSetting('resume', '1')
                     # noinspection PyTypeChecker
                     play_video(parameters)
                 elif cmd == 'resumeno_mark':
-                    nt.addon.setSetting('no_mark', '1')
-                    nt.addon.setSetting('resume', '1')
+                    plugin_addon.setSetting('no_mark', '1')
+                    plugin_addon.setSetting('resume', '1')
                     # noinspection PyTypeChecker
                     play_video(parameters)
                 elif cmd == 'wizard':
                     xbmc.log('--- (cmd: wizard) --- ', xbmc.LOGWARNING)
-                    nt.addon.setSetting('wizard', '0')
+                    plugin_addon.setSetting('wizard', '0')
                     kodi_utils.wizard()
             else:
                 if mode == 0:  # string label
@@ -164,7 +165,7 @@ if nt.addon.getSetting('wizard') != '0' and nt.get_server_status():
                     try:
                         if 'extras' in parameters:
                             if parameters['extras'] == "force-search" and 'query' in parameters:
-                                url = nt.server + '/api/search'
+                                url = server + '/api/search'
                                 url = nt.set_parameter(url, 'query', parameters['query'])
                                 gb.search_for(url)
                             else:
@@ -196,7 +197,7 @@ if nt.addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif mode == 8:  # File List
                     gb.build_raw_list(parameters)
                 elif mode == 9:  # Calendar
-                    if nt.addon.getSetting('calendar_basic') == 'true':
+                    if plugin_addon.getSetting('calendar_basic') == 'true':
                         gb.build_serie_soon(parameters)
                     else:
                         xbmc.executebuiltin('RunScript(script.module.nakamori,?info=calendar)')
@@ -221,8 +222,8 @@ if nt.addon.getSetting('wizard') != '0' and nt.get_server_status():
                     gb.build_filters_menu()
         else:
             xbmc.log('--- (auth = False: wizard) ---', xbmc.LOGWARNING)
-            nt.error(nt.addon.getLocalizedString(30194), nt.addon.getLocalizedString(30195))
-            nt.addon.setSetting(id='wizard', value='0')
+            nt.error(plugin_addon.getLocalizedString(30194), plugin_addon.getLocalizedString(30195))
+            plugin_addon.setSetting(id='wizard', value='0')
     except HTTPError as err:
         if err.code == 401:
             xbmc.log('--- (httperror = 401: wizard) ---', xbmc.LOGWARNING)
@@ -231,5 +232,5 @@ else:
     gb.build_network_menu()
     if xbmcgui.Dialog().yesno("Error Connecting", "Would you like to open the setup wizard"):
         xbmc.log('--- (get_server_status: wizard) ---', xbmc.LOGWARNING)
-        nt.addon.setSetting(id='wizard', value='0')
+        plugin_addon.setSetting(id='wizard', value='0')
         kodi_utils.wizard()

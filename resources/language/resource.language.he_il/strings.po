@@ -145,12 +145,12 @@ msgstr "שימוש ברשימה תג קצר"
 
 #: settings.xml
 msgctxt "#30029"
-msgid "Cache"
+msgid "cache"
 msgstr "מטמון"
 
 #: settings.xml
 msgctxt "#30030"
-msgid "Enable Cache"
+msgid "Enable cache"
 msgstr "אפשר מטמון"
 
 #: settings.xml

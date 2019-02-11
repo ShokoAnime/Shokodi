@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-
 import cProfile
 import pstats
 import xbmc
 import sys
-import nakamori_utils.nakamoritools as nt
+from nakamori_utils import nakamoritools as nt
+from nakamori_utils.globalvars import *
 
 has_pydev = False
 has_line_profiler = False
@@ -50,13 +50,19 @@ def debug_init():
     also dump argv if spamLog
     :return:
     """
-    if nt.addon.getSetting('spamLog') == "true":
+    if plugin_addon.getSetting('spamLog') == "true":
         nt.dump_dictionary(sys.argv, 'sys.argv')
 
-    if nt.addon.getSetting('remote_debug') == 'true':
+    if plugin_addon.getSetting('remote_debug') == 'true':
+        # try pycharm first
         try:
-            import web_pdb
-            web_pdb.set_trace()
-        except Exception as ex:
-            nt.error('Unable to start debugger, disabling', str(ex))
-            nt.addon.setSetting('remote_debug', 'false')
+            import pydevd
+            pydevd.settrace(plugin_addon.getSetting("remote_ip"), True, True, 5678)
+        except:
+            xbmc.log('unable to start pycharm debugger, falling back on the web-pdb')
+            try:
+                import web_pdb
+                web_pdb.set_trace()
+            except Exception as ex:
+                nt.error('Unable to start debugger, disabling', str(ex))
+                plugin_addon.setSetting('remote_debug', 'false')
