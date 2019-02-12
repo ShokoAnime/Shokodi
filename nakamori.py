@@ -72,7 +72,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
             mode = None
             if parameters:
                 try:
-                    if 'mode' in parameters:
+                    if 'mode' in parameters and parameters['mode'] is not None:
                         mode = int(parameters['mode'])
                 except Exception as exp:
                     nt.error('valid_userid set \'mode\' util.error', str(exp) + " parameters: " + str(parameters))

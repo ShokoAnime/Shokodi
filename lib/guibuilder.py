@@ -2,26 +2,22 @@
 """
 here are functions needed to create dirs/files
 """
-import json
-from distutils.version import LooseVersion
-
-from nakamori_utils import nakamoritools as nt
-from nakamori_utils.globalvars import *
-from lib import model_utils
-from lib import kodi_utils
-from lib import search
-
-import xbmcaddon
-import xbmcgui
-import xbmc
-import xbmcplugin
-import sys
-import os
 import datetime
+import json
+import os
+import sys
 import time
 from collections import defaultdict
+from distutils.version import LooseVersion
 
-from proxy.python_version_proxy import Python2Proxy
+import xbmc
+import xbmcgui
+import xbmcplugin
+from lib import kodi_utils
+from lib import model_utils
+from lib import search
+from nakamori_utils import nakamoritools as nt
+from nakamori_utils.globalvars import *
 from proxy.python_version_proxy import python_proxy as pyproxy
 
 list_items = []
@@ -182,22 +178,12 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
                 if extra_data.get('partialTV') == 1:
                     total = str(extra_data['TotalEpisodes'])
                     watched = str(extra_data['WatchedEpisodes'])
-                    if pyproxy is Python2Proxy:
-                        # noinspection PyCompatibility
-                        if unicode(total).isnumeric() and unicode(watched).isnumeric():
-                            liz.setProperty('TotalTime', total)
-                            liz.setProperty('ResumeTime', watched)
-                        else:
-                            liz.setProperty('TotalTime', '100')
-                            liz.setProperty('ResumeTime', '50')
+                    if pyproxy.isnumeric(total) and pyproxy.isnumeric(watched):
+                        liz.setProperty('TotalTime', total)
+                        liz.setProperty('ResumeTime', watched)
                     else:
-                        # noinspection PyUnresolvedReferences
-                        if total.isnumeric() and watched.isnumeric():
-                            liz.setProperty('TotalTime', total)
-                            liz.setProperty('ResumeTime', watched)
-                        else:
-                            liz.setProperty('TotalTime', '100')
-                            liz.setProperty('ResumeTime', '50')
+                        liz.setProperty('TotalTime', '100')
+                        liz.setProperty('ResumeTime', '50')
                 # set colors for titles
                 # TODO airing flag missing from api
                 liz.setLabel(title_coloring(details.get('title', 'Unknown'),
@@ -438,7 +424,7 @@ def add_raw_files(node):
         u = sys.argv[0]
         u = pyproxy.set_parameter(u, 'url', raw_url)
         u = pyproxy.set_parameter(u, 'mode', 1)
-        u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+        u = pyproxy.set_parameter(u, 'name', title)
         u = pyproxy.set_parameter(u, 'raw_id', file_id)
         u = pyproxy.set_parameter(u, 'type', "raw")
         u = pyproxy.set_parameter(u, 'file', key)
@@ -517,7 +503,7 @@ def add_content_typ_dir(name, serie_id, total_size=0, watched=0, unwatched=0):
     u = sys.argv[0]
     u = pyproxy.set_parameter(u, 'url', dir_url)
     u = pyproxy.set_parameter(u, 'mode', str(6))
-    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+    u = pyproxy.set_parameter(u, 'name', title)
     u = pyproxy.set_parameter(u, 'type', name)
     list_items.append((u, liz, True))
 
@@ -932,7 +918,7 @@ def add_filter_item(menu):
     u = sys.argv[0]
     u = pyproxy.set_parameter(u, 'url', filter_url)
     u = pyproxy.set_parameter(u, 'mode', use_mode)
-    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+    u = pyproxy.set_parameter(u, 'name', title)
     u = pyproxy.set_parameter(u, 'filter_id', menu.get("id", ""))
 
     liz = xbmcgui.ListItem(label=title, label2=title, path=filter_url)
@@ -1032,7 +1018,7 @@ def build_filters_menu():
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', soon_url)
                     u = pyproxy.set_parameter(u, 'mode', str(9))
-                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'name', title)
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1048,7 +1034,7 @@ def build_filters_menu():
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', search_url)
                     u = pyproxy.set_parameter(u, 'mode', str(3))
-                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'name', title)
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1063,7 +1049,7 @@ def build_filters_menu():
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', '')
                     u = pyproxy.set_parameter(u, 'mode', str(11))
-                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'name', title)
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1078,7 +1064,7 @@ def build_filters_menu():
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', '')
                     u = pyproxy.set_parameter(u, 'mode', str(12))
-                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'name', title)
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1093,7 +1079,7 @@ def build_filters_menu():
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', '')
                     u = pyproxy.set_parameter(u, 'mode', str(13))
-                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'name', title)
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1887,7 +1873,7 @@ def build_serie_soon(params):
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', soon_url)
                     u = pyproxy.set_parameter(u, 'mode', str(0))
-                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(details.get('title', '')))
+                    u = pyproxy.set_parameter(u, 'name', details.get('title', ''))
                     extra_data = {'type': 'pictures'}
                     add_gui_item(u, details, extra_data)
                 # endregion
@@ -1939,7 +1925,7 @@ def build_network_menu():
     liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
     u = sys.argv[0]
     u = pyproxy.set_parameter(u, 'url', network_url)
-    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+    u = pyproxy.set_parameter(u, 'name', title)
     list_items.append((u, liz, True))
     end_of_directory(False)
 
