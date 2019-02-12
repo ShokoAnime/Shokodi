@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from nakamori_utils import nakamoritools as nt
 from nakamori_utils.globalvars import *
+from proxy.python_version_proxy import python_proxy as pyproxy
 
 
 def populate_tag_setting_flags():
@@ -39,7 +40,7 @@ def get_tags(tag_node):
                 if isinstance(tag, str) or isinstance(tag, unicode):
                     temp_genres.append(tag)
                 else:
-                    temp_genre = nt.decode(tag["tag"]).strip()
+                    temp_genre = pyproxy.decode(tag["tag"]).strip()
                     temp_genres.append(temp_genre)
             temp_genre = " | ".join(temp_genres)
             return temp_genre
@@ -144,9 +145,9 @@ def get_title(data):
     """
     try:
         if 'titles' not in data or plugin_addon.getSetting('use_server_title') == 'true':
-            return nt.decode(data.get('name', ''))
+            return pyproxy.decode(data.get('name', ''))
         # xbmc.log(data.get('title', 'Unknown'))
-        title = nt.decode(data.get('name', '').lower())
+        title = pyproxy.decode(data.get('name', '').lower())
         if title == 'ova' or title == 'ovas' \
                 or title == 'episode' or title == 'episodes' \
                 or title == 'special' or title == 'specials' \
@@ -154,7 +155,7 @@ def get_title(data):
                 or title == 'credit' or title == 'credits' \
                 or title == 'trailer' or title == 'trailers' \
                 or title == 'other' or title == 'others':
-            return nt.decode(data.get('name', ''))
+            return pyproxy.decode(data.get('name', ''))
 
         lang = plugin_addon.getSetting("displaylang")
         title_type = plugin_addon.getSetting("title_type")
@@ -162,28 +163,28 @@ def get_title(data):
             for titleTag in data.get("titles", []):
                 if titleTag.get("Type", "").lower() == title_type.lower():
                     if titleTag.get("Language", "").lower() == lang.lower():
-                        if nt.decode(titleTag.get("Title", "")) == "":
+                        if pyproxy.decode(titleTag.get("Title", "")) == "":
                             continue
-                        return nt.decode(titleTag.get("Title", ""))
+                        return pyproxy.decode(titleTag.get("Title", ""))
             # fallback on language any title
             for titleTag in data.get("titles", []):
                 if titleTag.get("Type", "").lower() != 'short':
                     if titleTag.get("Language", "").lower() == lang.lower():
-                        if nt.decode(titleTag.get("Title", "")) == "":
+                        if pyproxy.decode(titleTag.get("Title", "")) == "":
                             continue
-                        return nt.decode(titleTag.get("Title", ""))
+                        return pyproxy.decode(titleTag.get("Title", ""))
             # fallback on x-jat main title
             for titleTag in data.get("titles", []):
                 if titleTag.get("Type", "").lower() == 'main':
                     if titleTag.get("Language", "").lower() == "x-jat":
-                        if nt.decode(titleTag.get("Title", "")) == "":
+                        if pyproxy.decode(titleTag.get("Title", "")) == "":
                             continue
-                        return nt.decode(titleTag.get("Title", ""))
+                        return pyproxy.decode(titleTag.get("Title", ""))
             # fallback on directory title
-            return nt.decode(data.get('name', ''))
+            return pyproxy.decode(data.get('name', ''))
         except Exception as expc:
             nt.error('util.error thrown on getting title', str(expc))
-            return nt.decode(data.get('name', ''))
+            return pyproxy.decode(data.get('name', ''))
     except Exception as exw:
         nt.error("get_title Exception", str(exw))
         return 'util.error'

@@ -2,6 +2,7 @@
 from nakamori_utils import nakamoritools as nt
 from nakamori_utils.globalvars import *
 from lib import kodi_utils
+from proxy.python_version_proxy import python_proxy as pyproxy
 
 import xbmc
 
@@ -30,13 +31,13 @@ def perform_server_action(command, object_id=None, refresh='refresh10', post=Fal
     """
     key_url = server + "/api/" + command
     if object_id is not None and object_id != 0 and object_id != '':
-        key_url = nt.set_parameter(key_url, 'id', object_id)
+        key_url = pyproxy.set_parameter(key_url, 'id', object_id)
     if plugin_addon.getSetting('spamLog') == 'true':
         xbmc.log('object_id: ' + str(object_id), xbmc.LOGWARNING)
         xbmc.log('key: ' + key_url, xbmc.LOGWARNING)
 
     if post:
-        response = nt.post_json(key_url, '')
+        response = pyproxy.post_json(key_url, '')
     else:
         response = nt.get_json(key_url)
 

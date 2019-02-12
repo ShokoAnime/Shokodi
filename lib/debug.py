@@ -5,8 +5,8 @@ import xbmc
 import sys
 from nakamori_utils import nakamoritools as nt
 from nakamori_utils.globalvars import *
+from proxy.python_version_proxy import python_proxy as pyproxy
 
-has_pydev = False
 has_line_profiler = False
 try:
     # noinspection PyUnresolvedReferences
@@ -36,7 +36,7 @@ def profile_this(func):
             profile.disable()
             return result
         finally:
-            stream = nt.StringIO()
+            stream = pyproxy.StringIO()
             sort_by = 'time'
             ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
             ps.print_stats()
@@ -57,7 +57,8 @@ def debug_init():
         # try pycharm first
         try:
             import pydevd
-            pydevd.settrace(plugin_addon.getSetting("remote_ip"), True, True, 5678)
+            pydevd.settrace(host=plugin_addon.getSetting("remote_ip"), stdoutToServer=True, stderrToServer=True,
+                            port=5678, suspend=False)
         except:
             xbmc.log('unable to start pycharm debugger, falling back on the web-pdb')
             try:

@@ -15,6 +15,7 @@ import xbmcgui
 import xbmc
 
 import sys
+from proxy.python_version_proxy import python_proxy as pyproxy
 
 if sys.version_info < (3, 0):
     # noinspection PyCompatibility
@@ -63,7 +64,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
         auth, apikey = nt.valid_user()
         if auth:
             try:
-                parameters = nt.parse_parameters(sys.argv[2])
+                parameters = pyproxy.parse_parameters(sys.argv[2])
             except Exception as exp:
                 nt.error('valid_userid_1 parse_parameters() util.error', str(exp))
                 parameters = {'mode': 2}
@@ -166,7 +167,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                         if 'extras' in parameters:
                             if parameters['extras'] == "force-search" and 'query' in parameters:
                                 url = server + '/api/search'
-                                url = nt.set_parameter(url, 'query', parameters['query'])
+                                url = pyproxy.set_parameter(url, 'query', parameters['query'])
                                 gb.search_for(url)
                             else:
                                 xbmcplugin.setContent(int(gb.handle), 'movies')

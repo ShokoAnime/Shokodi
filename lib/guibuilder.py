@@ -21,6 +21,9 @@ import datetime
 import time
 from collections import defaultdict
 
+from proxy.python_version_proxy import Python2Proxy
+from proxy.python_version_proxy import python_proxy as pyproxy
+
 list_items = []
 handle = int(sys.argv[1])
 busy = xbmcgui.DialogProgress()
@@ -131,7 +134,7 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
         if extra_data is not None and len(extra_data) > 0:
             if extra_data.get('parameters'):
                 for argument, value in extra_data.get('parameters').items():
-                    link_url = "%s&%s=%s" % (link_url, argument, nt.quote(value))
+                    link_url = "%s&%s=%s" % (link_url, argument, pyproxy.quote(value))
             tbi = extra_data.get('thumb', '')
             tp = extra_data.get('type', 'Video')
 
@@ -179,7 +182,7 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
                 if extra_data.get('partialTV') == 1:
                     total = str(extra_data['TotalEpisodes'])
                     watched = str(extra_data['WatchedEpisodes'])
-                    if nt.python_two:
+                    if pyproxy is Python2Proxy:
                         # noinspection PyCompatibility
                         if unicode(total).isnumeric() and unicode(watched).isnumeric():
                             liz.setProperty('TotalTime', total)
@@ -227,11 +230,11 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
                     ep_id = extra_data.get('ep_id', 0)
                     file_id = extra_data.get('file_id', 0)
                     url_peep = url_peep_base
-                    url_peep = nt.set_parameter(url_peep, 'mode', 1)
-                    url_peep = nt.set_parameter(url_peep, 'serie_id', str(series_id))
-                    url_peep = nt.set_parameter(url_peep, 'ep_id', str(ep_id))
-                    url_peep = nt.set_parameter(url_peep, 'ui_index', str(index))
-                    url_peep = nt.set_parameter(url_peep, 'file_id', str(file_id))
+                    url_peep = pyproxy.set_parameter(url_peep, 'mode', 1)
+                    url_peep = pyproxy.set_parameter(url_peep, 'serie_id', str(series_id))
+                    url_peep = pyproxy.set_parameter(url_peep, 'ep_id', str(ep_id))
+                    url_peep = pyproxy.set_parameter(url_peep, 'ui_index', str(index))
+                    url_peep = pyproxy.set_parameter(url_peep, 'file_id', str(file_id))
 
                     # Play
                     if plugin_addon.getSetting('context_show_play') == 'true':
@@ -375,7 +378,7 @@ def add_raw_files(node):
     :return: add item to listitem
     """
     try:
-        name = nt.decode(node.get("filename", ''))
+        name = pyproxy.decode(node.get("filename", ''))
         file_id = str(node["id"])
         key = node["url"]
         raw_url = server + "/api/file?id=" + file_id
@@ -433,15 +436,15 @@ def add_raw_files(node):
             set_stream_info(liz, extra_data)
 
         u = sys.argv[0]
-        u = nt.set_parameter(u, 'url', raw_url)
-        u = nt.set_parameter(u, 'mode', 1)
-        u = nt.set_parameter(u, 'name', nt.quote_plus(title))
-        u = nt.set_parameter(u, 'raw_id', file_id)
-        u = nt.set_parameter(u, 'type', "raw")
-        u = nt.set_parameter(u, 'file', key)
-        u = nt.set_parameter(u, 'ep_id', '0')
+        u = pyproxy.set_parameter(u, 'url', raw_url)
+        u = pyproxy.set_parameter(u, 'mode', 1)
+        u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+        u = pyproxy.set_parameter(u, 'raw_id', file_id)
+        u = pyproxy.set_parameter(u, 'type', "raw")
+        u = pyproxy.set_parameter(u, 'file', key)
+        u = pyproxy.set_parameter(u, 'ep_id', '0')
         # this is used for rescan and rehash, which takes the VideoLocalID
-        u = nt.set_parameter(u, 'vl', file_id)
+        u = pyproxy.set_parameter(u, 'vl', file_id)
         context = [(plugin_addon.getLocalizedString(30120), 'RunPlugin(%s&cmd=rescan)' % u),
                    (plugin_addon.getLocalizedString(30121), 'RunPlugin(%s&cmd=rehash)' % u),
                    (plugin_addon.getLocalizedString(30122), 'RunPlugin(%s&cmd=missing)' % u)]
@@ -462,8 +465,8 @@ def add_content_typ_dir(name, serie_id, total_size=0, watched=0, unwatched=0):
     :return: add new directory
     """
     dir_url = server + "/api/serie"
-    dir_url = nt.set_parameter(dir_url, 'id', str(serie_id))
-    dir_url = nt.set_parameter(dir_url, 'level', 4)
+    dir_url = pyproxy.set_parameter(dir_url, 'id', str(serie_id))
+    dir_url = pyproxy.set_parameter(dir_url, 'level', 4)
     title = str(name)
 
     if title == "Credit":
@@ -512,10 +515,10 @@ def add_content_typ_dir(name, serie_id, total_size=0, watched=0, unwatched=0):
         liz.setProperty('ResumeTime', str(watched))
 
     u = sys.argv[0]
-    u = nt.set_parameter(u, 'url', dir_url)
-    u = nt.set_parameter(u, 'mode', str(6))
-    u = nt.set_parameter(u, 'name', nt.quote_plus(title))
-    u = nt.set_parameter(u, 'type', name)
+    u = pyproxy.set_parameter(u, 'url', dir_url)
+    u = pyproxy.set_parameter(u, 'mode', str(6))
+    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+    u = pyproxy.set_parameter(u, 'type', name)
     list_items.append((u, liz, True))
 
 
@@ -592,7 +595,7 @@ def add_serie_item(node, parent_title, destination_playlist=False):
     details = {
         'mediatype':        'episode',
         'title':            title,
-        'parenttitle':      nt.decode(parent_title),
+        'parenttitle':      pyproxy.decode(parent_title),
         'genre':            temp_genre,
         'year':             node.get("year", ''),
         'episode':          total,
@@ -606,7 +609,7 @@ def add_serie_item(node, parent_title, destination_playlist=False):
         'castandrole':      list_cast_and_role,
         # director       : string (Dagur Kari,
         # 'mpaa':             directory.get('contentRating', ''),
-        'plot':             nt.remove_anidb_links(nt.decode(node.get("summary", '...'))),
+        'plot':             nt.remove_anidb_links(pyproxy.decode(node.get("summary", '...'))),
         # 'plotoutline'  : plotoutline,
         'originaltitle':    title,
         'sorttitle':        title,
@@ -614,7 +617,7 @@ def add_serie_item(node, parent_title, destination_playlist=False):
         # 'Studio'       : studio, < ---
         # 'Tagline'      : tagline,
         # 'Writer'       : writer,
-        'tvshowtitle':      nt.decode(parent_title),
+        'tvshowtitle':      pyproxy.decode(parent_title),
         'tvshowname':       title,
         # 'premiered'    : premiered,
         # 'Status'       : status,
@@ -640,11 +643,11 @@ def add_serie_item(node, parent_title, destination_playlist=False):
     directory_type = str(node.get('type', ''))
     key_id = str(node.get('id', ''))
     key = server + "/api/serie"
-    key = nt.set_parameter(key, 'id', key_id)
-    key = nt.set_parameter(key, 'level', 2)
-    key = nt.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
+    key = pyproxy.set_parameter(key, 'id', key_id)
+    key = pyproxy.set_parameter(key, 'level', 2)
+    key = pyproxy.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
     if plugin_addon.getSetting('request_nocast') == 'true':
-        key = nt.set_parameter(key, 'nocast', 1)
+        key = pyproxy.set_parameter(key, 'nocast', 1)
 
     thumb = ''
     if len(node["art"]["thumb"]) > 0:
@@ -687,14 +690,14 @@ def add_serie_item(node, parent_title, destination_playlist=False):
         use_mode = 0
 
     u = sys.argv[0]
-    u = nt.set_parameter(u, 'url', serie_url)
-    u = nt.set_parameter(u, 'mode', use_mode)
-    u = nt.set_parameter(u, 'movie', node.get('ismovie', '0'))
+    u = pyproxy.set_parameter(u, 'url', serie_url)
+    u = pyproxy.set_parameter(u, 'mode', use_mode)
+    u = pyproxy.set_parameter(u, 'movie', node.get('ismovie', '0'))
 
     context = []
     url_peep = sys.argv[0]
-    url_peep = nt.set_parameter(url_peep, 'mode', 1)
-    url_peep = nt.set_parameter(url_peep, 'serie_id', key_id)
+    url_peep = pyproxy.set_parameter(url_peep, 'mode', 1)
+    url_peep = pyproxy.set_parameter(url_peep, 'serie_id', key_id)
 
     # Watch
     context.append((plugin_addon.getLocalizedString(30126), 'RunPlugin(%s&cmd=watched)' % url_peep))
@@ -772,7 +775,7 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
     details = {
         'mediatype':        'tvshow',
         'title':            title,
-        'parenttitle':      nt.decode(parent_title),
+        'parenttitle':      pyproxy.decode(parent_title),
         'genre':            temp_genre,
         'year':             node.get('year', ''),
         'episode':          total,
@@ -781,10 +784,10 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
         'rating':           float(str(node.get('rating', '0')).replace(',', '.')),
         'userrating':       float(str(node.get('userrating', '0')).replace(',', '.')),
         'playcount':        watched,
-        'plot':             nt.remove_anidb_links(nt.decode(node.get('summary', '...'))),
+        'plot':             nt.remove_anidb_links(pyproxy.decode(node.get('summary', '...'))),
         'originaltitle':    title,
         'sorttitle':        title,
-        'tvshowtitle':      nt.decode(parent_title),
+        'tvshowtitle':      pyproxy.decode(parent_title),
         'tvshowname':       title,
         'dateadded':        node.get('added', ''),
         'aired':            str(air),
@@ -805,12 +808,12 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
         key = server + "/api/filter"
     else:
         key = server + "/api/group"
-    key = nt.set_parameter(key, 'id', key_id)
-    key = nt.set_parameter(key, 'filter', filter_id)
-    key = nt.set_parameter(key, 'level', 1)
-    key = nt.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
+    key = pyproxy.set_parameter(key, 'id', key_id)
+    key = pyproxy.set_parameter(key, 'filter', filter_id)
+    key = pyproxy.set_parameter(key, 'level', 1)
+    key = pyproxy.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
     if plugin_addon.getSetting('request_nocast') == 'true':
-        key = nt.set_parameter(key, 'nocast', 1)
+        key = pyproxy.set_parameter(key, 'nocast', 1)
 
     thumb = ''
     if len(node["art"]["thumb"]) > 0:
@@ -848,16 +851,16 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
         use_mode = 0
 
     u = sys.argv[0]
-    u = nt.set_parameter(u, 'url', group_url)
-    u = nt.set_parameter(u, 'mode', str(use_mode))
+    u = pyproxy.set_parameter(u, 'url', group_url)
+    u = pyproxy.set_parameter(u, 'mode', str(use_mode))
     if filter_id != '':
-        u = nt.set_parameter(u, 'filter', filter_id)
+        u = pyproxy.set_parameter(u, 'filter', filter_id)
     else:
-        u = nt.set_parameter(u, 'filter', None)
+        u = pyproxy.set_parameter(u, 'filter', None)
 
     url_peep = sys.argv[0]
-    url_peep = nt.set_parameter(url_peep, 'mode', 1)
-    url_peep = nt.set_parameter(url_peep, 'group_id', key_id)
+    url_peep = pyproxy.set_parameter(url_peep, 'mode', 1)
+    url_peep = pyproxy.set_parameter(url_peep, 'group_id', key_id)
 
     context = [(plugin_addon.getLocalizedString(30126), 'RunPlugin(%s&cmd=watched)' % url_peep),
                (plugin_addon.getLocalizedString(30127), 'RunPlugin(%s&cmd=unwatched)' % url_peep)]
@@ -893,11 +896,11 @@ def add_filter_item(menu):
         xbmc.log("build_filters_menu - key = " + key, xbmc.LOGWARNING)
 
     if plugin_addon.getSetting('request_nocast') == 'true' and title != 'Unsorted':
-        key = nt.set_parameter(key, 'nocast', 1)
-    key = nt.set_parameter(key, 'level', 2)
+        key = pyproxy.set_parameter(key, 'nocast', 1)
+    key = pyproxy.set_parameter(key, 'level', 2)
     if title == "Airing Today":
-        key = nt.set_parameter(key, 'level', 0)
-    key = nt.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
+        key = pyproxy.set_parameter(key, 'level', 0)
+    key = pyproxy.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
     filter_url = key
 
     thumb = ''
@@ -927,10 +930,10 @@ def add_filter_item(menu):
         pass
 
     u = sys.argv[0]
-    u = nt.set_parameter(u, 'url', filter_url)
-    u = nt.set_parameter(u, 'mode', use_mode)
-    u = nt.set_parameter(u, 'name', nt.quote_plus(title))
-    u = nt.set_parameter(u, 'filter_id', menu.get("id", ""))
+    u = pyproxy.set_parameter(u, 'url', filter_url)
+    u = pyproxy.set_parameter(u, 'mode', use_mode)
+    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
+    u = pyproxy.set_parameter(u, 'filter_id', menu.get("id", ""))
 
     liz = xbmcgui.ListItem(label=title, label2=title, path=filter_url)
     liz.setArt({
@@ -960,7 +963,7 @@ def build_filters_menu():
     filters_sorting = {'Airing Today': 0, 'Seasons': 1, 'Years': 2, 'Tags': 3, 'Unsort': 4}
     try:
         filters_key = server + "/api/filter"
-        filters_key = nt.set_parameter(filters_key, "level", 0)
+        filters_key = pyproxy.set_parameter(filters_key, "level", 0)
         retrieved_json = nt.get_json(filters_key)
         if retrieved_json is not None:
             json_menu = json.loads(retrieved_json)
@@ -1027,9 +1030,9 @@ def build_filters_menu():
                                 "fanart": os.path.join(_img, 'backgrounds', 'calendar.jpg')})
                     liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
                     u = sys.argv[0]
-                    u = nt.set_parameter(u, 'url', soon_url)
-                    u = nt.set_parameter(u, 'mode', str(9))
-                    u = nt.set_parameter(u, 'name', nt.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'url', soon_url)
+                    u = pyproxy.set_parameter(u, 'mode', str(9))
+                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1043,9 +1046,9 @@ def build_filters_menu():
                                 "fanart": os.path.join(_img, 'backgrounds', 'search.jpg')})
                     liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
                     u = sys.argv[0]
-                    u = nt.set_parameter(u, 'url', search_url)
-                    u = nt.set_parameter(u, 'mode', str(3))
-                    u = nt.set_parameter(u, 'name', nt.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'url', search_url)
+                    u = pyproxy.set_parameter(u, 'mode', str(3))
+                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1058,9 +1061,9 @@ def build_filters_menu():
                                 "fanart": os.path.join(_img, 'backgrounds', 'settings.jpg')})
                     liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
                     u = sys.argv[0]
-                    u = nt.set_parameter(u, 'url', '')
-                    u = nt.set_parameter(u, 'mode', str(11))
-                    u = nt.set_parameter(u, 'name', nt.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'url', '')
+                    u = pyproxy.set_parameter(u, 'mode', str(11))
+                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1073,9 +1076,9 @@ def build_filters_menu():
                                 "fanart": os.path.join(_img, 'backgrounds', 'settings.jpg')})
                     liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
                     u = sys.argv[0]
-                    u = nt.set_parameter(u, 'url', '')
-                    u = nt.set_parameter(u, 'mode', str(12))
-                    u = nt.set_parameter(u, 'name', nt.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'url', '')
+                    u = pyproxy.set_parameter(u, 'mode', str(12))
+                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1088,9 +1091,9 @@ def build_filters_menu():
                                 "fanart": os.path.join(_img, 'backgrounds', 'settings.jpg')})
                     liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
                     u = sys.argv[0]
-                    u = nt.set_parameter(u, 'url', '')
-                    u = nt.set_parameter(u, 'mode', str(13))
-                    u = nt.set_parameter(u, 'name', nt.quote_plus(title))
+                    u = pyproxy.set_parameter(u, 'url', '')
+                    u = pyproxy.set_parameter(u, 'mode', str(13))
+                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
                     list_items.append((u, liz, True))
                 # endregion
 
@@ -1137,9 +1140,9 @@ def build_groups_menu(params, json_body=None):
         if json_body is None:
             busy.update(10)
             temp_url = params['url']
-            temp_url = nt.set_parameter(temp_url, 'nocast', 1)
-            temp_url = nt.set_parameter(temp_url, 'notag', 1)
-            temp_url = nt.set_parameter(temp_url, 'level', 0)
+            temp_url = pyproxy.set_parameter(temp_url, 'nocast', 1)
+            temp_url = pyproxy.set_parameter(temp_url, 'notag', 1)
+            temp_url = pyproxy.set_parameter(temp_url, 'level', 0)
             busy.update(20)
             html = nt.get_json(temp_url)
             busy.update(50, plugin_addon.getLocalizedString(30162))
@@ -1152,13 +1155,13 @@ def build_groups_menu(params, json_body=None):
             if directory_type != "filters":
                 # level 2 will fill group and series (for filter)
                 temp_url = params['url']
-                temp_url = nt.set_parameter(temp_url, 'level', 2)
+                temp_url = pyproxy.set_parameter(temp_url, 'level', 2)
                 html = nt.get_json(temp_url)
                 body = json.loads(html)
             else:
                 # level 1 will fill group and series (for filter)
                 temp_url = params['url']
-                temp_url = nt.set_parameter(temp_url, 'level', 1)
+                temp_url = pyproxy.set_parameter(temp_url, 'level', 1)
                 html = nt.get_json(temp_url)
                 body = json.loads(html)
         else:
@@ -1362,7 +1365,7 @@ def build_serie_episodes(params):
             if short_tag:
                 temp_genre = temp_genre[:50]
             parent_key = body.get('id', '')
-            grandparent_title = nt.decode(body.get('name', ''))
+            grandparent_title = pyproxy.decode(body.get('name', ''))
 
             if len(body.get('eps', {})) <= 0:
                 # TODO: When there is eps {} = 0
@@ -1376,7 +1379,7 @@ def build_serie_episodes(params):
                             thumb = server + thumb
                     details = {
                         'mediatype': 'episode',
-                        'plot': nt.remove_anidb_links(nt.decode(body['summary'])),
+                        'plot': nt.remove_anidb_links(pyproxy.decode(body['summary'])),
                         'title': body['name'],
                         'rating': float(str(body.get('rating', '0')).replace(',', '.')),
                         'castandrole': list_cast_and_role,
@@ -1413,7 +1416,7 @@ def build_serie_episodes(params):
             elif len(body.get('eps', {})) > 0:
                 # add item to move to next not played item (not marked as watched)
                 if plugin_addon.getSetting("show_continue") == "true":
-                    if nt.decode(parent_title).lower() != "unsort":
+                    if pyproxy.decode(parent_title).lower() != "unsort":
                         if plugin_addon.getSetting("replace_continue") == "false":
                             nt.add_dir("-continue-", '', '7', os.path.join(_img, 'thumb', 'other.png'),
                                        "Next episode", os.path.join(_img, 'poster', 'other.png'), "4",
@@ -1476,7 +1479,7 @@ def build_serie_episodes(params):
                                 # air=0001-01-01
                                 if air == '0001-01-01' or air == '01-01-0001':
                                     air = ''
-                            title = nt.decode(video.get('name', 'Parse util.error'))
+                            title = pyproxy.decode(video.get('name', 'Parse util.error'))
                             if title is None:
                                 title = 'Episode ' + str(video.get('epnumber', '??'))
 
@@ -1509,10 +1512,10 @@ def build_serie_episodes(params):
                                 'castandrole': list_cast_and_role,
                                 #  'director': " / ".join(temp_dir),
                                 #  'mpaa':          video.get('contentRating', ''), <--
-                                'plot': nt.remove_anidb_links(nt.decode(video['summary'])),
+                                'plot': nt.remove_anidb_links(pyproxy.decode(video['summary'])),
                                 #  'plotoutline':
                                 'title': title,
-                                'originaltitle': nt.decode(video.get('name', '')),
+                                'originaltitle': pyproxy.decode(video.get('name', '')),
                                 'sorttitle': str(video.get('epnumber', '')) + " " + title,
                                 'duration': duration,
                                 # 'studio'      : episode.get('studio',tree.get('studio','')), 'utf-8') ,
@@ -1539,7 +1542,7 @@ def build_serie_episodes(params):
                                 #  'dbid' - local kodi db id
 
                                 # CUSTOM
-                                'parenttitle':   nt.decode(parent_title),
+                                'parenttitle':   pyproxy.decode(parent_title),
                                 'tvshowname': grandparent_title
                             }
 
@@ -1661,12 +1664,12 @@ def build_serie_episodes(params):
                             context = None
 
                             u = sys.argv[0]
-                            u = nt.set_parameter(u, 'mode', 1)
-                            u = nt.set_parameter(u, 'file_id', video["files"][0].get("id", 0))
-                            u = nt.set_parameter(u, 'ep_id', video.get("id", ''))
-                            u = nt.set_parameter(u, 'serie_id', body.get("id", ''))
-                            u = nt.set_parameter(u, 'userrate', details["userrating"])
-                            u = nt.set_parameter(u, 'ui_index', str(int(episode_count - 1)))
+                            u = pyproxy.set_parameter(u, 'mode', 1)
+                            u = pyproxy.set_parameter(u, 'file_id', video["files"][0].get("id", 0))
+                            u = pyproxy.set_parameter(u, 'ep_id', video.get("id", ''))
+                            u = pyproxy.set_parameter(u, 'serie_id', body.get("id", ''))
+                            u = pyproxy.set_parameter(u, 'userrate', details["userrating"])
+                            u = pyproxy.set_parameter(u, 'ui_index', str(int(episode_count - 1)))
 
                             add_gui_item(u, details, extra_data, context,
                                          folder=False, index=int(episode_count - 1),
@@ -1701,15 +1704,15 @@ def build_cast_menu(params):
         search_url = server + "/api/cast/byseries"
         if params.get("serie_id", "") == "":
             return
-        search_url = nt.set_parameter(search_url, 'id', params.get("serie_id", ""))
-        search_url = nt.set_parameter(search_url, 'notag', 1)
-        search_url = nt.set_parameter(search_url, 'level', 0)
+        search_url = pyproxy.set_parameter(search_url, 'id', params.get("serie_id", ""))
+        search_url = pyproxy.set_parameter(search_url, 'notag', 1)
+        search_url = pyproxy.set_parameter(search_url, 'level', 0)
         cast_nodes = json.loads(nt.get_json(search_url))
         if plugin_addon.getSetting("spamLog") == "true":
             nt.dump_dictionary(cast_nodes, "cast_nodes")
 
         base_search_url = server + "/api/cast/search"
-        base_search_url = nt.set_parameter(base_search_url, "fuzzy", 0)
+        base_search_url = pyproxy.set_parameter(base_search_url, "fuzzy", 0)
 
         if len(cast_nodes) > 0:
             if cast_nodes[0].get("character", "") == "":
@@ -1724,7 +1727,7 @@ def build_cast_menu(params):
                 staff_image = server + cast.get("staff_image", "")
 
                 liz = xbmcgui.ListItem(staff)
-                new_search_url = nt.set_parameter(base_search_url, "query", staff)
+                new_search_url = pyproxy.set_parameter(base_search_url, "query", staff)
 
                 details = {
                     'mediatype': 'episode',
@@ -1749,10 +1752,10 @@ def build_cast_menu(params):
                     liz.setArt({"fanart": character_image})
 
                 u = sys.argv[0]
-                u = nt.set_parameter(u, 'mode', 1)
-                u = nt.set_parameter(u, 'name', params.get('name', 'Cast'))
-                u = nt.set_parameter(u, 'url', new_search_url)
-                u = nt.set_parameter(u, 'cmd', 'searchCast')
+                u = pyproxy.set_parameter(u, 'mode', 1)
+                u = pyproxy.set_parameter(u, 'name', params.get('name', 'Cast'))
+                u = pyproxy.set_parameter(u, 'url', new_search_url)
+                u = pyproxy.set_parameter(u, 'cmd', 'searchCast')
 
                 list_items.append((u, liz, True))
 
@@ -1812,18 +1815,18 @@ def build_search_directory():
 
     for detail in items:
         u = sys.argv[0]
-        u = nt.set_parameter(u, 'url', detail['url'])
-        u = nt.set_parameter(u, 'mode', detail['mode'])
-        u = nt.set_parameter(u, 'name', nt.encode(detail['title']))
-        u = nt.set_parameter(u, 'extras', detail['extras'])
+        u = pyproxy.set_parameter(u, 'url', detail['url'])
+        u = pyproxy.set_parameter(u, 'mode', detail['mode'])
+        u = pyproxy.set_parameter(u, 'name', pyproxy.encode(detail['title']))
+        u = pyproxy.set_parameter(u, 'extras', detail['extras'])
         if 'query' in detail:
-            u = nt.set_parameter(u, 'query', detail['query'])
-        liz = xbmcgui.ListItem(nt.encode(detail['title']))
+            u = pyproxy.set_parameter(u, 'query', detail['query'])
+        liz = xbmcgui.ListItem(pyproxy.encode(detail['title']))
         liz.setArt({'thumb': detail['icon'],
                     'poster': detail['poster'],
                     'icon': detail['icon'],
                     'fanart': detail['fanart']})
-        liz.setInfo(type=detail['type'], infoLabels={"Title": nt.encode(detail['title']), "Plot": detail['plot']})
+        liz.setInfo(type=detail['type'], infoLabels={"Title": pyproxy.encode(detail['title']), "Plot": detail['plot']})
         list_items.append((u, liz, True))
     end_of_directory(False)
 
@@ -1843,12 +1846,12 @@ def build_serie_soon(params):
         busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30161))
         busy.update(20)
         temp_url = params['url']
-        temp_url = nt.set_parameter(temp_url, 'level', 2)
+        temp_url = pyproxy.set_parameter(temp_url, 'level', 2)
 
         busy.update(10)
-        temp_url = nt.set_parameter(temp_url, 'nocast', 0)
-        temp_url = nt.set_parameter(temp_url, 'notag', 0)
-        temp_url = nt.set_parameter(temp_url, 'level', 0)
+        temp_url = pyproxy.set_parameter(temp_url, 'nocast', 0)
+        temp_url = pyproxy.set_parameter(temp_url, 'notag', 0)
+        temp_url = pyproxy.set_parameter(temp_url, 'level', 0)
         busy.update(20)
         html = nt.get_json(temp_url)
         busy.update(50, plugin_addon.getLocalizedString(30162))
@@ -1857,7 +1860,7 @@ def build_serie_soon(params):
             xbmc.log(html, xbmc.LOGWARNING)
         busy.update(70)
         temp_url = params['url']
-        temp_url = nt.set_parameter(temp_url, 'level', 2)
+        temp_url = pyproxy.set_parameter(temp_url, 'level', 2)
         html = nt.get_json(temp_url)
         body = json.loads(html)
         busy.update(100)
@@ -1882,9 +1885,9 @@ def build_serie_soon(params):
                     soon_url = server + "/api/serie/soon"
                     details = {'aired': sers.get('air', ''), 'title': sers.get('air', '')}
                     u = sys.argv[0]
-                    u = nt.set_parameter(u, 'url', soon_url)
-                    u = nt.set_parameter(u, 'mode', str(0))
-                    u = nt.set_parameter(u, 'name', nt.quote_plus(details.get('title', '')))
+                    u = pyproxy.set_parameter(u, 'url', soon_url)
+                    u = pyproxy.set_parameter(u, 'mode', str(0))
+                    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(details.get('title', '')))
                     extra_data = {'type': 'pictures'}
                     add_gui_item(u, details, extra_data)
                 # endregion
@@ -1935,8 +1938,8 @@ def build_network_menu():
                 "fanart": os.path.join(_img, 'backgrounds', 'settings.jpg')})
     liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
     u = sys.argv[0]
-    u = nt.set_parameter(u, 'url', network_url)
-    u = nt.set_parameter(u, 'name', nt.quote_plus(title))
+    u = pyproxy.set_parameter(u, 'url', network_url)
+    u = pyproxy.set_parameter(u, 'name', pyproxy.quote_plus(title))
     list_items.append((u, liz, True))
     end_of_directory(False)
 
@@ -1947,17 +1950,17 @@ def search_for(search_url):
     :param search_url: search url with query
     """
     try:
-        search_url = nt.set_parameter(search_url, 'tags', 2)
-        search_url = nt.set_parameter(search_url, 'level', 1)
-        search_url = nt.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
-        search_url = nt.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
+        search_url = pyproxy.set_parameter(search_url, 'tags', 2)
+        search_url = pyproxy.set_parameter(search_url, 'level', 1)
+        search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
+        search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
         json_body = json.loads(nt.get_json(search_url))
         if json_body["groups"][0]["size"] == 0:
             xbmc.executebuiltin("XBMC.Notification(%s, %s %s, 7500, %s)" % (plugin_addon.getLocalizedString(30180),
                                                                             plugin_addon.getLocalizedString(30181),
                                                                             '!', plugin_addon.getAddonInfo('icon')))
         else:
-            search_url = nt.parse_parameters(search_url)
+            search_url = pyproxy.parse_parameters(search_url)
             build_groups_menu(search_url, json_body)
     except:
         nt.error("util.error in findVideo")
@@ -1977,7 +1980,7 @@ def execute_search_and_add_query():
         search.add_search_history(find)
         xbmc.executebuiltin('Container.Refresh')
     search_url = server + "/api/search"
-    search_url = nt.set_parameter(search_url, "query", find)
+    search_url = pyproxy.set_parameter(search_url, "query", find)
     search_for(search_url)
 
 
@@ -2073,16 +2076,16 @@ def build_shoko_menu():
     for detail in items:
         u = sys.argv[0]
         if 'cmd' in detail:
-            u = nt.set_parameter(u, 'cmd', detail['cmd'])
+            u = pyproxy.set_parameter(u, 'cmd', detail['cmd'])
         if 'vl' in detail:
-            u = nt.set_parameter(u, 'vl', detail['vl'])
-        u = nt.set_parameter(u, 'name', nt.encode(detail['title']))
-        u = nt.set_parameter(u, 'extras', detail['extras'])
-        liz = xbmcgui.ListItem(nt.encode(detail['title']))
+            u = pyproxy.set_parameter(u, 'vl', detail['vl'])
+        u = pyproxy.set_parameter(u, 'name', pyproxy.encode(detail['title']))
+        u = pyproxy.set_parameter(u, 'extras', detail['extras'])
+        liz = xbmcgui.ListItem(pyproxy.encode(detail['title']))
         liz.setArt({'thumb': detail['icon'],
                     'poster': detail['poster'],
                     'icon': detail['icon'],
                     'fanart': detail['fanart']})
-        liz.setInfo(type=detail['type'], infoLabels={"Title": nt.encode(detail['title']), "Plot": detail['plot']})
+        liz.setInfo(type=detail['type'], infoLabels={"Title": pyproxy.encode(detail['title']), "Plot": detail['plot']})
         list_items.append((u, liz, True))
     end_of_directory(False)

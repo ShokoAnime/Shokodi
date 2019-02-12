@@ -2,7 +2,6 @@
 import json
 import sys
 import os
-import traceback
 
 import xbmc
 import xbmcgui
@@ -12,18 +11,12 @@ from lib import model_utils
 from nakamori_utils import nakamoritools as nt
 from nakamori_utils.globalvars import *
 import nakamori_player as nplayer
+from proxy.python_version_proxy import python_proxy as pyproxy
 
 try:
     from sqlite3 import dbapi2 as database
 except:
     from pysqlite2 import dbapi2 as database
-
-if sys.version_info < (3, 0):
-    from urllib import unquote
-else:
-    # For Python 3.0 and later
-    # noinspection PyCompatibility,PyUnresolvedReferences
-    from urllib.parse import unquote
 
 
 busy = xbmcgui.DialogProgress()
@@ -44,50 +37,21 @@ def set_window_heading(window_name):
     try:
         window_obj.setProperty("heading", str(window_name))
     except Exception as e:
-        error('set_window_heading Exception', str(e))
+        nt.error('set_window_heading Exception', str(e))
         window_obj.clearProperty("heading")
     try:
         window_obj.setProperty("heading2", str(window_name))
     except Exception as e:
-        error('set_window_heading2 Exception', str(e))
+        nt.error('set_window_heading2 Exception', str(e))
         window_obj.clearProperty("heading2")
-
-
-def error(msg, error_type='Error', silent=False):
-    """
-    Log and notify the user of an error
-    Args:
-        msg: the message to print to log and user notification
-        error_type: Type of Error
-        silent: disable visual notification
-    """
-    xbmc.log("Nakamori " + str(nt.addonversion) + " id: " + str(nt.addonid), xbmc.LOGERROR)
-    xbmc.log('---' + msg + '---', xbmc.LOGERROR)
-    key = sys.argv[0]
-    if len(sys.argv) > 2 and sys.argv[2] != '':
-        key += sys.argv[2]
-    xbmc.log('On url: ' + unquote(key), xbmc.LOGERROR)
-    try:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        if exc_type is not None and exc_obj is not None and exc_tb is not None:
-            xbmc.log(str(exc_type) + " at line " + str(exc_tb.tb_lineno) + " in file " + str(
-                os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]), xbmc.LOGERROR)
-            traceback.print_exc()
-    except Exception as e:
-        xbmc.log("There was an error catching the error. WTF.", xbmc.LOGERROR)
-        xbmc.log("The error message: " + str(e), xbmc.LOGERROR)
-        traceback.print_exc()
-    if not silent:
-        xbmc.executebuiltin('XBMC.Notification(%s, %s %s, 2000, %s)' % (error_type, ' ', msg,
-                                                                        plugin_addon.getAddonInfo('icon')))
-
+        
 
 def play_continue_item():
     """
     Move to next item that was not marked as watched
     Essential information are query from Parameters via util lib
     """
-    params = nt.parse_parameters(sys.argv[2])
+    params = pyproxy.parse_parameters(sys.argv[2])
     if 'offset' in params:
         offset = params['offset']
         pos = int(offset)
@@ -197,8 +161,8 @@ def play_video(ep_id, raw_id, movie):
     try:
         if ep_id != "0":
             episode_url = server + "/api/ep?id=" + str(ep_id)
-            episode_url = nt.set_parameter(episode_url, "level", "1")
-            html = nt.get_json(nt.encode(episode_url))
+            episode_url = pyproxy.set_parameter(episode_url, "level", "1")
+            html = nt.get_json(pyproxy.encode(episode_url))
             if plugin_addon.getSetting("spamLog") == "true":
                 xbmc.log(html, xbmc.LOGWARNING)
             episode_body = json.loads(html)
@@ -219,13 +183,8 @@ def play_video(ep_id, raw_id, movie):
             if server_path is not None and server_path != '':
                 try:
                     if os.path.isfile(server_path):
-                        if nt.python_two:
-                            # noinspection PyCompatibility
-                            if unicode(server_path).startswith('\\\\'):
-                                server_path = "smb:"+server_path
-                        else:
-                            if server_path.startswith('\\\\'):
-                                server_path = "smb:"+server_path
+                        if server_path.startswith(u'\\\\'):
+                            server_path = u"smb:"+server_path
                         file_url = server_path
                 except:
                     pass
@@ -268,7 +227,7 @@ def play_video(ep_id, raw_id, movie):
                 nt.error("file_id not retrieved")
             return 0
     except Exception as exc:
-        nt.error('util.error getting episode info', str(exc))
+        nt.error('util.nt.error getting episode info', str(exc))
 
     m3u8_url = ''
     is_transcoded = False
@@ -340,13 +299,13 @@ def play_video(ep_id, raw_id, movie):
                         post_data += ',"audio_codec":"' + plugin_addon.getSetting("audioEigakan") + '"'
                         post_data += ',"video_bitrate":"' + plugin_addon.getSetting("vbitrateEigakan") + '"'
                         post_data += ',"x264_profile":"' + plugin_addon.getSetting("profileEigakan") + '"'
-                    nt.post_json(video_url, post_data)
+                    pyproxy.post_json(video_url, post_data)
                     xbmc.sleep(1000)
                     busy.close()
 
                     busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30164))
                     while True:
-                        if nt.head(url_in=ts_url) is False:
+                        if pyproxy.head(url_in=ts_url) is False:
                             x_try = int(plugin_addon.getSetting("tryEigakan"))
                             if try_count > x_try:
                                 break
@@ -370,13 +329,13 @@ def play_video(ep_id, raw_id, movie):
                                 break
                         busy.close()
 
-                    if nt.head(url_in=ts_url):
+                    if pyproxy.head(url_in=ts_url):
                         is_transcoded = True
 
                 else:
                     nt.error("Eigakan server is unavailable")
             except Exception as exc:
-                nt.error('eigakan.post_json error', str(exc))
+                nt.error('eigakan.post_json nt.error', str(exc))
                 busy.close()
     except Exception as eigakan_ex:
         xbmc.log('---> enableEigakan: ' + str(eigakan_ex), xbmc.LOGWARNING)
@@ -451,7 +410,7 @@ def fix_mark_watch_in_kodi_db():
                                  plugin_addon.getLocalizedString(30081), plugin_addon.getLocalizedString(30112))
     if ret:
         db_files = []
-        db_path = os.path.join(nt.decode(xbmc.translatePath('special://home')), 'userdata')
+        db_path = os.path.join(pyproxy.decode(xbmc.translatePath('special://home')), 'userdata')
         db_path = os.path.join(db_path, 'Database')
         for r, d, f in os.walk(db_path):
             for files in f:
@@ -476,7 +435,7 @@ def clear_image_cache_in_kodi_db():
                                  plugin_addon.getLocalizedString(30081), plugin_addon.getLocalizedString(30112))
     if ret:
         db_files = []
-        db_path = os.path.join(nt.decode(xbmc.translatePath('special://home')), 'userdata')
+        db_path = os.path.join(pyproxy.decode(xbmc.translatePath('special://home')), 'userdata')
         db_path = os.path.join(db_path, 'Database')
         for r, d, f in os.walk(db_path):
             for files in f:
