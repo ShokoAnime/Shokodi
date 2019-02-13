@@ -16,6 +16,7 @@ from proxy.python_version_proxy import python_proxy as pyproxy
 try:
     from sqlite3 import dbapi2 as database
 except:
+    # noinspection PyUnresolvedReferences
     from pysqlite2 import dbapi2 as database
 
 
