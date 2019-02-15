@@ -940,6 +940,9 @@ def build_filters_menu():
     """
     Builds the list of items (filters) in the Main Menu
     """
+    if plugin_addon.getSetting('skip_information') == 'false':
+        nt.show_information()
+
     xbmcplugin.setContent(handle, 'tvshows')
     xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_UNSORTED)
     xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_EPISODE)

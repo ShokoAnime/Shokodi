@@ -56,9 +56,6 @@ def play_video(video_parameters):
         pass
 
 
-if plugin_addon.getSetting('skip_information') == 'false':
-    nt.show_information()
-
 if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
     try:
         auth, apikey = nt.valid_user()
