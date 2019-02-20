@@ -131,7 +131,8 @@
         <setting label="30014" type="bool" id="pick_file" default="true"/>
         <setting label="30027" type="number" id="player_sleep" default="5000"/>
         <setting label="30004" type="number" id="timeout" default="60"/>
-        <setting label="30149" type="bool" id="external_player" default="false"/>
+        <setting type="number" id="kodi18" default="3" visible="false"/> <!-- second one so external_player can access it -->
+        <setting label="30149" type="bool" id="external_player" default="false" enable="!eq(-1,3)"/> <!-- enable for debuggning later can be change to visible k18 hide, <k18 show-->
     </category>
 	<!-- Advance -->
     <category label="30044">

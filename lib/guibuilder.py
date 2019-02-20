@@ -942,6 +942,8 @@ def build_filters_menu():
     """
     if plugin_addon.getSetting('skip_information') == 'false':
         nt.show_information()
+        # with each 'major release' aka with 'news.txt' reset 'kodi18' so we can detect version once again (in case of kodi upgrade)
+        plugin_addon.setSetting(id='kodi18', value='3')
 
     xbmcplugin.setContent(handle, 'tvshows')
     xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_UNSORTED)
