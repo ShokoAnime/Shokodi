@@ -377,6 +377,14 @@ def play_video(ep_id, raw_id, movie):
     return 0
 
 
+def calendar():
+    """
+    Open calendar
+    :return:
+    """
+    xbmc.executebuiltin('RunScript(script.module.nakamori,?info=calendar)', True)
+
+
 def wizard():
     """
     Run wizard if there weren't any before

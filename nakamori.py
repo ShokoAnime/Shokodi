@@ -198,9 +198,9 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                     if plugin_addon.getSetting('calendar_basic') == 'true':
                         gb.build_serie_soon(parameters)
                     else:
-                        xbmc.executebuiltin('RunScript(script.module.nakamori,?info=calendar)', True)
+                        kodi_utils.calendar()
                 elif mode == 10:  # newCalendar
-                    xbmc.executebuiltin('RunScript(script.module.nakamori,?info=calendar)', True)
+                    kodi_utils.calendar()
                     # gb.build_serie_soon_new(parameters)
                 elif mode == 11:  # Settings
                     # noinspection PyTypeChecker
@@ -208,7 +208,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif mode == 12:  # Shoko
                     gb.build_shoko_menu()
                 elif mode == 13:  # Experiment
-                    xbmc.executebuiltin('RunScript(script.module.nakamori,?info=calendar)', True)
+                    kodi_utils.calendar()
                 elif mode == 31:  # Clear Search History
                     search.clear_search_history(parameters)
                 elif mode == 32:  # remove watch marks from kodi db
