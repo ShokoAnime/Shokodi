@@ -377,23 +377,6 @@ def play_video(ep_id, raw_id, movie):
     return 0
 
 
-def calendar():
-    """
-    Open calendar
-    :return:
-    """
-    xbmc.executebuiltin('RunScript(script.module.nakamori,?info=calendar)', True)
-
-
-def wizard():
-    """
-    Run wizard if there weren't any before
-    :return: nothing, set ip/port user/password in settings
-    """
-    if plugin_addon.getSetting('wizard') == '0':
-        xbmc.executebuiltin('RunScript(script.module.nakamori,?info=wizard)', True)
-
-
 def detect_kodi18():
     """
     Detect if Kodi user run is not-yet-released 18.x

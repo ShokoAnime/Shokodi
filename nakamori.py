@@ -29,7 +29,7 @@ dbg.debug_init()
 
 kodi_utils.detect_kodi18()
 
-kodi_utils.wizard()
+nt.wizard()
 
 
 def play_video(video_parameters):
@@ -151,7 +151,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif cmd == 'wizard':
                     xbmc.log('--- (cmd: wizard) --- ', xbmc.LOGWARNING)
                     plugin_addon.setSetting('wizard', '0')
-                    kodi_utils.wizard()
+                    nt.wizard()
             else:
                 if mode == 0:  # string label
                     pass
@@ -198,9 +198,9 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                     if plugin_addon.getSetting('calendar_basic') == 'true':
                         gb.build_serie_soon(parameters)
                     else:
-                        kodi_utils.calendar()
+                        nt.calendar()
                 elif mode == 10:  # newCalendar
-                    kodi_utils.calendar()
+                    nt.calendar()
                     # gb.build_serie_soon_new(parameters)
                 elif mode == 11:  # Settings
                     # noinspection PyTypeChecker
@@ -208,7 +208,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif mode == 12:  # Shoko
                     gb.build_shoko_menu()
                 elif mode == 13:  # Experiment
-                    kodi_utils.calendar()
+                    nt.calendar()
                 elif mode == 31:  # Clear Search History
                     search.clear_search_history(parameters)
                 elif mode == 32:  # remove watch marks from kodi db
@@ -231,4 +231,4 @@ else:
     if xbmcgui.Dialog().yesno("Error Connecting", "Would you like to open the setup wizard"):
         xbmc.log('--- (get_server_status: wizard) ---', xbmc.LOGWARNING)
         plugin_addon.setSetting(id='wizard', value='0')
-        kodi_utils.wizard()
+        nt.wizard()
