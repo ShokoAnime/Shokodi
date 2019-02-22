@@ -2,7 +2,6 @@
 """
 here are functions needed to create dirs/files
 """
-import datetime
 import json
 import os
 import sys
@@ -525,7 +524,6 @@ def add_serie_item(node, parent_title, destination_playlist=False):
             watched += nt.safe_int(watched_sizes.get("Specials", 0))
     else:
         watched = nt.safe_int(node.get("watchedsize", ''))
-    _watched = watched
     list_cast = []
     list_cast_and_role = []
     actors = []
@@ -968,7 +966,7 @@ def build_filters_menu():
                         airing['art']['thumb'] = []
                         airing['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'airing.jpg')})
                         airing['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'airing.png')})
-                        if nt.get_version() >= LooseVersion("3.8.0.0"):
+                        if nt.get_version() >= LooseVersion("3.8"):
                             menu_append.insert(filters_sorting[title], airing)
                         menu['art'] = {}
                         menu['art']['fanart'] = []
@@ -983,8 +981,7 @@ def build_filters_menu():
                         menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'tags.jpg')})
                         menu['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'tags.png')})
                         menu_append.insert(filters_sorting[title], menu)
-                    elif title == 'Unsort':
-                        if plugin_addon.getSetting("show_unsort") == "true":
+                    elif title == 'Unsort' and plugin_addon.getSetting("show_unsort") == "true":
                             menu['art'] = {}
                             menu['art']['fanart'] = []
                             menu['art']['thumb'] = []
@@ -1169,38 +1166,31 @@ def build_groups_menu(params, json_body=None):
                 pass
 
         try:
-            item_count = 0
             parent_title = body.get('name', '')
             directory_type = body.get('type', '')
             filter_id = ''
 
-            if directory_type != 'ep' and directory_type != 'serie':
-                if 'filter' in params:
-                    filter_id = params['filter']
-                    if directory_type == 'filter':
-                        filter_id = body.get('id', '')
+            if directory_type != 'ep' and directory_type != 'serie' and 'filter' in params:
+                filter_id = params['filter']
+                if directory_type == 'filter':
+                    filter_id = body.get('id', '')
 
             if directory_type == 'filter':
                 for grp in body["groups"]:
-                    if len(grp["series"]) > 0:
-                        if len(grp["series"]) == 1:
+                    if len(grp["series"]) == 1:
                             add_serie_item(grp["series"][0], parent_title)
+                    elif len(grp["series"]) > 1:
+                        if json_body is not None:
+                            for srg in grp["series"]:
+                                add_serie_item(srg, parent_title)
                         else:
-                            if json_body is not None:
-                                for srg in grp["series"]:
-                                    add_serie_item(srg, parent_title)
-                            else:
-                                add_group_item(grp, parent_title, filter_id)
-                    item_count += 1
+                            add_group_item(grp, parent_title, filter_id)
             elif directory_type == 'filters':
                 for flt in body["filters"]:
                     add_group_item(flt, parent_title, filter_id, True)
-                    item_count += 1
             elif directory_type == 'group':
                 for sers in body['series']:
                     add_serie_item(sers, parent_title)
-                    item_count += 1
-
         except Exception as e:
             nt.error("util.error during build_groups_menu", str(e))
     except Exception as e:
@@ -1856,7 +1846,6 @@ def build_serie_soon(params):
             kodi_utils.set_window_heading(plugin_addon.getLocalizedString(30222))
 
         try:
-            item_count = 0
             parent_title = body.get('name', '')
             used_dates = []
             for sers in body['series']:
@@ -1876,7 +1865,6 @@ def build_serie_soon(params):
                 # endregion
 
                 add_serie_item(sers, parent_title)
-                item_count += 1
 
         except Exception as e:
             nt.error("util.error during build_serie_soon date_air", str(e))
@@ -1980,21 +1968,19 @@ def create_playlist(serie_id):
     item_count = 0
     ep_list = []
     # TODO sort by epnumber and eptype so it wont get mixed
-    if 'eps' in serie_body:
-        if len(serie_body['eps']) > 0:
-            for serie in serie_body['eps']:
-                if len(serie['files']) > 0:
-                    if 'view' in serie:
-                        if serie['view'] == 1:
-                            continue
-                    ep_id = serie['id']
-                    # video = serie['files'][0]['url']
-                    # details = add_serie_item(serie, serie_body['name'], True)
-                    # liz = xbmcgui.ListItem(details.get('title', 'Unknown'))
-                    # liz.setInfo(type='Video', infoLabels=details)
-                    item_count += 1
-                    # playlist.add(url=video, listitem=liz, index=item_count)
-                    ep_list.append(ep_id)
+    if 'eps' in serie_body and len(serie_body['eps']) > 0:
+        for serie in serie_body['eps']:
+            if len(serie['files']) > 0:
+                if 'view' in serie and serie['view'] == 1:
+                    continue
+                ep_id = serie['id']
+                # video = serie['files'][0]['url']
+                # details = add_serie_item(serie, serie_body['name'], True)
+                # liz = xbmcgui.ListItem(details.get('title', 'Unknown'))
+                # liz.setInfo(type='Video', infoLabels=details)
+                item_count += 1
+                # playlist.add(url=video, listitem=liz, index=item_count)
+                ep_list.append(ep_id)
     if len(ep_list) > 0:
         # xbmc.Player().play(playlist)
         for ep in ep_list:

@@ -152,7 +152,6 @@ def play_video(ep_id, raw_id, movie):
     file_id = ''
     file_url = ''
     file_body = None
-    offset = 0
     item = ''
 
     resume = plugin_addon.getSetting('resume') == '1'
