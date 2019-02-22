@@ -381,9 +381,7 @@ def add_raw_files(node):
         if tmp_duration == 1:
             duration = 1
         else:
-            duration = int(tmp_duration) / 1000
-
-        kodi_proxy.duration(duration)
+            duration = kodi_proxy.duration(tmp_duration)
 
         details = {
             "Title": title,
@@ -1456,10 +1454,7 @@ def build_serie_episodes(params):
                             if tmp_duration == 1:
                                 duration = 1
                             else:
-                                duration = int(tmp_duration) / 1000
-
-                            if plugin_addon.getSetting('kodi18') == 1:
-                                duration = str(datetime.timedelta(seconds=duration))
+                                duration = kodi_proxy.duration(tmp_duration)
 
                             # filter out invalid date
                             air = video.get('air', '')
