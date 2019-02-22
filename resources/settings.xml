@@ -16,7 +16,6 @@
         <setting label="30018" type="text" id="apikey" visible="false"/>
         <setting type="number" id="no_mark" default="0" visible="false"/>
         <setting type="number" id="resume" default="0" visible="false"/>
-        <setting type="number" id="kodi18" default="3" visible="false"/>
         <setting type="number" id="wizard" default="0" visible="false"/>
         <setting type="text" id="good_ip" default="" visible="false"/>
         <setting type="text" id="good_version" default="" visible="false"/>
@@ -131,8 +130,7 @@
         <setting label="30014" type="bool" id="pick_file" default="true"/>
         <setting label="30027" type="number" id="player_sleep" default="5000"/>
         <setting label="30004" type="number" id="timeout" default="60"/>
-        <setting type="number" id="kodi18" default="3" visible="false"/> <!-- second one so external_player can access it -->
-        <setting label="30149" type="bool" id="external_player" default="false" enable="!eq(-1,3)"/> <!-- enable for debuggning later can be change to visible k18 hide, <k18 show-->
+        <setting label="30149" type="bool" id="external_player" default="false" visible="false"/>
     </category>
 	<!-- Advance -->
     <category label="30044">

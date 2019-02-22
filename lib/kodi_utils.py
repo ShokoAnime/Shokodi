@@ -3,7 +3,6 @@ import json
 import sys
 import os
 
-import xbmc
 import xbmcgui
 
 from lib import model_utils
@@ -375,37 +374,6 @@ def play_video(ep_id, raw_id, movie):
 
     xbmc.log('-------~ ~~ ~ ----> ' + str(monitor.abortRequested()), xbmc.LOGWARNING)
     return 0
-
-
-def detect_kodi18():
-    """
-    Detect if Kodi user run is not-yet-released 18.x
-    check if '3' (unknown), set 1 if kodi18, set 0 if anything else
-    :return: this function dont return anything, only set 'kodi18' in settings
-    """
-    if plugin_addon.getSetting('kodi18') == '3':
-        python = xbmcaddon.Addon('xbmc.addon')
-        if python is not None:
-            if str(python.getAddonInfo('version')).startswith('17.9.'):  # leia 18.x
-                plugin_addon.setSetting(id='kodi18', value='1')
-            elif str(python.getAddonInfo('version')).startswith('17.0.'):  # krypton 17.x
-                plugin_addon.setSetting(id='kodi18', value='0')
-            elif str(python.getAddonInfo('version')).startswith('16.0.'):  # jarvis 16.x
-                plugin_addon.setSetting(id='kodi18', value='0')
-            elif str(python.getAddonInfo('version')).startswith('15.0.'):  # isengard 15.x
-                plugin_addon.setSetting(id='kodi18', value='0')
-            elif str(python.getAddonInfo('version')).startswith('14.0.'):  # helix 14.x
-                plugin_addon.setSetting(id='kodi18', value='0')
-            elif str(python.getAddonInfo('version')).startswith('13.0.'):  # gotham 13.x
-                plugin_addon.setSetting(id='kodi18', value='0')
-            elif str(python.getAddonInfo('version')).startswith('12.0.'):  # frodo 12.x
-                plugin_addon.setSetting(id='kodi18', value='0')
-            elif str(python.getAddonInfo('version')).startswith('11.0'):  # eden 11.x
-                plugin_addon.setSetting(id='kodi18', value='0')
-            elif str(python.getAddonInfo('version')).startswith('0.1'):  # dharma 10.x
-                plugin_addon.setSetting(id='kodi18', value='0')
-            else:  # anything else should be now post-kodi18
-                plugin_addon.setSetting(id='kodi18', value='1')
 
 
 def fix_mark_watch_in_kodi_db():

@@ -10,7 +10,6 @@ import time
 from collections import defaultdict
 from distutils.version import LooseVersion
 
-import xbmc
 import xbmcgui
 import xbmcplugin
 from lib import kodi_utils
@@ -19,6 +18,7 @@ from lib import search
 from nakamori_utils import nakamoritools as nt
 from nakamori_utils.globalvars import *
 from proxy.python_version_proxy import python_proxy as pyproxy
+from proxy.kodi_version_proxy import kodi_proxy
 
 list_items = []
 handle = int(sys.argv[1])
@@ -383,8 +383,7 @@ def add_raw_files(node):
         else:
             duration = int(tmp_duration) / 1000
 
-        if plugin_addon.getSetting('kodi18') == 1:
-            duration = str(datetime.timedelta(seconds=duration))
+        kodi_proxy.duration(duration)
 
         details = {
             "Title": title,
@@ -942,8 +941,6 @@ def build_filters_menu():
     """
     if plugin_addon.getSetting('skip_information') == 'false':
         nt.show_information()
-        # with each 'major release' aka with 'news.txt' reset 'kodi18' so we can detect version once again (in case of kodi upgrade)
-        plugin_addon.setSetting(id='kodi18', value='3')
 
     xbmcplugin.setContent(handle, 'tvshows')
     xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_UNSORTED)

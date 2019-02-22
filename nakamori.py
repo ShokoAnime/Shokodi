@@ -27,8 +27,6 @@ else:
 
 dbg.debug_init()
 
-kodi_utils.detect_kodi18()
-
 nt.wizard()
 
 
