@@ -12,9 +12,8 @@ from distutils.version import LooseVersion
 import xbmcgui
 import xbmcplugin
 from lib import kodi_utils
-from lib import model_utils
 from lib import search
-from nakamori_utils import nakamoritools as nt
+from nakamori_utils import nakamoritools as nt, model_utils
 from nakamori_utils.globalvars import *
 from proxy.python_version_proxy import python_proxy as pyproxy
 from proxy.kodi_version_proxy import kodi_proxy

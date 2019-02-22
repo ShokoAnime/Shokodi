@@ -5,9 +5,7 @@ import os
 
 import xbmcgui
 
-from lib import model_utils
-
-from nakamori_utils import nakamoritools as nt
+from nakamori_utils import nakamoritools as nt, model_utils
 from nakamori_utils.globalvars import *
 import nakamori_player as nplayer
 from proxy.python_version_proxy import python_proxy as pyproxy
