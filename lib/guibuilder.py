@@ -1426,226 +1426,194 @@ def build_serie_episodes(params):
                                        str(next_episode))
                 selected_list_item = False
                 for video in body['eps']:
-                    item_count += 1
                     # check if episode have files
                     episode_type = True
                     if "type" in params:
                         episode_type = True if str(video['eptype']) == str(params['type']) else False
-                    if video['files'] is not None and episode_type:
-                        if len(video['files']) > 0:
-                            episode_count += 1
-                            # Check for empty duration from MediaInfo check fail and handle it properly
-                            tmp_duration = 1
+                    if not episode_type:
+                        continue
+                    item_count += 1
+
+                    if video['files'] is not None and len(video['files']) > 0:
+                        episode_count += 1
+                        # Check for empty duration from MediaInfo check fail and handle it properly
+                        tmp_duration = 1
+                        try:
+                            tmp_duration = video['files'][0]['duration']
+                        except:
+                            pass
+                        if tmp_duration == 1:
+                            duration = 1
+                        else:
+                            duration = kodi_proxy.duration(tmp_duration)
+
+                        # filter out invalid date
+                        air = video.get('air', '')
+                        if air != '':
+                            # air=0001-01-01
+                            if air == '0001-01-01' or air == '01-01-0001':
+                                air = ''
+                        title = pyproxy.decode(video.get('name', 'Parse util.error'))
+                        if title is None:
+                            title = 'Episode ' + str(video.get('epnumber', '??'))
+
+                        is_watched = int(nt.safe_int(video.get("view", '0')))
+                        # Required listItem entries for XBMC
+                        details = {
+                            'size': nt.safe_int(video['files'][0].get('size', '0')),
+                            'genre': temp_genre,
+                            'year': nt.safe_int(video.get('year', '')),
+                            'episode': nt.safe_int(video.get('epnumber', '')),
+                            'rating': float(str(video.get('rating', '0')).replace(',', '.')),
+                            'userrating': float(str(video.get('UserRating', '0')).replace(',', '.')),
+                            'cast': list_cast,
+                            'castandrole': list_cast_and_role,
+                            'plot': nt.remove_anidb_links(pyproxy.decode(video['summary'])),
+                            'title': title,
+                            'originaltitle': pyproxy.decode(video.get('name', '')),
+                            'sorttitle': str(video.get('epnumber', '')) + " " + title,
+                            'duration': duration,
+                            'tagline': temp_genre,  # short description of movie k18
+                            'tvshowtitle': grandparent_title,
+                            'premiered': air,
+                            'tag': temp_genre,  # k18
+                            'aired': air,
+                            'votes': nt.safe_int(video.get('votes', '')),
+                            'mediatype': 'episode',  # "video", "movie", "tvshow", "season", "episode", "musicvideo"
+
+                            # CUSTOM
+                            'parenttitle':   pyproxy.decode(parent_title),
+                            'tvshowname': grandparent_title
+                        }
+
+                        if str(video['eptype']) != "Special":
+                            season = str(video.get('season', '1'))
                             try:
-                                tmp_duration = video['files'][0]['duration']
-                            except:
-                                pass
-                            if tmp_duration == 1:
-                                duration = 1
-                            else:
-                                duration = kodi_proxy.duration(tmp_duration)
+                                if season != '1':
+                                    season = season.split('x')[0]
+                                    if season == '0':
+                                        season = '1'
+                            except Exception as w:
+                                nt.error(w, season)
+                        else:
+                            season = '0'
+                        details['season'] = nt.safe_int(season)
 
-                            # filter out invalid date
-                            air = video.get('air', '')
-                            if air != '':
-                                # air=0001-01-01
-                                if air == '0001-01-01' or air == '01-01-0001':
-                                    air = ''
-                            title = pyproxy.decode(video.get('name', 'Parse util.error'))
-                            if title is None:
-                                title = 'Episode ' + str(video.get('epnumber', '??'))
+                        temp_date = str(details['aired']).split('-')
+                        if len(temp_date) == 3:  # format is 2016-01-24, we want it 24.01.2016
+                            details['date'] = temp_date[1] + '.' + temp_date[2] + '.' + temp_date[0]
 
-                            is_watched = int(nt.safe_int(video.get("view", '0')))
-                            # Required listItem entries for XBMC
-                            details = {
-                                # OFFICIAL General Values
-                                # 'count': - can be used to store an id for later, or for sorting purposes
-                                'size': nt.safe_int(video['files'][0].get('size', '0')),
-                                # 'date': file date - coded below
-                                # OFFICIAL Video Values
-                                'genre': temp_genre,
-                                # 'county':
-                                'year': nt.safe_int(video.get('year', '')),
-                                'episode': nt.safe_int(video.get('epnumber', '')),
-                                #  'season' - coded below
-                                #  'sortepisode'  # k18
-                                #  'sortseason'  # k18
-                                #  'episodeguide'  # k18
-                                #  'showlink'  # k18
-                                #  'top250'
-                                #  'setid'
-                                #  'tracknumber'
-                                'rating': float(str(video.get('rating', '0')).replace(',', '.')),
-                                'userrating': float(str(video.get('UserRating', '0')).replace(',', '.')),
-                                #  'watched' - depreciated
-                                #  'playcount' - coded below
-                                #  'overlay' - cdeded below
-                                'cast': list_cast,
-                                'castandrole': list_cast_and_role,
-                                #  'director': " / ".join(temp_dir),
-                                #  'mpaa':          video.get('contentRating', ''), <--
-                                'plot': nt.remove_anidb_links(pyproxy.decode(video['summary'])),
-                                #  'plotoutline':
-                                'title': title,
-                                'originaltitle': pyproxy.decode(video.get('name', '')),
-                                'sorttitle': str(video.get('epnumber', '')) + " " + title,
-                                'duration': duration,
-                                # 'studio'      : episode.get('studio',tree.get('studio','')), 'utf-8') ,
-                                'tagline': temp_genre,  # short description of movie k18
-                                # 'writer': " / ".join(temp_writer),
-                                'tvshowtitle': grandparent_title,
-                                'premiered': air,
-                                #  'status': 'Continuing'
-                                #  'set' -  name of the collection
-                                #  'setoverview' - k18
-                                'tag': temp_genre,  # k18
-                                #  'imdbnumber'
-                                #  'code' - production code
-                                'aired': air,
-                                #  'credits'
-                                #  'lastplayed'
-                                #  'album'
-                                #  'artist'
-                                'votes': nt.safe_int(video.get('votes', '')),
-                                #  'path'
-                                #  'trailes'
-                                #  'dateadded'
-                                'mediatype': 'episode',  # "video", "movie", "tvshow", "season", "episode", "musicvideo"
-                                #  'dbid' - local kodi db id
+                        thumb = ''
+                        if len(video["art"]["thumb"]) > 0:
+                            thumb = video["art"]["thumb"][0]["url"]
+                            if thumb is not None and ":" not in thumb:
+                                thumb = server + thumb
+                        fanart = ''
+                        if len(video["art"]["fanart"]) > 0:
+                            fanart = video["art"]["fanart"][0]["url"]
+                            if fanart is not None and ":" not in fanart:
+                                fanart = server + fanart
+                        banner = ''
+                        if len(video["art"]["banner"]) > 0:
+                            banner = video["art"]["banner"][0]["url"]
+                            if banner is not None and ":" not in banner:
+                                banner = server + banner
 
-                                # CUSTOM
-                                'parenttitle':   pyproxy.decode(parent_title),
-                                'tvshowname': grandparent_title
-                            }
-
-                            if str(video['eptype']) != "Special":
-                                season = str(video.get('season', '1'))
-                                try:
-                                    if season != '1':
-                                        season = season.split('x')[0]
-                                        if season == '0':
-                                            season = '1'
-                                except Exception as w:
-                                    nt.error(w, season)
-                            else:
-                                season = '0'
-                            details['season'] = nt.safe_int(season)
-
-                            temp_date = str(details['aired']).split('-')
-                            if len(temp_date) == 3:  # format is 2016-01-24, we want it 24.01.2016
-                                details['date'] = temp_date[1] + '.' + temp_date[2] + '.' + temp_date[0]
-
+                        if plugin_addon.getSetting('hide_images') == "true" and is_watched == 0:
+                            # TODO add default spoiler_protected images to resources package
                             thumb = ''
-                            if len(video["art"]["thumb"]) > 0:
-                                thumb = video["art"]["thumb"][0]["url"]
-                                if thumb is not None and ":" not in thumb:
-                                    thumb = server + thumb
                             fanart = ''
-                            if len(video["art"]["fanart"]) > 0:
-                                fanart = video["art"]["fanart"][0]["url"]
-                                if fanart is not None and ":" not in fanart:
-                                    fanart = server + fanart
                             banner = ''
-                            if len(video["art"]["banner"]) > 0:
-                                banner = video["art"]["banner"][0]["url"]
-                                if banner is not None and ":" not in banner:
-                                    banner = server + banner
 
-                            if plugin_addon.getSetting('hide_images') == "true" and is_watched == 0:
-                                # TODO add default spoiler_protected images to resources package
-                                thumb = ''
-                                fanart = ''
-                                banner = ''
+                        key = video["files"][0]["url"]
 
-                            key = video["files"][0]["url"]
+                        # Extra data required to manage other properties
+                        extra_data = {
+                            'type':             'video',  # 'video'
+                            'source':           'ep',
+                            'thumb':            thumb,
+                            'fanart_image':     fanart,
+                            'banner':           banner,
+                            'key':              key,
+                            'resume':           int(int(video['files'][0].get('offset', '0')) / 1000),
+                            'parentKey':        parent_key,
+                            'jmmepisodeid':     nt.safe_int(body.get('id', '')),
+                            'actors':           actors,
+                            'VideoStreams':     defaultdict(dict),
+                            'AudioStreams':     defaultdict(dict),
+                            'SubStreams':       defaultdict(dict),
+                            'ep_id':            nt.safe_int(video.get('id', '')),
+                            'serie_id':         nt.safe_int(body.get('id', '')),
+                            'file_id':          video['files'][0].get('offset', '0'),
+                            'multiep':          True if len(video['files']) > 1 else False
+                        }
 
-                            # Extra data required to manage other properties
-                            extra_data = {
-                                'type':             'video',  # 'video'
-                                'source':           'ep',
-                                'thumb':            thumb,
-                                'fanart_image':     fanart,
-                                'banner':           banner,
-                                'key':              key,
-                                'resume':           int(int(video['files'][0].get('offset', '0')) / 1000),
-                                'parentKey':        parent_key,
-                                'jmmepisodeid':     nt.safe_int(body.get('id', '')),
-                                'actors':           actors,
-                                'VideoStreams':     defaultdict(dict),
-                                'AudioStreams':     defaultdict(dict),
-                                'SubStreams':       defaultdict(dict),
-                                'ep_id':            nt.safe_int(video.get('id', '')),
-                                'serie_id':         nt.safe_int(body.get('id', '')),
-                                'file_id':          video['files'][0].get('offset', '0'),
-                                'multiep':          True if len(video['files']) > 1 else False
-                            }
+                        # Information about streams inside video file
+                        if len(video["files"][0].get("media", {})) > 0:
+                            model_utils.video_file_information(video['files'][0]['media'], extra_data)
 
-                            # Information about streams inside video file
-                            if len(video["files"][0].get("media", {})) > 0:
-                                model_utils.video_file_information(video['files'][0]['media'], extra_data)
+                        # Determine what type of watched flag [overlay] to use
+                        if is_watched > 0:
+                            details['playcount'] = 1
+                            details['overlay'] = 5
+                            # don't show resume if the file is watched (fixes an issue with resume > 80%)
+                            del extra_data['resume']
+                            # details['lastplayed'] = '2010-10-10 11:00:00'
+                        else:
+                            details['playcount'] = 0
+                            details['overlay'] = 4
+                            if next_episode == -1:
+                                next_episode = episode_count - 1
+                        select_this_item = False
+                        if details['playcount'] == 0:
+                            # if there was no other item select this on listitem
+                            if not selected_list_item:
+                                select_this_item = True
+                                selected_list_item = True
+                            # Hide plot and thumb for unwatched by kodi setting
+                            if not nt.get_kodi_setting_bool("videolibrary.showunwatchedplots"):
+                                details['plot'] \
+                                    = "Hidden due to user setting.\nCheck Show Plot" + \
+                                      " for Unwatched Items in the Video Library Settings."
+                                extra_data['thumb'] = thumb
+                                extra_data['fanart_image'] = fanart
 
-                            # Determine what type of watched flag [overlay] to use
-                            if is_watched > 0:
-                                details['playcount'] = 1
-                                details['overlay'] = 5
-                                # don't show resume if the file is watched (fixes an issue with resume > 80%)
-                                del extra_data['resume']
-                                # details['lastplayed'] = '2010-10-10 11:00:00'
-                            else:
-                                details['playcount'] = 0
-                                details['overlay'] = 4
-                                if next_episode == -1:
-                                    next_episode = episode_count - 1
-                            select_this_item = False
-                            if details['playcount'] == 0:
-                                # if there was no other item select this on listitem
-                                if not selected_list_item:
-                                    select_this_item = True
-                                    selected_list_item = True
-                                # Hide plot and thumb for unwatched by kodi setting
-                                if not nt.get_kodi_setting_bool("videolibrary.showunwatchedplots"):
-                                    details['plot'] \
-                                        = "Hidden due to user setting.\nCheck Show Plot" + \
-                                          " for Unwatched Items in the Video Library Settings."
-                                    extra_data['thumb'] = thumb
-                                    extra_data['fanart_image'] = fanart
+                        # handle these after watched stuff is handled
+                        if plugin_addon.getSetting('hide_rating') == 'Always':
+                            if plugin_addon.getSetting('hide_rating_type') != 'Series':  # Episodes|Both
+                                details['rating'] = 0
+                        elif plugin_addon.getSetting('hide_rating') == 'Unwatched':
+                            if plugin_addon.getSetting(
+                                    'hide_rating_type') != 'Series' and is_watched < 1:  # Episodes|Both
+                                details['rating'] = 0
+                        elif plugin_addon.getSetting('hide_rating') == 'All Unwatched':
+                            if plugin_addon.getSetting('hide_rating_type') != 'Series' and next_episode <= 1:  # Episodes|Both
+                                details['rating'] = 0
 
-                            # handle these after watched stuff is handled
-                            if plugin_addon.getSetting('hide_rating') == 'Always':
-                                if plugin_addon.getSetting('hide_rating_type') != 'Series':  # Episodes|Both
-                                    details['rating'] = 0
-                            elif plugin_addon.getSetting('hide_rating') == 'Unwatched':
-                                if plugin_addon.getSetting(
-                                        'hide_rating_type') != 'Series' and is_watched < 1:  # Episodes|Both
-                                    details['rating'] = 0
-                            elif plugin_addon.getSetting('hide_rating') == 'All Unwatched':
-                                if plugin_addon.getSetting('hide_rating_type') != 'Series' and next_episode <= 1:  # Episodes|Both
-                                    details['rating'] = 0
+                        if plugin_addon.getSetting('hide_title') != 'Never' and is_watched < 1:
+                            if str(video['eptype']) == "Special":
+                                if plugin_addon.getSetting('hide_title') != 'Episodes':  # both,specials
+                                    details['title'] = plugin_addon.getLocalizedString(30076)
+                            elif str(video['eptype']) == "Episode":
+                                if plugin_addon.getSetting('hide_title') != 'Specials':  # both,episodes
+                                    details['title'] = plugin_addon.getLocalizedString(30076)
 
-                            if plugin_addon.getSetting('hide_title') != 'Never' and is_watched < 1:
-                                if str(video['eptype']) == "Special":
-                                    if plugin_addon.getSetting('hide_title') != 'Episodes':  # both,specials
-                                        details['title'] = plugin_addon.getLocalizedString(30076)
-                                elif str(video['eptype']) == "Episode":
-                                    if plugin_addon.getSetting('hide_title') != 'Specials':  # both,episodes
-                                        details['title'] = plugin_addon.getLocalizedString(30076)
+                        if plugin_addon.getSetting('hide_plot') == "true" and is_watched < 1:
+                            details['plot'] = plugin_addon.getLocalizedString(30079)
 
-                            if plugin_addon.getSetting('hide_plot') == "true" and is_watched < 1:
-                                details['plot'] = plugin_addon.getLocalizedString(30079)
+                        context = None
 
-                            context = None
+                        u = sys.argv[0]
+                        u = pyproxy.set_parameter(u, 'mode', 1)
+                        u = pyproxy.set_parameter(u, 'file_id', video["files"][0].get("id", 0))
+                        u = pyproxy.set_parameter(u, 'ep_id', video.get("id", ''))
+                        u = pyproxy.set_parameter(u, 'serie_id', body.get("id", ''))
+                        u = pyproxy.set_parameter(u, 'userrate', details["userrating"])
+                        u = pyproxy.set_parameter(u, 'ui_index', str(int(episode_count - 1)))
 
-                            u = sys.argv[0]
-                            u = pyproxy.set_parameter(u, 'mode', 1)
-                            u = pyproxy.set_parameter(u, 'file_id', video["files"][0].get("id", 0))
-                            u = pyproxy.set_parameter(u, 'ep_id', video.get("id", ''))
-                            u = pyproxy.set_parameter(u, 'serie_id', body.get("id", ''))
-                            u = pyproxy.set_parameter(u, 'userrate', details["userrating"])
-                            u = pyproxy.set_parameter(u, 'ui_index', str(int(episode_count - 1)))
-
-                            add_gui_item(u, details, extra_data, context,
-                                         folder=False, index=int(episode_count - 1),
-                                         force_select=select_this_item)
+                        add_gui_item(u, details, extra_data, context,
+                                     folder=False, index=int(episode_count - 1),
+                                     force_select=select_this_item)
 
         except Exception as exc:
             nt.error("util.error during build_serie_episodes", str(exc))
