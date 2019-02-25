@@ -625,7 +625,7 @@ def add_serie_item(node, parent_title, destination_playlist=False):
     key = server + "/api/serie"
     key = pyproxy.set_parameter(key, 'id', key_id)
     key = pyproxy.set_parameter(key, 'level', 2)
-    key = pyproxy.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
+    key = pyproxy.set_parameter(key, 'tagfilter', tag_setting_flags)
     if plugin_addon.getSetting('request_nocast') == 'true':
         key = pyproxy.set_parameter(key, 'nocast', 1)
 
@@ -791,7 +791,7 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
     key = pyproxy.set_parameter(key, 'id', key_id)
     key = pyproxy.set_parameter(key, 'filter', filter_id)
     key = pyproxy.set_parameter(key, 'level', 1)
-    key = pyproxy.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
+    key = pyproxy.set_parameter(key, 'tagfilter', tag_setting_flags)
     if plugin_addon.getSetting('request_nocast') == 'true':
         key = pyproxy.set_parameter(key, 'nocast', 1)
 
@@ -880,7 +880,7 @@ def add_filter_item(menu):
     key = pyproxy.set_parameter(key, 'level', 2)
     if title == "Airing Today":
         key = pyproxy.set_parameter(key, 'level', 0)
-    key = pyproxy.set_parameter(key, 'tagfilter', model_utils.__tagSettingFlags__)
+    key = pyproxy.set_parameter(key, 'tagfilter', tag_setting_flags)
     filter_url = key
 
     thumb = ''

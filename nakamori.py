@@ -17,7 +17,7 @@ import xbmc
 import sys
 from proxy.python_version_proxy import python_proxy as pyproxy
 
-if sys.version_info < (3, 0):
+if sys.version_info[0] < 3:
     # noinspection PyCompatibility
     from urllib2 import HTTPError
 else:
