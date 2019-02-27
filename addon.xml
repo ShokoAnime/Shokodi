@@ -11,7 +11,7 @@
 		<import addon="resource.images.nakamori" version="3.0.0"/>
 		<import addon="script.module.nakamori-lib" version="3.0.9" />
 	</requires>
-	<extension point="xbmc.python.pluginsource" library="nakamori.py">
+	<extension point="xbmc.python.pluginsource" library="nakamoriplugin.py">
 		<provides>video</provides>
 	</extension>
 	<extension point="xbmc.addon.metadata">
