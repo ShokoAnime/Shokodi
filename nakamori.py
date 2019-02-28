@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 import json
 
-import lib.debug as dbg
+import debug as dbg
 import lib.guibuilder as gb
 from nakamori_utils import nakamoritools as nt
 from nakamori_utils.globalvars import *

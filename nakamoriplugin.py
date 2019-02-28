@@ -1,6 +1,9 @@
+import sys
+
 import routing
 from kodi_models.kodi_models import DirectoryListing
-from lib import debug
+import debug
+from nakamori_utils import nakamoritools as nt
 
 routing_plugin = routing.Plugin('plugin://plugin.video.nakamori')
 
@@ -20,7 +23,7 @@ def show_main_menu():
 @routing_plugin.route('/menu/filter/<filter_id>')
 def show_filter_menu(filter_id):
     from shoko_models.v2 import Filter
-    filter = Filter(filter_id, build_full_object=True)
+    filter = Filter(filter_id, build_full_object=True, get_children=True)
     dir = DirectoryListing('tvshows')
     for item in filter:
         dir.append(item.get_listitem())
@@ -29,7 +32,7 @@ def show_filter_menu(filter_id):
 @routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>')
 def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
-    group = Group(group_id, build_full_object=True, filter_id=filter_id)
+    group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id)
     dir = DirectoryListing('tvshows')
     for item in group:
         dir.append(item.get_listitem())
@@ -38,7 +41,7 @@ def show_group_menu(group_id, filter_id):
 @routing_plugin.route('/menu/series/<series_id>')
 def show_series_menu(series_id):
     from shoko_models.v2 import Series
-    series = Series(series_id, build_full_object=True)
+    series = Series(series_id, build_full_object=True, get_children=True)
 
     if len(series.episode_types) > 1:
         dir = DirectoryListing('seasons')
@@ -107,4 +110,8 @@ def set_group_watched_status(group_id, watched):
 
 if __name__ == '__main__':
     debug.debug_init()
+    auth, apikey = nt.valid_user()
+    if not auth:
+        # error
+        sys.exit()
     routing_plugin.run()
