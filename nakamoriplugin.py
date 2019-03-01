@@ -1,6 +1,8 @@
 import sys
 
 import routing
+from lib import kodi_utils
+from nakamori_utils.globalvars import *
 from kodi_models.kodi_models import DirectoryListing
 import debug
 from nakamori_utils import nakamoritools as nt
@@ -51,6 +53,8 @@ def show_series_menu(series_id):
     else:
         dir = DirectoryListing('episodes')
         for item in series:
+            if item.get_file() is None:
+                continue
             dir.append(item.get_listitem())
 
 
@@ -60,6 +64,8 @@ def show_series_episode_types_menu(series_id, episode_type):
     types = SeriesTypeList(series_id, episode_type)
     dir = DirectoryListing('episodes')
     for item in types:
+        if item.get_file() is None:
+            continue
         dir.append(item.get_listitem())
 
 
@@ -78,9 +84,39 @@ def show_episode_vote_dialog(ep_id):
     pass
 
 
-@routing_plugin.route('/episode/<ep_id>/file/<file_id>/play/<is_movie>/<mark_as_watched>')
-def play_video(file_id, ep_id=0, is_movie=False, mark_as_watched=True):
-    pass
+def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
+    # because we have an endpoint, we will not try to pass the series ID around
+    # we'll simply look it up from the episode
+    from shoko_models.v2 import Episode
+    ep = Episode(ep_id, build_full_object=True)
+    file = None
+    for f in ep.items:
+        if f.id == int(file_id):
+            file = f
+            break
+    if file is None:
+        # TODO error
+        return
+
+    # now we have a file
+    # quick hack to test, will be rewritten
+    kodi_utils.play_video(ep_id, file_id, False)
+
+
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')
+def play_video(ep_id, file_id):
+    play_video_internal(ep_id, file_id, plugin_addon.getSetting('file_resume') == 'true', True)
+
+
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/play_without_marking')
+def play_video_without_marking(ep_id, file_id):
+    play_video_internal(ep_id, file_id, False)
+
+
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/resume')
+def resume_video(ep_id, file_id):
+    # if we are resuming, then we'll assume that scrobbling and marking are True
+    play_video_internal(ep_id, file_id, True, True)
 
 
 @routing_plugin.route('/series/<series_id>/vote/<value>')
@@ -95,17 +131,23 @@ def vote_for_episode(ep_id, value):
 
 @routing_plugin.route('/episode/<ep_id>/set_watched/<watched>')
 def set_episode_watched_status(ep_id, watched):
-    pass
+    from shoko_models.v2 import Episode
+    ep = Episode(ep_id)
+    ep.set_watched_status(watched)
 
 
 @routing_plugin.route('/series/<series_id>/set_watched/<watched>')
 def set_series_watched_status(series_id, watched):
-    pass
+    from shoko_models.v2 import Series
+    series = Series(series_id)
+    series.set_watched_status(watched)
 
 
 @routing_plugin.route('/group/<group_id>/set_watched/<watched>')
 def set_group_watched_status(group_id, watched):
-    pass
+    from shoko_models.v2 import Group
+    group = Group(group_id)
+    group.set_watched_status(watched)
 
 
 if __name__ == '__main__':

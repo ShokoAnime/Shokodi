@@ -744,6 +744,26 @@ msgctxt "#30199"
 msgid "Queued Import Folder Scan"
 msgstr "Queued Import Folder Scan"
 
+#: nakamoritools.py
+msgctxt "#30200"
+msgid "Watched Status Changed"
+msgstr "Watched Status Changed"
+
+#: nakamoritools.py
+msgctxt "#30201"
+msgid "Marked as"
+msgstr "Marked as"
+
+#: nakamoritools.py
+msgctxt "#30202"
+msgid "Watched"
+msgstr "Watched"
+
+#: nakamoritools.py
+msgctxt "#30203"
+msgid "Unwatched"
+msgstr "Unwatched"
+
 #. 200 - 220 empty
 #: settings.xml, guibuilder.py
 msgctxt "#30221"
