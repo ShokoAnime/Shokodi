@@ -37,7 +37,7 @@ db_cursor = db_connection.cursor()
 
 # create table
 try:
-    db_cursor.execute("CREATE TABLE IF NOT EXISTS search (search_term);")
+    db_cursor.execute('CREATE TABLE IF NOT EXISTS search (search_term);')
 except:
     pass
 
@@ -54,7 +54,7 @@ def get_search_history():
     try:
         db_connection = database.connect(db_file)
         db_cursor = db_connection.cursor()
-        db_cursor.execute("SELECT search_term FROM search")
+        db_cursor.execute('SELECT search_term FROM search')
         faves = db_cursor.fetchall()
         for a_row in faves:
             if len(a_row) > 0:
@@ -74,7 +74,7 @@ def add_search_history(keyword):
     """
     db_connection = database.connect(db_file)
     db_cursor = db_connection.cursor()
-    db_cursor.execute("INSERT INTO search (search_term) VALUES (?)", (keyword,))
+    db_cursor.execute('INSERT INTO search (search_term) VALUES (?)', (keyword,))
     db_connection.commit()
     db_connection.close()
 
@@ -88,10 +88,10 @@ def remove_search_history(params):
     db_connection = database.connect(db_file)
     db_cursor = db_connection.cursor()
     try:
-        if params["extras"] == "single-delete":
-            db_cursor.execute("DELETE FROM search WHERE search_term=?", (params['name'],))
+        if params['extras'] == 'single-delete':
+            db_cursor.execute('DELETE FROM search WHERE search_term=?', (params['name'],))
     except:
-        db_cursor.execute("DELETE FROM search")
+        db_cursor.execute('DELETE FROM search')
     db_connection.commit()
     db_connection.close()
 
@@ -104,7 +104,7 @@ def check_in_database(term):
     """
     db_connection = database.connect(db_file)
     db_cursor = db_connection.cursor()
-    db_cursor.execute("SELECT search_term FROM search WHERE search_term=?", (term,))
+    db_cursor.execute('SELECT search_term FROM search WHERE search_term=?', (term,))
     data = db_cursor.fetchall()
     if len(data) == 0:
         return False
@@ -112,7 +112,7 @@ def check_in_database(term):
 
 
 def clear_search_history(params):
-    do_clean = xbmcgui.Dialog().yesno("Confirm Delete", "Are you sure you want to delete ALL search terms?")
+    do_clean = xbmcgui.Dialog().yesno('Confirm Delete', 'Are you sure you want to delete ALL search terms?')
     if do_clean:
         remove_search_history(params)
         xbmc.executebuiltin('Container.Refresh')

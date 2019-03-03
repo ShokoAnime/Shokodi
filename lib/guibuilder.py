@@ -24,21 +24,21 @@ busy = xbmcgui.DialogProgress()
 _img = os.path.join(xbmcaddon.Addon(plugin_addon.getSetting('icon_pack')).getAddonInfo('path'), 'resources', 'media')
 
 map_types = {
-                    "Credits": "Credits",
-                    "Episode": "Episodes",
-                    "Special": "Specials",
-                    "Trailer": "Trailers",
-                    "Parody": "Parodies",
-                    "Other": "Others"
+                    'Credits': 'Credits',
+                    'Episode': 'Episodes',
+                    'Special': 'Specials',
+                    'Trailer': 'Trailers',
+                    'Parody': 'Parodies',
+                    'Other': 'Others'
                 }
 
 map_shortcuts_x_types = {
-                    "Credits": "C",
-                    "Episode": "E",
-                    "Special": "S",
-                    "Trailer": "T",
-                    "Parody": "P",
-                    "Other": "O"
+                    'Credits': 'C',
+                    'Episode': 'E',
+                    'Special': 'S',
+                    'Trailer': 'T',
+                    'Parody': 'P',
+                    'Other': 'O'
 }
 
 
@@ -54,28 +54,28 @@ def title_coloring(title, episode_count, total_count, special_count, total_speci
     :return: colorized title
     """
     color_title = title
-    if plugin_addon.getSetting('color_title') == "true":
+    if plugin_addon.getSetting('color_title') == 'true':
         if airing:
             if episode_count == total_count:
                 if total_special_count == 0:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_airing'), title)
+                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_airing'), title)
                 elif special_count == total_special_count:
                     # its possible if set to local_size in setting
-                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_airing_special'), title)
+                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_airing_special'), title)
                 elif special_count < total_special_count:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_airing'), title)
+                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_airing'), title)
             elif episode_count < total_count:
-                color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_airing_missing'), title)
+                color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_airing_missing'), title)
         else:
             if episode_count == total_count:
                 if total_special_count == 0:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_finish'), title)
+                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_finish'), title)
                 elif special_count == total_special_count:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_finish_special'), title)
+                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_finish_special'), title)
                 elif special_count < total_special_count:
-                    color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_finish'), title)
+                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_finish'), title)
             elif episode_count < total_count:
-                color_title = "[COLOR %s]%s[/COLOR]" % (plugin_addon.getSetting('title_color_finish_missing'), title)
+                color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_finish_missing'), title)
 
     return color_title
 
@@ -99,9 +99,9 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
     :return: Did the item successfully add
     """
     try:
-        tbi = ""
+        tbi = ''
         tp = 'video'
-        link_url = ""
+        link_url = ''
 
         # do this before so it'll log
         # use the year as a fallback in case the date is unavailable
@@ -120,15 +120,15 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
                 f_data = str(details['date']).split('.')
                 details['aired'] = f_data[2] + '-' + f_data[1] + '-' + f_data[0]  # aired y-m-d
 
-        if plugin_addon.getSetting("spamLog") == 'true':
-            xbmc.log("add_gui_item - url: " + gui_url, xbmc.LOGWARNING)
+        if plugin_addon.getSetting('spamLog') == 'true':
+            xbmc.log('add_gui_item - url: ' + gui_url, xbmc.LOGWARNING)
             nt.dump_dictionary(details, 'details')
             nt.dump_dictionary(extra_data, 'extra data')
 
         if extra_data is not None and len(extra_data) > 0:
             if extra_data.get('parameters'):
                 for argument, value in extra_data.get('parameters').items():
-                    link_url = "%s&%s=%s" % (link_url, argument, pyproxy.quote(value))
+                    link_url = '%s&%s=%s' % (link_url, argument, pyproxy.quote(value))
             tbi = extra_data.get('thumb', '')
             tp = extra_data.get('type', 'Video')
 
@@ -192,12 +192,12 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
 
             # For series/groups/episodes
             if extra_data.get('thumb'):
-                liz.setArt({"thumb": extra_data.get('thumb', '')})
-                liz.setArt({"icon": extra_data.get('thumb', '')})
-                liz.setArt({"poster": extra_data.get('thumb', '')})
+                liz.setArt({'thumb': extra_data.get('thumb', '')})
+                liz.setArt({'icon': extra_data.get('thumb', '')})
+                liz.setArt({'poster': extra_data.get('thumb', '')})
             if extra_data.get('fanart_image'):
-                liz.setArt({"fanart": extra_data.get('fanart_image', '')})
-                liz.setArt({"clearart": extra_data.get('fanart_image', '')})
+                liz.setArt({'fanart': extra_data.get('fanart_image', '')})
+                liz.setArt({'clearart': extra_data.get('fanart_image', '')})
             if extra_data.get('banner'):
                 liz.setArt({'banner': extra_data.get('banner', '')})
             if extra_data.get('season_thumb'):
@@ -226,8 +226,8 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
 
                     # Resume
                     if 'resume' in extra_data:
-                        if plugin_addon.getSetting("file_resume") == "true":
-                            if str(extra_data.get('resume')) != "0":
+                        if plugin_addon.getSetting('file_resume') == 'true':
+                            if str(extra_data.get('resume')) != '0':
                                 liz.setProperty('ResumeTime', str(extra_data.get('resume')))
                                 context.append((plugin_addon.getLocalizedString(30141) + ' (%s)' %
                                                 time.strftime('%H:%M:%S', time.gmtime(int(extra_data.get('resume')))),
@@ -297,13 +297,13 @@ def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=
         list_items.append((gui_url, liz, folder))
         return liz
     except Exception as e:
-        nt.error("util.error during add_gui_item", str(e))
+        nt.error('util.error during add_gui_item', str(e))
 
 
 def set_stream_info(liz, extra_data):
-    if extra_data.get('type', 'video').lower() == "video":
+    if extra_data.get('type', 'video').lower() == 'video':
         liz.setProperty('TotalTime', str(extra_data['VideoStreams'][0].get('duration', 0)))
-        if plugin_addon.getSetting("file_resume") == "true":
+        if plugin_addon.getSetting('file_resume') == 'true':
             liz.setProperty('ResumeTime', str(extra_data.get('resume')))
 
         video_codec = extra_data.get('VideoStreams', {})
@@ -362,10 +362,10 @@ def add_raw_files(node):
     :return: add item to listitem
     """
     try:
-        name = pyproxy.decode(node.get("filename", ''))
-        file_id = str(node["id"])
-        key = node["url"]
-        raw_url = server + "/api/file?id=" + file_id
+        name = pyproxy.decode(node.get('filename', ''))
+        file_id = str(node['id'])
+        key = node['url']
+        raw_url = server + '/api/file?id=' + file_id
         title = os.path.split(str(name))[1]
         # it's an unsorted file, but we can still use basic metadata and watched status
         # when it is scanned, it'll take the watched status with it
@@ -382,14 +382,14 @@ def add_raw_files(node):
             duration = kodi_proxy.duration(tmp_duration)
 
         details = {
-            "Title": title,
-            "Plot": title,
-            "Duration": duration,
-            "Size": node.get('size', '0')
+            'Title': title,
+            'Plot': title,
+            'Duration': duration,
+            'Size': node.get('size', '0')
         }
 
         # as for now, there are few ways to mark these, but future or something!
-        watched = int(nt.safe_int(node.get("view", '0'))) == '1'
+        watched = int(nt.safe_int(node.get('view', '0'))) == '1'
         if watched:
             details['playcount'] = 1
             details['overlay'] = 5
@@ -403,14 +403,14 @@ def add_raw_files(node):
         poster = os.path.join(_img, 'poster', 'other.png')
         liz = xbmcgui.ListItem(label=title, label2=title, path=raw_url)
         liz.setArt({'thumb': thumb, 'poster': poster, 'icon': 'DefaultVideo.png', 'fanart': fanart, 'banner': banner})
-        liz.setInfo(type="Video", infoLabels=details)
+        liz.setInfo(type='Video', infoLabels=details)
 
         # Information about streams inside video file
         extra_data = defaultdict()
         if not watched:
             extra_data['resume'] = int(int(node.get('offset', '0')) / 1000)
 
-        if len(node.get("media", {})) > 0:
+        if len(node.get('media', {})) > 0:
             model_utils.video_file_information(node['media'], extra_data)
 
         if extra_data and len(extra_data) > 0:
@@ -421,7 +421,7 @@ def add_raw_files(node):
         u = pyproxy.set_parameter(u, 'mode', 1)
         u = pyproxy.set_parameter(u, 'name', title)
         u = pyproxy.set_parameter(u, 'raw_id', file_id)
-        u = pyproxy.set_parameter(u, 'type', "raw")
+        u = pyproxy.set_parameter(u, 'type', 'raw')
         u = pyproxy.set_parameter(u, 'file', key)
         u = pyproxy.set_parameter(u, 'ep_id', '0')
         # this is used for rescan and rehash, which takes the VideoLocalID
@@ -445,35 +445,35 @@ def add_content_typ_dir(name, serie_id, total_size=0, watched=0, unwatched=0):
     :param unwatched: how many files haven't been watched
     :return: add new directory
     """
-    dir_url = server + "/api/serie"
+    dir_url = server + '/api/serie'
     dir_url = pyproxy.set_parameter(dir_url, 'id', str(serie_id))
     dir_url = pyproxy.set_parameter(dir_url, 'level', 4)
     title = str(name)
 
-    if title == "Credit":
+    if title == 'Credit':
         image_name = 'credits.png'
-    elif title == "Movie":
-        image_name = "movie.png"
-    elif title == "Ova":
-        image_name = "ova.png"
-    elif title == "Other":
-        image_name = "other.png"
-    elif title == "Episode":
-        image_name = "episodes.png"
-    elif title == "TV Episode":
-        image_name = "tvepisodes.png"
-    elif title == "Web Clip":
-        image_name = "webclips.png"
-    elif title == "Parody":
-        image_name = "parody.png"
-    elif title == "Special":
-        image_name = "specials.png"
-    elif title == "Trailer":
-        image_name = "trailers.png"
-    elif title == "Misc":
-        image_name = "misc.png"
+    elif title == 'Movie':
+        image_name = 'movie.png'
+    elif title == 'Ova':
+        image_name = 'ova.png'
+    elif title == 'Other':
+        image_name = 'other.png'
+    elif title == 'Episode':
+        image_name = 'episodes.png'
+    elif title == 'TV Episode':
+        image_name = 'tvepisodes.png'
+    elif title == 'Web Clip':
+        image_name = 'webclips.png'
+    elif title == 'Parody':
+        image_name = 'parody.png'
+    elif title == 'Special':
+        image_name = 'specials.png'
+    elif title == 'Trailer':
+        image_name = 'trailers.png'
+    elif title == 'Misc':
+        image_name = 'misc.png'
     else:
-        image_name = "other.png"
+        image_name = 'other.png'
 
     thumb = os.path.join(_img, 'thumb', image_name)
     fanart = os.path.join(_img, 'fanart', image_name)
@@ -484,10 +484,10 @@ def add_content_typ_dir(name, serie_id, total_size=0, watched=0, unwatched=0):
     liz.setArt({'thumb': thumb, 'poster': poster, 'icon': 'DefaultVideo.png', 'fanart': fanart, 'banner': banner})
 
     if watched == total_size:
-        details = {'mediatype': 'tvshow', 'size': total_size, "Title": title, "Plot": title, 'playcount': 1}
+        details = {'mediatype': 'tvshow', 'size': total_size, 'Title': title, 'Plot': title, 'playcount': 1}
     else:
-        details = {'mediatype': 'tvshow', 'size': total_size, "Title": title, "Plot": title, 'playcount': 0}
-    liz.setInfo(type="Video", infoLabels=details)
+        details = {'mediatype': 'tvshow', 'size': total_size, 'Title': title, 'Plot': title, 'playcount': 0}
+    liz.setInfo(type='Video', infoLabels=details)
     liz.setProperty('TotalEpisodes', str(total_size))
     liz.setProperty('WatchedEpisodes', str(watched))
     liz.setProperty('UnWatchedEpisodes', str(unwatched))
@@ -514,22 +514,22 @@ def add_serie_item(node, parent_title, destination_playlist=False):
     # xbmcgui.Dialog().ok('add_serie_item', '')
     temp_genre = ''
     if 'tags' in node:
-        temp_genre = model_utils.get_tags(node.get("tags", {}))
+        temp_genre = model_utils.get_tags(node.get('tags', {}))
 
-    watched_sizes = node.get("watched_sizes", {})
+    watched_sizes = node.get('watched_sizes', {})
     if len(watched_sizes) > 0:
-        watched = nt.safe_int(watched_sizes.get("Episodes", 0))
-        if not nt.get_kodi_setting_bool("ignore_specials_watched"):
-            watched += nt.safe_int(watched_sizes.get("Specials", 0))
+        watched = nt.safe_int(watched_sizes.get('Episodes', 0))
+        if not nt.get_kodi_setting_bool('ignore_specials_watched'):
+            watched += nt.safe_int(watched_sizes.get('Specials', 0))
     else:
-        watched = nt.safe_int(node.get("watchedsize", ''))
+        watched = nt.safe_int(node.get('watchedsize', ''))
     list_cast = []
     list_cast_and_role = []
     actors = []
     if len(list_cast) == 0 and 'roles' in node:
-        cast_nodes = node.get("roles", {})
+        cast_nodes = node.get('roles', {})
         if len(cast_nodes) > 0:
-            if cast_nodes[0].get("character", "") != "":
+            if cast_nodes[0].get('character', '') != '':
                 result_list = model_utils.get_cast_and_role_new(cast_nodes)
             else:
                 result_list = model_utils.get_cast_and_role(cast_nodes)
@@ -539,29 +539,29 @@ def add_serie_item(node, parent_title, destination_playlist=False):
                 list_cast = result_list[0]
                 list_cast_and_role = result_list[1]
 
-    local_sizes = node.get("local_sizes", {})
-    if plugin_addon.getSetting("local_total") == "true":
+    local_sizes = node.get('local_sizes', {})
+    if plugin_addon.getSetting('local_total') == 'true':
         if len(local_sizes) > 0:
-            total = nt.safe_int(local_sizes.get("Episodes", 0)) + nt.safe_int(local_sizes.get("Specials", 0))
+            total = nt.safe_int(local_sizes.get('Episodes', 0)) + nt.safe_int(local_sizes.get('Specials', 0))
         else:
-            total = nt.safe_int(node.get("localsize", ''))
+            total = nt.safe_int(node.get('localsize', ''))
     else:
-        sizes = node.get("total_sizes", {})
+        sizes = node.get('total_sizes', {})
         if len(sizes) > 0:
-            total = nt.safe_int(sizes.get("Episodes", 0)) + nt.safe_int(sizes.get("Specials", 0))
+            total = nt.safe_int(sizes.get('Episodes', 0)) + nt.safe_int(sizes.get('Specials', 0))
         else:
-            total = nt.safe_int(node.get("localsize", ''))
-    local_size = nt.safe_int(local_sizes.get("Episodes", 0))
-    total_size = nt.safe_int(node.get("total_sizes", {}).get("Episodes", 0))
-    local_special_size = nt.safe_int(local_sizes.get("Specials", 0))
-    total_special_size = nt.safe_int(node.get("total_sizes", {}).get("Specials", 0))
+            total = nt.safe_int(node.get('localsize', ''))
+    local_size = nt.safe_int(local_sizes.get('Episodes', 0))
+    total_size = nt.safe_int(node.get('total_sizes', {}).get('Episodes', 0))
+    local_special_size = nt.safe_int(local_sizes.get('Specials', 0))
+    total_special_size = nt.safe_int(node.get('total_sizes', {}).get('Specials', 0))
 
     if watched > total:
         watched = total
 
     title = model_utils.get_title(node)
-    if "userrating" in node:
-        userrating = str(node.get("userrating", '0')).replace(',', '.')
+    if 'userrating' in node:
+        userrating = str(node.get('userrating', '0')).replace(',', '.')
     else:
         userrating = 0.0
 
@@ -577,19 +577,19 @@ def add_serie_item(node, parent_title, destination_playlist=False):
         'title':            title,
         'parenttitle':      pyproxy.decode(parent_title),
         'genre':            temp_genre,
-        'year':             node.get("year", ''),
+        'year':             node.get('year', ''),
         'episode':          total,
-        'season':           nt.safe_int(node.get("season", '1')),
+        'season':           nt.safe_int(node.get('season', '1')),
         # 'count'        : count,
         'size':             total,
-        'rating':           float(str(node.get("rating", '0')).replace(',', '.')),
+        'rating':           float(str(node.get('rating', '0')).replace(',', '.')),
         'userrating':       float(userrating),
         'playcount':        watched,
         'cast':             list_cast,  # cast : list (Michal C. Hall,
         'castandrole':      list_cast_and_role,
         # director       : string (Dagur Kari,
         # 'mpaa':             directory.get('contentRating', ''),
-        'plot':             nt.remove_anidb_links(pyproxy.decode(node.get("summary", '...'))),
+        'plot':             nt.remove_anidb_links(pyproxy.decode(node.get('summary', '...'))),
         # 'plotoutline'  : plotoutline,
         'originaltitle':    title,
         'sorttitle':        title,
@@ -622,7 +622,7 @@ def add_serie_item(node, parent_title, destination_playlist=False):
 
     directory_type = str(node.get('type', ''))
     key_id = str(node.get('id', ''))
-    key = server + "/api/serie"
+    key = server + '/api/serie'
     key = pyproxy.set_parameter(key, 'id', key_id)
     key = pyproxy.set_parameter(key, 'level', 2)
     key = pyproxy.set_parameter(key, 'tagfilter', tag_setting_flags)
@@ -630,19 +630,19 @@ def add_serie_item(node, parent_title, destination_playlist=False):
         key = pyproxy.set_parameter(key, 'nocast', 1)
 
     thumb = ''
-    if len(node["art"]["thumb"]) > 0:
-        thumb = node["art"]["thumb"][0]["url"]
-        if thumb is not None and ":" not in thumb:
+    if len(node['art']['thumb']) > 0:
+        thumb = node['art']['thumb'][0]['url']
+        if thumb is not None and ':' not in thumb:
             thumb = server + thumb
     fanart = ''
-    if len(node["art"]["fanart"]) > 0:
-        fanart = node["art"]["fanart"][0]["url"]
-        if fanart is not None and ":" not in fanart:
+    if len(node['art']['fanart']) > 0:
+        fanart = node['art']['fanart'][0]['url']
+        if fanart is not None and ':' not in fanart:
             fanart = server + fanart
     banner = ''
-    if len(node["art"]["banner"]) > 0:
-        banner = node["art"]["banner"][0]["url"]
-        if banner is not None and ":" not in banner:
+    if len(node['art']['banner']) > 0:
+        banner = node['art']['banner'][0]['url']
+        if banner is not None and ':' not in banner:
             banner = server + banner
 
     extra_data = {
@@ -713,37 +713,37 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
     :return:
     """
 
-    temp_genre = model_utils.get_tags(node.get("tags", {}))
+    temp_genre = model_utils.get_tags(node.get('tags', {}))
     title = model_utils.get_title(node)
 
-    watched_sizes = node.get("watched_sizes", {})
+    watched_sizes = node.get('watched_sizes', {})
     if len(watched_sizes) > 0:
-        watched = nt.safe_int(watched_sizes.get("Episodes", 0))
-        if not nt.get_kodi_setting_bool("ignore_specials_watched"):
-            watched += nt.safe_int(watched_sizes.get("Specials", 0))
+        watched = nt.safe_int(watched_sizes.get('Episodes', 0))
+        if not nt.get_kodi_setting_bool('ignore_specials_watched'):
+            watched += nt.safe_int(watched_sizes.get('Specials', 0))
     else:
-        watched = nt.safe_int(node.get("watchedsize", ''))
+        watched = nt.safe_int(node.get('watchedsize', ''))
 
-    if plugin_addon.getSetting("local_total") == "true":
-        local_sizes = node.get("local_sizes", {})
+    if plugin_addon.getSetting('local_total') == 'true':
+        local_sizes = node.get('local_sizes', {})
         if len(local_sizes) > 0:
-            total = nt.safe_int(local_sizes.get("Episodes", 0)) + nt.safe_int(local_sizes.get("Specials", 0))
+            total = nt.safe_int(local_sizes.get('Episodes', 0)) + nt.safe_int(local_sizes.get('Specials', 0))
         else:
-            total = nt.safe_int(node.get("localsize", ''))
+            total = nt.safe_int(node.get('localsize', ''))
     else:
-        sizes = node.get("total_sizes", {})
+        sizes = node.get('total_sizes', {})
         if len(sizes) > 0:
-            total = nt.safe_int(sizes.get("Episodes", 0)) + nt.safe_int(sizes.get("Specials", 0))
+            total = nt.safe_int(sizes.get('Episodes', 0)) + nt.safe_int(sizes.get('Specials', 0))
         else:
-            total = nt.safe_int(node.get("localsize", ''))
+            total = nt.safe_int(node.get('localsize', ''))
 
-    if node.get("type", '') == 'filter':
-        total = node.get("size", 0)
+    if node.get('type', '') == 'filter':
+        total = node.get('size', 0)
 
     if watched > total:
         watched = total
 
-    content_type = node.get("type", '') if not is_filter else "filter"
+    content_type = node.get('type', '') if not is_filter else 'filter'
 
     # filter out invalid date
     air = node.get('air', '')
@@ -783,11 +783,11 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
         if plugin_addon.getSetting('hide_rating_type') != 'Episodes' and watched < 1:  # Series|Both
             details['rating'] = 0
 
-    key_id = str(node.get("id", ''))
+    key_id = str(node.get('id', ''))
     if is_filter:
-        key = server + "/api/filter"
+        key = server + '/api/filter'
     else:
-        key = server + "/api/group"
+        key = server + '/api/group'
     key = pyproxy.set_parameter(key, 'id', key_id)
     key = pyproxy.set_parameter(key, 'filter', filter_id)
     key = pyproxy.set_parameter(key, 'level', 1)
@@ -796,19 +796,19 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
         key = pyproxy.set_parameter(key, 'nocast', 1)
 
     thumb = ''
-    if len(node["art"]["thumb"]) > 0:
-        thumb = node["art"]["thumb"][0]["url"]
-        if thumb is not None and ":" not in thumb:
+    if len(node['art']['thumb']) > 0:
+        thumb = node['art']['thumb'][0]['url']
+        if thumb is not None and ':' not in thumb:
             thumb = server + thumb
     fanart = ''
-    if len(node["art"]["fanart"]) > 0:
-        fanart = node["art"]["fanart"][0]["url"]
-        if fanart is not None and ":" not in fanart:
+    if len(node['art']['fanart']) > 0:
+        fanart = node['art']['fanart'][0]['url']
+        if fanart is not None and ':' not in fanart:
             fanart = server + fanart
     banner = ''
-    if len(node["art"]["banner"]) > 0:
-        banner = node["art"]["banner"][0]["url"]
-        if banner is not None and ":" not in banner:
+    if len(node['art']['banner']) > 0:
+        banner = node['art']['banner'][0]['url']
+        if banner is not None and ':' not in banner:
             banner = server + banner
 
     extra_data = {
@@ -862,8 +862,8 @@ def add_filter_item(menu):
     :param menu: json tree
     """
     use_mode = 4
-    key = menu["url"]
-    size = nt.safe_int(menu.get("size"))
+    key = menu['url']
+    size = nt.safe_int(menu.get('size'))
     title = menu['name']
 
     if title == 'Continue Watching (SYSTEM)':
@@ -872,39 +872,39 @@ def add_filter_item(menu):
         title = 'Unsorted'
         use_mode = 8
 
-    if plugin_addon.getSetting("spamLog") == "true":
-        xbmc.log("build_filters_menu - key = " + key, xbmc.LOGWARNING)
+    if plugin_addon.getSetting('spamLog') == 'true':
+        xbmc.log('build_filters_menu - key = ' + key, xbmc.LOGWARNING)
 
     if plugin_addon.getSetting('request_nocast') == 'true' and title != 'Unsorted':
         key = pyproxy.set_parameter(key, 'nocast', 1)
     key = pyproxy.set_parameter(key, 'level', 2)
-    if title == "Airing Today":
+    if title == 'Airing Today':
         key = pyproxy.set_parameter(key, 'level', 0)
     key = pyproxy.set_parameter(key, 'tagfilter', tag_setting_flags)
     filter_url = key
 
     thumb = ''
     try:
-        if len(menu["art"]["thumb"]) > 0:
-            thumb = menu["art"]["thumb"][0]["url"]
-            if ":" not in thumb:
+        if len(menu['art']['thumb']) > 0:
+            thumb = menu['art']['thumb'][0]['url']
+            if ':' not in thumb:
                 thumb = server + thumb
     except:
         pass
 
     fanart = ''
     try:
-        if len(menu["art"]["fanart"]) > 0:
-            fanart = menu["art"]["fanart"][0]["url"]
-            if ":" not in fanart:
+        if len(menu['art']['fanart']) > 0:
+            fanart = menu['art']['fanart'][0]['url']
+            if ':' not in fanart:
                 fanart = server + fanart
     except:
         pass
     banner = ''
     try:
-        if len(menu["art"]["banner"]) > 0:
-            banner = menu["art"]["banner"][0]["url"]
-            if ":" not in banner:
+        if len(menu['art']['banner']) > 0:
+            banner = menu['art']['banner'][0]['url']
+            if ':' not in banner:
                 banner = server + banner
     except:
         pass
@@ -913,7 +913,7 @@ def add_filter_item(menu):
     u = pyproxy.set_parameter(u, 'url', filter_url)
     u = pyproxy.set_parameter(u, 'mode', use_mode)
     u = pyproxy.set_parameter(u, 'name', title)
-    u = pyproxy.set_parameter(u, 'filter_id', menu.get("id", ""))
+    u = pyproxy.set_parameter(u, 'filter_id', menu.get('id', ''))
 
     liz = xbmcgui.ListItem(label=title, label2=title, path=filter_url)
     liz.setArt({
@@ -926,7 +926,7 @@ def add_filter_item(menu):
     })
     if thumb == '':
         liz.setIconImage('DefaultVideo.png')
-    liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title, "count": size})
+    liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title, 'count': size})
     list_items.append((u, liz, True))
 
 
@@ -945,27 +945,27 @@ def build_filters_menu():
 
     filters_sorting = {'Airing Today': 0, 'Seasons': 1, 'Years': 2, 'Tags': 3, 'Unsort': 4}
     try:
-        filters_key = server + "/api/filter"
-        filters_key = pyproxy.set_parameter(filters_key, "level", 0)
+        filters_key = server + '/api/filter'
+        filters_key = pyproxy.set_parameter(filters_key, 'level', 0)
         retrieved_json = nt.get_json(filters_key)
         if retrieved_json is not None:
             json_menu = json.loads(retrieved_json)
             kodi_utils.set_window_heading(json_menu['name'])
             try:
                 menu_append = []
-                for menu in json_menu["filters"]:
+                for menu in json_menu['filters']:
                     title = menu['name']
                     if title == 'Seasons':
                         airing = dict({
-                            "name": plugin_addon.getLocalizedString(30223),
-                            "url": server + "/api/serie/today",
+                            'name': plugin_addon.getLocalizedString(30223),
+                            'url': server + '/api/serie/today',
                         })
                         airing['art'] = {}
                         airing['art']['fanart'] = []
                         airing['art']['thumb'] = []
                         airing['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'airing.jpg')})
                         airing['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'airing.png')})
-                        if nt.get_version() >= LooseVersion("3.8"):
+                        if nt.get_version() >= LooseVersion('3.8'):
                             menu_append.insert(filters_sorting[title], airing)
                         menu['art'] = {}
                         menu['art']['fanart'] = []
@@ -980,7 +980,7 @@ def build_filters_menu():
                         menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'tags.jpg')})
                         menu['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'tags.png')})
                         menu_append.insert(filters_sorting[title], menu)
-                    elif title == 'Unsort' and plugin_addon.getSetting("show_unsort") == "true":
+                    elif title == 'Unsort' and plugin_addon.getSetting('show_unsort') == 'true':
                             menu['art'] = {}
                             menu['art']['fanart'] = []
                             menu['art']['thumb'] = []
@@ -994,7 +994,7 @@ def build_filters_menu():
                         menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'years.jpg')})
                         menu['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'years.png')})
                         menu_append.insert(filters_sorting[title], menu)
-                for menu in json_menu["filters"]:
+                for menu in json_menu['filters']:
                     if menu['name'] in filters_sorting:
                         continue
                     add_filter_item(menu)
@@ -1003,14 +1003,14 @@ def build_filters_menu():
                     add_filter_item(menu)
 
                 # region Calendar
-                if plugin_addon.getSetting("show_calendar") == "true":
-                    soon_url = server + "/api/serie/soon"
+                if plugin_addon.getSetting('show_calendar') == 'true':
+                    soon_url = server + '/api/serie/soon'
                     title = plugin_addon.getLocalizedString(30222)
                     liz = xbmcgui.ListItem(label=title, label2=title, path=soon_url)
                     thumb = os.path.join(_img, 'icons', 'calendar.png')
-                    liz.setArt({"icon": thumb, "poster": thumb, "thumb": thumb,
-                                "fanart": os.path.join(_img, 'backgrounds', 'calendar.jpg')})
-                    liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
+                    liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
+                                'fanart': os.path.join(_img, 'backgrounds', 'calendar.jpg')})
+                    liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', soon_url)
                     u = pyproxy.set_parameter(u, 'mode', str(9))
@@ -1019,14 +1019,14 @@ def build_filters_menu():
                 # endregion
 
                 # region Search
-                if plugin_addon.getSetting("show_search") == "true":
-                    search_url = server + "/api/search"
+                if plugin_addon.getSetting('show_search') == 'true':
+                    search_url = server + '/api/search'
                     title = plugin_addon.getLocalizedString(30221)
                     liz = xbmcgui.ListItem(label=title, label2=title, path=search_url)
                     thumb = os.path.join(_img, 'icons', 'search.png')
-                    liz.setArt({"icon": thumb, "poster": thumb, "thumb": thumb,
-                                "fanart": os.path.join(_img, 'backgrounds', 'search.jpg')})
-                    liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
+                    liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
+                                'fanart': os.path.join(_img, 'backgrounds', 'search.jpg')})
+                    liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', search_url)
                     u = pyproxy.set_parameter(u, 'mode', str(3))
@@ -1035,13 +1035,13 @@ def build_filters_menu():
                 # endregion
 
                 # region Settings
-                if plugin_addon.getSetting("show_settings") == "true":
+                if plugin_addon.getSetting('show_settings') == 'true':
                     title = plugin_addon.getLocalizedString(30107)
                     liz = xbmcgui.ListItem(label=title, label2=title)
                     thumb = os.path.join(_img, 'icons', 'settings.png')
-                    liz.setArt({"icon": thumb, "poster": thumb, "thumb": thumb,
-                                "fanart": os.path.join(_img, 'backgrounds', 'settings.jpg')})
-                    liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
+                    liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
+                                'fanart': os.path.join(_img, 'backgrounds', 'settings.jpg')})
+                    liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', '')
                     u = pyproxy.set_parameter(u, 'mode', str(11))
@@ -1050,13 +1050,13 @@ def build_filters_menu():
                 # endregion
 
                 # region Shoko
-                if plugin_addon.getSetting("show_shoko") == "true":
+                if plugin_addon.getSetting('show_shoko') == 'true':
                     title = plugin_addon.getLocalizedString(30115)
                     liz = xbmcgui.ListItem(label=title, label2=title)
                     thumb = os.path.join(_img, 'icons', 'settings.png')
-                    liz.setArt({"icon": thumb, "poster": thumb, "thumb": thumb,
-                                "fanart": os.path.join(_img, 'backgrounds', 'settings.jpg')})
-                    liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
+                    liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
+                                'fanart': os.path.join(_img, 'backgrounds', 'settings.jpg')})
+                    liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', '')
                     u = pyproxy.set_parameter(u, 'mode', str(12))
@@ -1065,13 +1065,13 @@ def build_filters_menu():
                 # endregion
 
                 # region Experiment
-                if plugin_addon.getSetting("onepunchmen") == "true":
+                if plugin_addon.getSetting('onepunchmen') == 'true':
                     title = 'Experiment'
                     liz = xbmcgui.ListItem(label=title, label2=title)
                     thumb = os.path.join(_img, 'icons', 'settings.png')
-                    liz.setArt({"icon": thumb, "poster": thumb, "thumb": thumb,
-                                "fanart": os.path.join(_img, 'backgrounds', 'settings.jpg')})
-                    liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
+                    liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
+                                'fanart': os.path.join(_img, 'backgrounds', 'settings.jpg')})
+                    liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', '')
                     u = pyproxy.set_parameter(u, 'mode', str(13))
@@ -1080,7 +1080,7 @@ def build_filters_menu():
                 # endregion
 
             except Exception as e:
-                nt.error("util.error during build_filters_menu", str(e))
+                nt.error('util.error during build_filters_menu', str(e))
 
             end_of_directory(False, force_sort=0)
 
@@ -1090,7 +1090,7 @@ def build_filters_menu():
             build_network_menu()
 
     except Exception as e:
-        nt.error("Invalid JSON Received in build_filters_menu", str(e))
+        nt.error('Invalid JSON Received in build_filters_menu', str(e))
 
 
 def build_groups_menu(params, json_body=None):
@@ -1128,13 +1128,13 @@ def build_groups_menu(params, json_body=None):
             busy.update(20)
             html = nt.get_json(temp_url)
             busy.update(50, plugin_addon.getLocalizedString(30162))
-            if plugin_addon.getSetting("spamLog") == "true":
+            if plugin_addon.getSetting('spamLog') == 'true':
                 xbmc.log(params['url'], xbmc.LOGWARNING)
                 xbmc.log(html, xbmc.LOGWARNING)
             html_body = json.loads(html)
             busy.update(70)
             directory_type = html_body['type']
-            if directory_type != "filters":
+            if directory_type != 'filters':
                 # level 2 will fill group and series (for filter)
                 temp_url = params['url']
                 temp_url = pyproxy.set_parameter(temp_url, 'level', 2)
@@ -1175,25 +1175,25 @@ def build_groups_menu(params, json_body=None):
                     filter_id = body.get('id', '')
 
             if directory_type == 'filter':
-                for grp in body["groups"]:
-                    if len(grp["series"]) == 1:
-                            add_serie_item(grp["series"][0], parent_title)
-                    elif len(grp["series"]) > 1:
+                for grp in body['groups']:
+                    if len(grp['series']) == 1:
+                            add_serie_item(grp['series'][0], parent_title)
+                    elif len(grp['series']) > 1:
                         if json_body is not None:
-                            for srg in grp["series"]:
+                            for srg in grp['series']:
                                 add_serie_item(srg, parent_title)
                         else:
                             add_group_item(grp, parent_title, filter_id)
             elif directory_type == 'filters':
-                for flt in body["filters"]:
+                for flt in body['filters']:
                     add_group_item(flt, parent_title, filter_id, True)
             elif directory_type == 'group':
                 for sers in body['series']:
                     add_serie_item(sers, parent_title)
         except Exception as e:
-            nt.error("util.error during build_groups_menu", str(e))
+            nt.error('util.error during build_groups_menu', str(e))
     except Exception as e:
-        nt.error("Invalid JSON Received in build_groups_menu", str(e))
+        nt.error('Invalid JSON Received in build_groups_menu', str(e))
 
     if params.get('name', '') == 'Seasons':  # TODO make this language neutral
         end_of_directory(force_sort=0)
@@ -1212,7 +1212,7 @@ def build_serie_episodes_types(params):
 
     try:
         html = nt.get_json(params['url'])
-        if plugin_addon.getSetting("spamLog") == "true":
+        if plugin_addon.getSetting('spamLog') == 'true':
             xbmc.log(html, xbmc.LOGWARNING)
         body = json.loads(html)
 
@@ -1221,19 +1221,19 @@ def build_serie_episodes_types(params):
             try:
                 parent_title = body.get('name', '')
             except Exception as exc:
-                nt.error("Unable to get parent title in buildTVSeasons", str(exc))
+                nt.error('Unable to get parent title in buildTVSeasons', str(exc))
 
             content_type = dict()
             content_watched = dict()
-            if "eps" in body:
-                if len(body.get("eps", {})) >= 1:
-                    for ep in body["eps"]:
-                        if ep["eptype"] not in content_type.keys():
-                            content_type[ep["eptype"]] = ep["art"]["thumb"][0]["url"] if len(ep["art"]["thumb"]) > 0 \
+            if 'eps' in body:
+                if len(body.get('eps', {})) >= 1:
+                    for ep in body['eps']:
+                        if ep['eptype'] not in content_type.keys():
+                            content_type[ep['eptype']] = ep['art']['thumb'][0]['url'] if len(ep['art']['thumb']) > 0 \
                                 else ''
-                            content_watched[ep["eptype"]] = 0
+                            content_watched[ep['eptype']] = 0
                         if ep.get('view', 0) == 1:
-                            content_watched[ep["eptype"]] += 1
+                            content_watched[ep['eptype']] += 1
             # no matter what type is its only one type, flat directory
             if len(content_type) == 1:
                 build_serie_episodes(params)
@@ -1252,23 +1252,23 @@ def build_serie_episodes_types(params):
                 for content in content_type:
                     try:
                         type_of = map_types[content]
-                        if plugin_addon.getSetting("local_total") == "true":
+                        if plugin_addon.getSetting('local_total') == 'true':
                             total_size = body['local_sizes'][type_of]
                         else:
                             total_size = body['total_sizes'][type_of]
                         watched = content_watched[content]
                         unwatched = int(total_size) - int(watched)
-                        add_content_typ_dir(content, body.get("id", ''), total_size, watched, unwatched)
+                        add_content_typ_dir(content, body.get('id', ''), total_size, watched, unwatched)
                     except Exception as ex:
-                        add_content_typ_dir(content, body.get("id", ''))
+                        add_content_typ_dir(content, body.get('id', ''))
                         xbmc.log('-- is %s supported? error: %s' % (content, ex), xbmc.LOGWARNING)
                 end_of_directory(place='group')
                 return
 
         except Exception as exs:
-            nt.error("util.error during build_serie_episodes_types", str(exs))
+            nt.error('util.error during build_serie_episodes_types', str(exs))
     except Exception as exc:
-        nt.error("Invalid JSON Received in build_serie_episodes_types", str(exc))
+        nt.error('Invalid JSON Received in build_serie_episodes_types', str(exc))
     end_of_directory(place='group')
 
 
@@ -1294,7 +1294,7 @@ def build_serie_episodes(params):
         html = nt.get_json(params['url'])
         busy.update(50, plugin_addon.getLocalizedString(30162))
         body = json.loads(html)
-        if plugin_addon.getSetting("spamLog") == "true":
+        if plugin_addon.getSetting('spamLog') == 'true':
             xbmc.log(html, xbmc.LOGWARNING)
 
         try:
@@ -1303,7 +1303,7 @@ def build_serie_episodes(params):
                 parent_title = body.get('name', '')
                 kodi_utils.set_window_heading(parent_title)
             except Exception as exc:
-                nt.error("Unable to get parent title in buildTVEpisodes", str(exc))
+                nt.error('Unable to get parent title in buildTVEpisodes', str(exc))
 
             xbmcplugin.setPluginCategory(handle, parent_title)
 
@@ -1325,7 +1325,7 @@ def build_serie_episodes(params):
             if len(list_cast) == 0:
                 cast_nodes = body.get('roles', {})
                 if len(cast_nodes) > 0:
-                    if cast_nodes[0].get("character", "") != "":
+                    if cast_nodes[0].get('character', '') != '':
                         result_list = model_utils.get_cast_and_role_new(cast_nodes)
                     else:
                         result_list = model_utils.get_cast_and_role(cast_nodes)
@@ -1335,7 +1335,7 @@ def build_serie_episodes(params):
                         list_cast = result_list[0]
                         list_cast_and_role = result_list[1]
 
-            short_tag = plugin_addon.getSetting("short_tag_list") == "true"
+            short_tag = plugin_addon.getSetting('short_tag_list') == 'true'
             temp_genre = model_utils.get_tags(body.get('tags', {}))
             if short_tag:
                 temp_genre = temp_genre[:50]
@@ -1345,12 +1345,12 @@ def build_serie_episodes(params):
             if len(body.get('eps', {})) <= 0:
                 # TODO: When there is eps {} = 0
                 if is_fake == 0:
-                    nt.error("No episodes in list")
+                    nt.error('No episodes in list')
                 else:
                     thumb = ''
-                    if len(body["art"]["thumb"]) > 0:
-                        thumb = body["art"]["thumb"][0]["url"]
-                        if thumb is not None and ":" not in thumb:
+                    if len(body['art']['thumb']) > 0:
+                        thumb = body['art']['thumb'][0]['url']
+                        if thumb is not None and ':' not in thumb:
                             thumb = server + thumb
                     details = {
                         'mediatype': 'episode',
@@ -1390,16 +1390,16 @@ def build_serie_episodes(params):
 
             elif len(body.get('eps', {})) > 0:
                 # add item to move to next not played item (not marked as watched)
-                if plugin_addon.getSetting("show_continue") == "true":
-                    if pyproxy.decode(parent_title).lower() != "unsort":
-                        if plugin_addon.getSetting("replace_continue") == "false":
-                            nt.add_dir("-continue-", '', '7', os.path.join(_img, 'thumb', 'other.png'),
-                                       "Next episode", os.path.join(_img, 'poster', 'other.png'), "4",
+                if plugin_addon.getSetting('show_continue') == 'true':
+                    if pyproxy.decode(parent_title).lower() != 'unsort':
+                        if plugin_addon.getSetting('replace_continue') == 'false':
+                            nt.add_dir('-continue-', '', '7', os.path.join(_img, 'thumb', 'other.png'),
+                                       'Next episode', os.path.join(_img, 'poster', 'other.png'), '4',
                                        str(next_episode))
                         else:
                             # show status for only one type when set to local size
-                            if plugin_addon.getSetting("local_total") == "true":
-                                if "type" in params:  # type folder
+                            if plugin_addon.getSetting('local_total') == 'true':
+                                if 'type' in params:  # type folder
                                     types = str(params['type'])
                                     row_type = map_types[types]
                                 else:  # flat folders
@@ -1407,7 +1407,7 @@ def build_serie_episodes(params):
                                     types = map_types.keys()[map_types.values().index(row_type)]
                                 ep_size = nt.safe_int(body.get('local_sizes', {}).get(row_type, 0))
                                 ep_total_size = nt.safe_int(body.get('total_sizes', {}).get(row_type, 0))
-                                status_label = "[ %s: %s/%s ]" % (map_shortcuts_x_types[types],
+                                status_label = '[ %s: %s/%s ]' % (map_shortcuts_x_types[types],
                                                                   ep_size, ep_total_size)
                             # show all type status for server size settings - that way you know what you are missing
                             else:
@@ -1416,19 +1416,19 @@ def build_serie_episodes(params):
                                     size_local = nt.safe_int(body.get('local_sizes', {}).get(row_type, 0))
                                     total_size = nt.safe_int(body.get('total_sizes', {}).get(row_type, 0))
                                     if total_size != 0:
-                                        status_label += "%s: %s/%s" % (map_shortcuts_x_types[map_types.keys()[
+                                        status_label += '%s: %s/%s' % (map_shortcuts_x_types[map_types.keys()[
                                             map_types.values().index(row_type)]], size_local, total_size)
-                                        status_label += " "
+                                        status_label += ' '
                                 status_label += ']'
 
                             nt.add_dir(status_label, '', '7', os.path.join(_img, 'thumb', 'other.png'),
-                                       "Episode counter", os.path.join(_img, 'poster', 'other.png'), "4",
+                                       'Episode counter', os.path.join(_img, 'poster', 'other.png'), '4',
                                        str(next_episode))
                 selected_list_item = False
                 for video in body['eps']:
                     # check if episode have files
                     episode_type = True
-                    if "type" in params:
+                    if 'type' in params:
                         episode_type = True if str(video['eptype']) == str(params['type']) else False
                     if not episode_type:
                         continue
@@ -1457,7 +1457,7 @@ def build_serie_episodes(params):
                         if title is None:
                             title = 'Episode ' + str(video.get('epnumber', '??'))
 
-                        is_watched = int(nt.safe_int(video.get("view", '0')))
+                        is_watched = int(nt.safe_int(video.get('view', '0')))
                         # Required listItem entries for XBMC
                         details = {
                             'size': nt.safe_int(video['files'][0].get('size', '0')),
@@ -1471,7 +1471,7 @@ def build_serie_episodes(params):
                             'plot': nt.remove_anidb_links(pyproxy.decode(video['summary'])),
                             'title': title,
                             'originaltitle': pyproxy.decode(video.get('name', '')),
-                            'sorttitle': str(video.get('epnumber', '')) + " " + title,
+                            'sorttitle': str(video.get('epnumber', '')) + ' ' + title,
                             'duration': duration,
                             'tagline': temp_genre,  # short description of movie k18
                             'tvshowtitle': grandparent_title,
@@ -1479,14 +1479,14 @@ def build_serie_episodes(params):
                             'tag': temp_genre,  # k18
                             'aired': air,
                             'votes': nt.safe_int(video.get('votes', '')),
-                            'mediatype': 'episode',  # "video", "movie", "tvshow", "season", "episode", "musicvideo"
+                            'mediatype': 'episode',  # 'video', 'movie', 'tvshow', 'season', 'episode', 'musicvideo'
 
                             # CUSTOM
                             'parenttitle':   pyproxy.decode(parent_title),
                             'tvshowname': grandparent_title
                         }
 
-                        if str(video['eptype']) != "Special":
+                        if str(video['eptype']) != 'Special':
                             season = str(video.get('season', '1'))
                             try:
                                 if season != '1':
@@ -1504,28 +1504,28 @@ def build_serie_episodes(params):
                             details['date'] = temp_date[1] + '.' + temp_date[2] + '.' + temp_date[0]
 
                         thumb = ''
-                        if len(video["art"]["thumb"]) > 0:
-                            thumb = video["art"]["thumb"][0]["url"]
-                            if thumb is not None and ":" not in thumb:
+                        if len(video['art']['thumb']) > 0:
+                            thumb = video['art']['thumb'][0]['url']
+                            if thumb is not None and ':' not in thumb:
                                 thumb = server + thumb
                         fanart = ''
-                        if len(video["art"]["fanart"]) > 0:
-                            fanart = video["art"]["fanart"][0]["url"]
-                            if fanart is not None and ":" not in fanart:
+                        if len(video['art']['fanart']) > 0:
+                            fanart = video['art']['fanart'][0]['url']
+                            if fanart is not None and ':' not in fanart:
                                 fanart = server + fanart
                         banner = ''
-                        if len(video["art"]["banner"]) > 0:
-                            banner = video["art"]["banner"][0]["url"]
-                            if banner is not None and ":" not in banner:
+                        if len(video['art']['banner']) > 0:
+                            banner = video['art']['banner'][0]['url']
+                            if banner is not None and ':' not in banner:
                                 banner = server + banner
 
-                        if plugin_addon.getSetting('hide_images') == "true" and is_watched == 0:
+                        if plugin_addon.getSetting('hide_images') == 'true' and is_watched == 0:
                             # TODO add default spoiler_protected images to resources package
                             thumb = ''
                             fanart = ''
                             banner = ''
 
-                        key = video["files"][0]["url"]
+                        key = video['files'][0]['url']
 
                         # Extra data required to manage other properties
                         extra_data = {
@@ -1549,7 +1549,7 @@ def build_serie_episodes(params):
                         }
 
                         # Information about streams inside video file
-                        if len(video["files"][0].get("media", {})) > 0:
+                        if len(video['files'][0].get('media', {})) > 0:
                             model_utils.video_file_information(video['files'][0]['media'], extra_data)
 
                         # Determine what type of watched flag [overlay] to use
@@ -1571,10 +1571,10 @@ def build_serie_episodes(params):
                                 select_this_item = True
                                 selected_list_item = True
                             # Hide plot and thumb for unwatched by kodi setting
-                            if not nt.get_kodi_setting_bool("videolibrary.showunwatchedplots"):
+                            if not nt.get_kodi_setting_bool('videolibrary.showunwatchedplots'):
                                 details['plot'] \
-                                    = "Hidden due to user setting.\nCheck Show Plot" + \
-                                      " for Unwatched Items in the Video Library Settings."
+                                    = 'Hidden due to user setting.\nCheck Show Plot' + \
+                                      ' for Unwatched Items in the Video Library Settings.'
                                 extra_data['thumb'] = thumb
                                 extra_data['fanart_image'] = fanart
 
@@ -1591,24 +1591,24 @@ def build_serie_episodes(params):
                                 details['rating'] = 0
 
                         if plugin_addon.getSetting('hide_title') != 'Never' and is_watched < 1:
-                            if str(video['eptype']) == "Special":
+                            if str(video['eptype']) == 'Special':
                                 if plugin_addon.getSetting('hide_title') != 'Episodes':  # both,specials
                                     details['title'] = plugin_addon.getLocalizedString(30076)
-                            elif str(video['eptype']) == "Episode":
+                            elif str(video['eptype']) == 'Episode':
                                 if plugin_addon.getSetting('hide_title') != 'Specials':  # both,episodes
                                     details['title'] = plugin_addon.getLocalizedString(30076)
 
-                        if plugin_addon.getSetting('hide_plot') == "true" and is_watched < 1:
+                        if plugin_addon.getSetting('hide_plot') == 'true' and is_watched < 1:
                             details['plot'] = plugin_addon.getLocalizedString(30079)
 
                         context = None
 
                         u = sys.argv[0]
                         u = pyproxy.set_parameter(u, 'mode', 1)
-                        u = pyproxy.set_parameter(u, 'file_id', video["files"][0].get("id", 0))
-                        u = pyproxy.set_parameter(u, 'ep_id', video.get("id", ''))
-                        u = pyproxy.set_parameter(u, 'serie_id', body.get("id", ''))
-                        u = pyproxy.set_parameter(u, 'userrate', details["userrating"])
+                        u = pyproxy.set_parameter(u, 'file_id', video['files'][0].get('id', 0))
+                        u = pyproxy.set_parameter(u, 'ep_id', video.get('id', ''))
+                        u = pyproxy.set_parameter(u, 'serie_id', body.get('id', ''))
+                        u = pyproxy.set_parameter(u, 'userrate', details['userrating'])
                         u = pyproxy.set_parameter(u, 'ui_index', str(int(episode_count - 1)))
 
                         add_gui_item(u, details, extra_data, context,
@@ -1616,15 +1616,15 @@ def build_serie_episodes(params):
                                      force_select=select_this_item)
 
         except Exception as exc:
-            nt.error("util.error during build_serie_episodes", str(exc))
+            nt.error('util.error during build_serie_episodes', str(exc))
     except Exception as exc:
-        nt.error("Invalid JSON Received in build_serie_episodes", str(exc))
+        nt.error('Invalid JSON Received in build_serie_episodes', str(exc))
     if is_fake == 0:
         busy.close()
         end_of_directory(place='episode')
     # settings / media / videos / {advanced} / Select first unwatched tv show season,episode (always)
     if nt.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') > 0 or \
-            plugin_addon.getSetting("select_unwatched") == "true":
+            plugin_addon.getSetting('select_unwatched') == 'true':
         try:
             xbmc.sleep(150)
             new_window = xbmcgui.Window(xbmcgui.getCurrentWindowId())
@@ -1641,33 +1641,33 @@ def build_cast_menu(params):
     :return:
     """
     try:
-        search_url = server + "/api/cast/byseries"
-        if params.get("serie_id", "") == "":
+        search_url = server + '/api/cast/byseries'
+        if params.get('serie_id', '') == '':
             return
-        search_url = pyproxy.set_parameter(search_url, 'id', params.get("serie_id", ""))
+        search_url = pyproxy.set_parameter(search_url, 'id', params.get('serie_id', ''))
         search_url = pyproxy.set_parameter(search_url, 'notag', 1)
         search_url = pyproxy.set_parameter(search_url, 'level', 0)
         cast_nodes = json.loads(nt.get_json(search_url))
-        if plugin_addon.getSetting("spamLog") == "true":
-            nt.dump_dictionary(cast_nodes, "cast_nodes")
+        if plugin_addon.getSetting('spamLog') == 'true':
+            nt.dump_dictionary(cast_nodes, 'cast_nodes')
 
-        base_search_url = server + "/api/cast/search"
-        base_search_url = pyproxy.set_parameter(base_search_url, "fuzzy", 0)
+        base_search_url = server + '/api/cast/search'
+        base_search_url = pyproxy.set_parameter(base_search_url, 'fuzzy', 0)
 
         if len(cast_nodes) > 0:
-            if cast_nodes[0].get("character", "") == "":
+            if cast_nodes[0].get('character', '') == '':
                 return
 
             xbmcplugin.setContent(handle, 'tvshows')
             for cast in cast_nodes:
-                character = cast.get(u"character", u"")
-                character_image = server + cast.get("character_image", "")
-                character_description = cast.get("character_description")
-                staff = cast.get("staff", "")
-                staff_image = server + cast.get("staff_image", "")
+                character = cast.get(u'character', u'')
+                character_image = server + cast.get('character_image', '')
+                character_description = cast.get('character_description')
+                staff = cast.get('staff', '')
+                staff_image = server + cast.get('staff_image', '')
 
                 liz = xbmcgui.ListItem(staff)
-                new_search_url = pyproxy.set_parameter(base_search_url, "query", staff)
+                new_search_url = pyproxy.set_parameter(base_search_url, 'query', staff)
 
                 details = {
                     'mediatype': 'episode',
@@ -1682,14 +1682,14 @@ def build_cast_menu(params):
                     character_description = nt.remove_anidb_links(character_description)
                     details['plot'] = character_description
 
-                liz.setInfo(type="video", infoLabels=details)
+                liz.setInfo(type='video', infoLabels=details)
 
-                if staff_image != "":
-                    liz.setArt({"thumb": staff_image,
-                                "icon": staff_image,
-                                "poster": staff_image})
-                if character_image != "":
-                    liz.setArt({"fanart": character_image})
+                if staff_image != '':
+                    liz.setArt({'thumb': staff_image,
+                                'icon': staff_image,
+                                'poster': staff_image})
+                if character_image != '':
+                    liz.setArt({'fanart': character_image})
 
                 u = sys.argv[0]
                 u = pyproxy.set_parameter(u, 'mode', 1)
@@ -1701,7 +1701,7 @@ def build_cast_menu(params):
 
             end_of_directory(place='filter')
     except:
-        nt.error("util.error in build_cast_menu")
+        nt.error('util.error in build_cast_menu')
 
 
 def build_search_directory():
@@ -1710,25 +1710,25 @@ def build_search_directory():
     :return:
     """
     items = [{
-        "title": plugin_addon.getLocalizedString(30224),
-        "url": server + "/api/serie",
-        "mode": 3,
-        "poster": "none",
-        "icon": os.path.join(_img, 'icons', 'new-search.png'),
-        "fanart": os.path.join(_img, 'backgrounds', 'new-search.jpg'),
-        "type": "",
-        "plot": "",
-        "extras": "true-search"
+        'title': plugin_addon.getLocalizedString(30224),
+        'url': server + '/api/serie',
+        'mode': 3,
+        'poster': 'none',
+        'icon': os.path.join(_img, 'icons', 'new-search.png'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'type': '',
+        'plot': '',
+        'extras': 'true-search'
     }, {
-        "title": "[COLOR yellow]Clear Search Terms[/COLOR]",
-        "url": "delete-all",
-        "mode": 31,
-        "poster": "none",
-        "icon": os.path.join(_img, 'icons', 'clear-search.png'),
-        "fanart": os.path.join(_img, 'backgrounds', 'clear-search.jpg'),
-        "type": "",
-        "plot": "",
-        "extras": ""
+        'title': '[COLOR yellow]Clear Search Terms[/COLOR]',
+        'url': 'delete-all',
+        'mode': 31,
+        'poster': 'none',
+        'icon': os.path.join(_img, 'icons', 'clear-search.png'),
+        'fanart': os.path.join(_img, 'backgrounds', 'clear-search.jpg'),
+        'type': '',
+        'plot': '',
+        'extras': ''
     }]
 
     # read search history
@@ -1738,17 +1738,17 @@ def build_search_directory():
         try:
             if len(ss[0]) > 0:
                 items.append({
-                    "title": ss[0],
-                    "url": server + "/api/search",
-                    "query": ss[0],
-                    "mode": 3,
-                    "poster": "none",
-                    "icon": os.path.join(_img, 'icons', 'search.png'),
-                    "fanart": os.path.join(_img, 'backgrounds', 'search.jpg'),
-                    "type": "",
-                    "plot": "",
-                    "extras": "force-search",
-                    "extras2": "db-search"
+                    'title': ss[0],
+                    'url': server + '/api/search',
+                    'query': ss[0],
+                    'mode': 3,
+                    'poster': 'none',
+                    'icon': os.path.join(_img, 'icons', 'search.png'),
+                    'fanart': os.path.join(_img, 'backgrounds', 'search.jpg'),
+                    'type': '',
+                    'plot': '',
+                    'extras': 'force-search',
+                    'extras2': 'db-search'
                 })
         except:
             pass
@@ -1766,7 +1766,7 @@ def build_search_directory():
                     'poster': detail['poster'],
                     'icon': detail['icon'],
                     'fanart': detail['fanart']})
-        liz.setInfo(type=detail['type'], infoLabels={"Title": pyproxy.encode(detail['title']), "Plot": detail['plot']})
+        liz.setInfo(type=detail['type'], infoLabels={'Title': pyproxy.encode(detail['title']), 'Plot': detail['plot']})
         list_items.append((u, liz, True))
     end_of_directory(False)
 
@@ -1795,7 +1795,7 @@ def build_serie_soon(params):
         busy.update(20)
         html = nt.get_json(temp_url)
         busy.update(50, plugin_addon.getLocalizedString(30162))
-        if plugin_addon.getSetting("spamLog") == "true":
+        if plugin_addon.getSetting('spamLog') == 'true':
             xbmc.log(params['url'], xbmc.LOGWARNING)
             xbmc.log(html, xbmc.LOGWARNING)
         busy.update(70)
@@ -1821,7 +1821,7 @@ def build_serie_soon(params):
                     pass
                 else:
                     used_dates.append(sers.get('air', ''))
-                    soon_url = server + "/api/serie/soon"
+                    soon_url = server + '/api/serie/soon'
                     details = {'aired': sers.get('air', ''), 'title': sers.get('air', '')}
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', soon_url)
@@ -1834,9 +1834,9 @@ def build_serie_soon(params):
                 add_serie_item(sers, parent_title)
 
         except Exception as e:
-            nt.error("util.error during build_serie_soon date_air", str(e))
+            nt.error('util.error during build_serie_soon date_air', str(e))
     except Exception as e:
-        nt.error("Invalid JSON Received in build_serie_soon", str(e))
+        nt.error('Invalid JSON Received in build_serie_soon', str(e))
     end_of_directory()
 
 
@@ -1851,16 +1851,16 @@ def build_raw_list(params):
     try:
         html = nt.get_json(params['url'])
         body = json.loads(html)
-        if plugin_addon.getSetting("spamLog") == "true":
+        if plugin_addon.getSetting('spamLog') == 'true':
             xbmc.log(html, xbmc.LOGWARNING)
 
         try:
             for file_body in body:
                 add_raw_files(file_body)
         except Exception as exc:
-            nt.error("util.error during build_raw_list add_raw_files", str(exc))
+            nt.error('util.error during build_raw_list add_raw_files', str(exc))
     except Exception as exc:
-        nt.error("util.error during build_raw_list", str(exc))
+        nt.error('util.error during build_raw_list', str(exc))
 
     end_of_directory(False)
 
@@ -1869,12 +1869,12 @@ def build_network_menu():
     """
     Build fake menu that will alert user about network util.error (unable to connect to api)
     """
-    network_url = server + "/api/version"
+    network_url = server + '/api/version'
     title = plugin_addon.getLocalizedString(30197)
     liz = xbmcgui.ListItem(label=title, label2=title, path=network_url)
-    liz.setArt({"icon": os.path.join(_img, 'icons', 'settings.png'),
-                "fanart": os.path.join(_img, 'backgrounds', 'settings.jpg')})
-    liz.setInfo(type="Video", infoLabels={"Title": title, "Plot": title})
+    liz.setArt({'icon': os.path.join(_img, 'icons', 'settings.png'),
+                'fanart': os.path.join(_img, 'backgrounds', 'settings.jpg')})
+    liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
     u = sys.argv[0]
     u = pyproxy.set_parameter(u, 'url', network_url)
     u = pyproxy.set_parameter(u, 'name', title)
@@ -1893,15 +1893,15 @@ def search_for(search_url):
         search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
         search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
         json_body = json.loads(nt.get_json(search_url))
-        if json_body["groups"][0]["size"] == 0:
-            xbmc.executebuiltin("XBMC.Notification(%s, %s %s, 7500, %s)" % (plugin_addon.getLocalizedString(30180),
+        if json_body['groups'][0]['size'] == 0:
+            xbmc.executebuiltin('XBMC.Notification(%s, %s %s, 7500, %s)' % (plugin_addon.getLocalizedString(30180),
                                                                             plugin_addon.getLocalizedString(30181),
                                                                             '!', plugin_addon.getAddonInfo('icon')))
         else:
             search_url = pyproxy.parse_parameters(search_url)
             build_groups_menu(search_url, json_body)
     except:
-        nt.error("util.error in findVideo")
+        nt.error('util.error in findVideo')
 
 
 def execute_search_and_add_query():
@@ -1917,8 +1917,8 @@ def execute_search_and_add_query():
         # if its not add to history & refresh
         search.add_search_history(find)
         xbmc.executebuiltin('Container.Refresh')
-    search_url = server + "/api/search"
-    search_url = pyproxy.set_parameter(search_url, "query", find)
+    search_url = server + '/api/search'
+    search_url = pyproxy.set_parameter(search_url, 'query', find)
     search_for(search_url)
 
 
@@ -1928,7 +1928,7 @@ def create_playlist(serie_id):
     :param serie_id:
     :return:
     """
-    serie_url = server + "/api/serie?id=" + str(serie_id) + "&level=2&nocast=1&notag=1"
+    serie_url = server + '/api/serie?id=' + str(serie_id) + '&level=2&nocast=1&notag=1'
     serie_body = json.loads(nt.get_json(serie_url))
     # playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     # playlist.clear()
@@ -1954,7 +1954,7 @@ def create_playlist(serie_id):
             xbmc.log('play this : ' + str(ep), xbmc.LOGWARNING)
             video_parameters = dict()
             video_parameters['ep_id'] = str(ep)
-            if kodi_utils.play_video(video_parameters['ep_id'], "0", 0) >= 0:
+            if kodi_utils.play_video(video_parameters['ep_id'], '0', 0) >= 0:
                 video_parameters['watched'] = True
                 nt.mark_watch_status(video_parameters)
             else:
@@ -1972,41 +1972,41 @@ def build_shoko_menu():
     kodi_utils.set_window_heading(plugin_addon.getLocalizedString(30115))
 
     items = [{
-        "title": plugin_addon.getLocalizedString(30122),
-        "cmd": "missing",
-        "poster": "none",
-        "icon": os.path.join(_img, 'icons', 'new-search.png'),
-        "fanart": os.path.join(_img, 'backgrounds', 'new-search.jpg'),
-        "type": "video",
-        "plot": plugin_addon.getLocalizedString(30135),
-        "extras": ""
+        'title': plugin_addon.getLocalizedString(30122),
+        'cmd': 'missing',
+        'poster': 'none',
+        'icon': os.path.join(_img, 'icons', 'new-search.png'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'type': 'video',
+        'plot': plugin_addon.getLocalizedString(30135),
+        'extras': ''
     }, {
-        "title": plugin_addon.getLocalizedString(30117),
-        "cmd": "statsupdate",
-        "poster": "none",
-        "icon": os.path.join(_img, 'icons', 'new-search.png'),
-        "fanart": os.path.join(_img, 'backgrounds', 'new-search.jpg'),
-        "type": "video",
-        "plot": plugin_addon.getLocalizedString(30136),
-        "extras": ""
+        'title': plugin_addon.getLocalizedString(30117),
+        'cmd': 'statsupdate',
+        'poster': 'none',
+        'icon': os.path.join(_img, 'icons', 'new-search.png'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'type': 'video',
+        'plot': plugin_addon.getLocalizedString(30136),
+        'extras': ''
     }, {
-        "title": plugin_addon.getLocalizedString(30118),
-        "cmd": "mediainfo",
-        "poster": "none",
-        "icon": os.path.join(_img, 'icons', 'new-search.png'),
-        "fanart": os.path.join(_img, 'backgrounds', 'new-search.jpg'),
-        "type": "video",
-        "plot": plugin_addon.getLocalizedString(30137),
-        "extras": ""
+        'title': plugin_addon.getLocalizedString(30118),
+        'cmd': 'mediainfo',
+        'poster': 'none',
+        'icon': os.path.join(_img, 'icons', 'new-search.png'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'type': 'video',
+        'plot': plugin_addon.getLocalizedString(30137),
+        'extras': ''
     }, {
-        "title": plugin_addon.getLocalizedString(30116),
-        "cmd": "folderlist",
-        "poster": "none",
-        "icon": os.path.join(_img, 'icons', 'new-search.png'),
-        "fanart": os.path.join(_img, 'backgrounds', 'new-search.jpg'),
-        "type": "video",
-        "plot": plugin_addon.getLocalizedString(30140),
-        "extras": "",
+        'title': plugin_addon.getLocalizedString(30116),
+        'cmd': 'folderlist',
+        'poster': 'none',
+        'icon': os.path.join(_img, 'icons', 'new-search.png'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'type': 'video',
+        'plot': plugin_addon.getLocalizedString(30140),
+        'extras': '',
     }]
 
     for detail in items:
@@ -2022,6 +2022,6 @@ def build_shoko_menu():
                     'poster': detail['poster'],
                     'icon': detail['icon'],
                     'fanart': detail['fanart']})
-        liz.setInfo(type=detail['type'], infoLabels={"Title": pyproxy.encode(detail['title']), "Plot": detail['plot']})
+        liz.setInfo(type=detail['type'], infoLabels={'Title': pyproxy.encode(detail['title']), 'Plot': detail['plot']})
         list_items.append((u, liz, True))
     end_of_directory(False)

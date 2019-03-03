@@ -5,7 +5,7 @@ import os
 
 import xbmcgui
 
-from nakamori_utils import nakamoritools as nt, model_utils
+from nakamori_utils import nakamoritools as nt, model_utils, infolabel_utils
 from nakamori_utils.globalvars import *
 import nakamori_player as nplayer
 from proxy.python_version_proxy import python_proxy as pyproxy
@@ -33,15 +33,15 @@ def set_window_heading(window_name):
 
     window_obj = xbmcgui.Window(xbmcgui.getCurrentWindowId())
     try:
-        window_obj.setProperty("heading", str(window_name))
+        window_obj.setProperty('heading', str(window_name))
     except Exception as e:
         nt.error('set_window_heading Exception', str(e))
-        window_obj.clearProperty("heading")
+        window_obj.clearProperty('heading')
     try:
-        window_obj.setProperty("heading2", str(window_name))
+        window_obj.setProperty('heading2', str(window_name))
     except Exception as e:
         nt.error('set_window_heading2 Exception', str(e))
-        window_obj.clearProperty("heading2")
+        window_obj.clearProperty('heading2')
         
 
 def play_continue_item():
@@ -97,7 +97,7 @@ def import_folder_list():
     """
     pick_folder = []
     get_id = []
-    import_list = json.loads(nt.get_json(nt.server + "/api/folder/list"))
+    import_list = json.loads(nt.get_json(nt.server + '/api/folder/list'))
     if len(import_list) > 1:
         for body in import_list:
             location = str(body['ImportFolderLocation'])
@@ -115,7 +115,175 @@ def import_folder_list():
         return 0
 
 
-def play_video(ep_id, raw_id, movie):
+def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False):
+    """
+    Plays a file
+    :param file_id: file ID. It is needed to look up the file
+    :param ep_id: episode ID, not needed, but it fills in a lot of info
+    :param resume: should we auto-resume
+    :return: True if successfully playing
+    """
+
+    from shoko_models.v2 import Episode, File
+    details = {}
+    file_url = ''
+    item = ''
+
+    if int(ep_id) != 0:
+        ep = Episode(ep_id, build_full_object=True)
+        f = ep.get_file_with_id(file_id)
+        details = infolabel_utils.get_infolabels_for_episode(ep)
+    else:
+        f = File(file_id, build_full_object=True)
+
+    if f is not None:
+        item = f.get_listitem()
+        if resume:
+            item.set_resume()
+        file_url = f.url_for_player
+
+    is_transcoded, m3u8_url = process_transcoder(file_id, file_url, f)
+
+    player = nplayer.Player()
+    player.feed(file_id, ep_id, details.get('duration'), m3u8_url if is_transcoded else file_url, mark_as_watched)
+
+    try:
+        if is_transcoded:
+            details['path'] = m3u8_url
+            player.feed(details)
+            player.play(item=m3u8_url)
+        else:
+            player.play(item=file_url, listitem=item)
+
+    except Exception as player_ex:
+        xbmc.log('---> player_ex: ' + str(player_ex), xbmc.LOGWARNING)
+
+    # leave player alive so we can handle onPlayBackStopped/onPlayBackEnded
+    xbmc.sleep(int(plugin_addon.getSetting('player_sleep')))
+
+    return player_loop(player)
+
+
+def player_loop(player):
+    # while player.isPlaying():
+    #     xbmc.sleep(500)
+    monitor = xbmc.Monitor()
+    while player.PlaybackStatus != 'Stopped' and player.PlaybackStatus != 'Ended':
+        xbmc.sleep(500)
+    if player.PlaybackStatus == 'Ended':
+        xbmc.log(' Ended -------~ ~~ ~ ----> ' + str(monitor.abortRequested()), xbmc.LOGWARNING)
+        return -1
+    else:
+        xbmc.log('player.PlaybackStatus=============' + str(player.PlaybackStatus))
+    xbmc.log('-------~ ~~ ~ ----> ' + str(monitor.abortRequested()), xbmc.LOGWARNING)
+    return 0
+
+
+def process_transcoder(file_id, file_url, file_obj):
+    """
+
+    :param file_id:
+    :param file_url:
+    :type file_url: str
+    :param file_obj:
+    :type file_obj: File
+    :return:
+    """
+    m3u8_url = ''
+    is_transcoded = False
+    if plugin_addon.getSetting('enableEigakan') != 'true':
+        return is_transcoded, m3u8_url
+    eigakan_url = plugin_addon.getSetting('ipEigakan')
+    eigakan_port = plugin_addon.getSetting('portEigakan')
+    eigakan_host = 'http://' + eigakan_url + ':' + eigakan_port
+    video_url = eigakan_host + '/api/transcode/' + str(file_id)
+    post_data = '"file":"' + file_url + '"'
+    try_count = 0
+    m3u8_url = eigakan_host + '/api/video/' + str(file_id) + '/play.m3u8'
+    ts_url = eigakan_host + '/api/video/' + str(file_id) + '/play0.ts'
+
+    try:
+        eigakan_data = nt.get_json(eigakan_host + '/api/version')
+        if 'eigakan' not in eigakan_data:
+            nt.error('Eigakan server is unavailable')
+            return is_transcoded, m3u8_url
+
+        audio_stream_id = find_language_index(file_obj.audio_streams, plugin_addon.getSetting('audiolangEigakan'))
+        sub_stream_id = find_language_index(file_obj.sub_streams, plugin_addon.getSetting('subEigakan'))
+
+        busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30165))
+
+        if audio_stream_id != -1:
+            post_data += ',"audio_stream":"' + str(audio_stream_id) + '"'
+        if sub_stream_id != -1:
+            post_data += ',"subtitles_stream":"' + str(sub_stream_id) + '"'
+
+        if plugin_addon.getSetting('advEigakan') == 'true':
+            post_data += ',"resolution":"' + plugin_addon.getSetting('resolutionEigakan') + '"'
+            post_data += ',"audio_codec":"' + plugin_addon.getSetting('audioEigakan') + '"'
+            post_data += ',"video_bitrate":"' + plugin_addon.getSetting('vbitrateEigakan') + '"'
+            post_data += ',"x264_profile":"' + plugin_addon.getSetting('profileEigakan') + '"'
+        pyproxy.post_json(video_url, post_data)
+        xbmc.sleep(1000)
+        busy.close()
+
+        busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30164))
+        while True:
+            if pyproxy.head(url_in=ts_url) is False:
+                x_try = int(plugin_addon.getSetting('tryEigakan'))
+                if try_count > x_try:
+                    break
+                if busy.iscanceled():
+                    break
+                try_count += 1
+                busy.update(try_count)
+                xbmc.sleep(1000)
+            else:
+                break
+        busy.close()
+
+        postpone_seconds = int(plugin_addon.getSetting('postponeEigakan'))
+        if postpone_seconds > 0:
+            busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30166))
+            while postpone_seconds > 0:
+                xbmc.sleep(1000)
+                postpone_seconds -= 1
+                busy.update(postpone_seconds)
+                if busy.iscanceled():
+                    break
+            busy.close()
+
+        if pyproxy.head(url_in=ts_url):
+            is_transcoded = True
+
+    except Exception as exc:
+        nt.error('eigakan.post_json nt.error', str(exc))
+        busy.close()
+
+    return is_transcoded, m3u8_url
+
+
+def find_language_index(streams, setting):
+    stream_index = -1
+    stream_id = -1
+    for code in setting.split(','):
+        for stream in streams:
+            stream_index += 1
+            if code in streams[stream].get('Language', '').lower() != '':
+                stream_id = stream_index
+                break
+            if code in streams[stream].get('LanguageCode', '').lower() != '':
+                stream_id = stream_index
+                break
+            if code in streams[stream].get('Title', '').lower() != '':
+                stream_id = stream_index
+                break
+        if stream_id != -1:
+            break
+    return stream_id
+
+
+def play_video_old(ep_id, raw_id, movie):
     """
     Plays a file or episode
     Args:
@@ -156,23 +324,23 @@ def play_video(ep_id, raw_id, movie):
     plugin_addon.setSetting('resume', '0')
 
     try:
-        if ep_id != "0":
-            episode_url = server + "/api/ep?id=" + str(ep_id)
-            episode_url = pyproxy.set_parameter(episode_url, "level", "1")
+        if ep_id != '0':
+            episode_url = server + '/api/ep?id=' + str(ep_id)
+            episode_url = pyproxy.set_parameter(episode_url, 'level', '1')
             html = nt.get_json(pyproxy.encode(episode_url))
-            if plugin_addon.getSetting("spamLog") == "true":
+            if plugin_addon.getSetting('spamLog') == 'true':
                 xbmc.log(html, xbmc.LOGWARNING)
             episode_body = json.loads(html)
-            if plugin_addon.getSetting("pick_file") == "true":
+            if plugin_addon.getSetting('pick_file') == 'true':
                 file_id = file_list_gui(episode_body)
             else:
-                file_id = episode_body["files"][0]["id"]
+                file_id = episode_body['files'][0]['id']
         else:
             file_id = raw_id
 
         if file_id is not None and file_id != 0:
             details['fileid'] = file_id
-            file_url = server + "/api/file?id=" + str(file_id)
+            file_url = server + '/api/file?id=' + str(file_id)
             file_body = json.loads(nt.get_json(file_url))
 
             file_url = file_body['url']
@@ -181,7 +349,7 @@ def play_video(ep_id, raw_id, movie):
                 try:
                     if os.path.isfile(server_path):
                         if server_path.startswith(u'\\\\'):
-                            server_path = u"smb:"+server_path
+                            server_path = u'smb:'+server_path
                         file_url = server_path
                 except:
                     pass
@@ -189,7 +357,7 @@ def play_video(ep_id, raw_id, movie):
             # Information about streams inside video file
             # Video
             codecs = dict()
-            model_utils.video_file_information(file_body["media"], codecs)
+            model_utils.video_file_information(file_body['media'], codecs)
             details['path'] = file_url
             details['duration'] = file_body.get('duration', 0)
             details['size'] = file_body['size']
@@ -203,141 +371,30 @@ def play_video(ep_id, raw_id, movie):
                 offset = file_body.get('offset', 0)
                 if offset != 0:
                     offset = int(offset) / 1000
-                    if plugin_addon.getSetting("file_resume") == "true" and resume:
+                    if plugin_addon.getSetting('file_resume') == 'true' and resume:
                         item.setProperty('ResumeTime', str(offset))
                         item.setProperty('StartOffset', str(offset))
 
-            for stream_index in codecs["VideoStreams"]:
-                if not isinstance(codecs["VideoStreams"][stream_index], dict):
+            for stream_index in codecs['VideoStreams']:
+                if not isinstance(codecs['VideoStreams'][stream_index], dict):
                     continue
-                item.addStreamInfo('video', codecs["VideoStreams"][stream_index])
-            for stream_index in codecs["AudioStreams"]:
-                if not isinstance(codecs["AudioStreams"][stream_index], dict):
+                item.addStreamInfo('video', codecs['VideoStreams'][stream_index])
+            for stream_index in codecs['AudioStreams']:
+                if not isinstance(codecs['AudioStreams'][stream_index], dict):
                     continue
-                item.addStreamInfo('audio', codecs["AudioStreams"][stream_index])
-            for stream_index in codecs["SubStreams"]:
-                if not isinstance(codecs["SubStreams"][stream_index], dict):
+                item.addStreamInfo('audio', codecs['AudioStreams'][stream_index])
+            for stream_index in codecs['SubStreams']:
+                if not isinstance(codecs['SubStreams'][stream_index], dict):
                     continue
-                item.addStreamInfo('subtitle', codecs["SubStreams"][stream_index])
+                item.addStreamInfo('subtitle', codecs['SubStreams'][stream_index])
         else:
-            if plugin_addon.getSetting("pick_file") == "false":
-                nt.error("file_id not retrieved")
+            if plugin_addon.getSetting('pick_file') == 'false':
+                nt.error('file_id not retrieved')
             return 0
     except Exception as exc:
         nt.error('util.nt.error getting episode info', str(exc))
 
-    m3u8_url = ''
-    is_transcoded = False
-
-    # region Eigakan
-    try:
-        if plugin_addon.getSetting("enableEigakan") == "true":
-            eigakan_url = plugin_addon.getSetting("ipEigakan")
-            eigakan_port = plugin_addon.getSetting("portEigakan")
-            eigakan_host = 'http://' + eigakan_url + ':' + eigakan_port
-            video_url = eigakan_host + '/api/transcode/' + str(file_id)
-            post_data = '"file":"' + file_url + '"'
-            try_count = 0
-            m3u8_url = eigakan_host + '/api/video/' + str(file_id) + '/play.m3u8'
-            ts_url = eigakan_host + '/api/video/' + str(file_id) + '/play0.ts'
-
-            try:
-                eigakan_data = nt.get_json(eigakan_host + '/api/version')
-                if 'eigakan' in eigakan_data:
-                    audio_stream_id = -1
-                    stream_index = -1
-                    for audio_code in plugin_addon.getSetting("audiolangEigakan").split(","):
-                        for audio_stream in file_body['media']['audios']:
-                            stream_index += 1
-                            if 'Language' in file_body['media']['audios'][audio_stream]:
-                                if audio_code in file_body['media']['audios'][audio_stream].get('Language').lower():
-                                    audio_stream_id = stream_index
-                                    break
-                            if 'LanguageCode' in file_body['media']['audios'][audio_stream]:
-                                if audio_code in file_body['media']['audios'][audio_stream].get('LanguageCode').lower():
-                                    audio_stream_id = stream_index
-                                    break
-                            if 'Title' in file_body['media']['audios'][audio_stream]:
-                                if audio_code in file_body['media']['audios'][audio_stream].get('Language').lower():
-                                    audio_stream_id = stream_index
-                                    break
-                        if audio_stream_id != -1:
-                            break
-
-                    sub_stream_id = -1
-                    stream_index = -1
-                    for sub_code in plugin_addon.getSetting("subEigakan").split(","):
-                        for sub_stream in file_body['media']['subtitles']:
-                            stream_index += 1
-                            if 'Language' in file_body['media']['subtitles'][sub_stream]:
-                                if sub_code in file_body['media']['subtitles'][sub_stream].get('Language').lower():
-                                    sub_stream_id = stream_index
-                                    break
-                            if 'LanguageCode' in file_body['media']['subtitles'][sub_stream]:
-                                if sub_code in file_body['media']['subtitles'][sub_stream].get('LanguageCode').lower():
-                                    sub_stream_id = stream_index
-                                    break
-                            if 'Title' in file_body['media']['subtitles'][sub_stream]:
-                                if sub_code in file_body['media']['subtitles'][sub_stream].get('Language').lower():
-                                    sub_stream_id = stream_index
-                                    break
-                        if sub_stream_id != -1:
-                            break
-
-                    busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30165))
-
-                    if audio_stream_id != -1:
-                        post_data += ',"audio_stream":"' + str(audio_stream_id) + '"'
-                    if sub_stream_id != -1:
-                        post_data += ',"subtitles_stream":"' + str(sub_stream_id) + '"'
-
-                    if plugin_addon.getSetting("advEigakan") == "true":
-                        post_data += ',"resolution":"' + plugin_addon.getSetting("resolutionEigakan") + '"'
-                        post_data += ',"audio_codec":"' + plugin_addon.getSetting("audioEigakan") + '"'
-                        post_data += ',"video_bitrate":"' + plugin_addon.getSetting("vbitrateEigakan") + '"'
-                        post_data += ',"x264_profile":"' + plugin_addon.getSetting("profileEigakan") + '"'
-                    pyproxy.post_json(video_url, post_data)
-                    xbmc.sleep(1000)
-                    busy.close()
-
-                    busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30164))
-                    while True:
-                        if pyproxy.head(url_in=ts_url) is False:
-                            x_try = int(plugin_addon.getSetting("tryEigakan"))
-                            if try_count > x_try:
-                                break
-                            if busy.iscanceled():
-                                break
-                            try_count += 1
-                            busy.update(try_count)
-                            xbmc.sleep(1000)
-                        else:
-                            break
-                    busy.close()
-
-                    postpone_seconds = int(plugin_addon.getSetting("postponeEigakan"))
-                    if postpone_seconds > 0:
-                        busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30166))
-                        while postpone_seconds > 0:
-                            xbmc.sleep(1000)
-                            postpone_seconds -= 1
-                            busy.update(postpone_seconds)
-                            if busy.iscanceled():
-                                break
-                        busy.close()
-
-                    if pyproxy.head(url_in=ts_url):
-                        is_transcoded = True
-
-                else:
-                    nt.error("Eigakan server is unavailable")
-            except Exception as exc:
-                nt.error('eigakan.post_json nt.error', str(exc))
-                busy.close()
-    except Exception as eigakan_ex:
-        xbmc.log('---> enableEigakan: ' + str(eigakan_ex), xbmc.LOGWARNING)
-        pass
-    # endregion
+    is_transcoded, m3u8_url = process_transcoder(file_id, file_url)
 
     player = nplayer.Player()
     player.feed(details)
@@ -352,25 +409,11 @@ def play_video(ep_id, raw_id, movie):
 
     except Exception as player_ex:
         xbmc.log('---> player_ex: ' + str(player_ex), xbmc.LOGWARNING)
-        pass
 
     # leave player alive so we can handle onPlayBackStopped/onPlayBackEnded
-    xbmc.sleep(int(plugin_addon.getSetting("player_sleep")))
+    xbmc.sleep(int(plugin_addon.getSetting('player_sleep')))
 
-    # while player.isPlaying():
-    #     xbmc.sleep(500)
-    monitor = xbmc.Monitor()
-    while player.PlaybackStatus != 'Stopped' and player.PlaybackStatus != 'Ended':
-        xbmc.sleep(500)
-
-    if player.PlaybackStatus == 'Ended':
-        xbmc.log(' Ended -------~ ~~ ~ ----> ' + str(monitor.abortRequested()), xbmc.LOGWARNING)
-        return -1
-    else:
-        xbmc.log('player.PlaybackStatus=============' + str(player.PlaybackStatus))
-
-    xbmc.log('-------~ ~~ ~ ----> ' + str(monitor.abortRequested()), xbmc.LOGWARNING)
-    return 0
+    return player_loop(player)
 
 
 def fix_mark_watch_in_kodi_db():
@@ -386,7 +429,7 @@ def fix_mark_watch_in_kodi_db():
         db_path = os.path.join(db_path, 'Database')
         for r, d, f in os.walk(db_path):
             for files in f:
-                if "MyVideos" in files:
+                if 'MyVideos' in files:
                     db_files.append(files)
         for db_file in db_files:
             db_connection = database.connect(os.path.join(db_path, db_file))
@@ -411,7 +454,7 @@ def clear_image_cache_in_kodi_db():
         db_path = os.path.join(db_path, 'Database')
         for r, d, f in os.walk(db_path):
             for files in f:
-                if "Textures" in files:
+                if 'Textures' in files:
                     db_files.append(files)
         for db_file in db_files:
             db_connection = database.connect(os.path.join(db_path, db_file))

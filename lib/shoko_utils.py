@@ -29,7 +29,7 @@ def perform_server_action(command, object_id=None, refresh='refresh10', post=Fal
         refresh: whether to refresh
         post: is it a POST endpoint
     """
-    key_url = server + "/api/" + command
+    key_url = server + '/api/' + command
     if object_id is not None and object_id != 0 and object_id != '':
         key_url = pyproxy.set_parameter(key_url, 'id', object_id)
     if plugin_addon.getSetting('spamLog') == 'true':
@@ -45,7 +45,7 @@ def perform_server_action(command, object_id=None, refresh='refresh10', post=Fal
         xbmc.log('response: ' + response, xbmc.LOGWARNING)
 
     refresh_message = localization_refresh_map.get(refresh, '')
-    xbmc.executebuiltin("XBMC.Notification(%s, %s, 2000, %s)" % (
+    xbmc.executebuiltin('XBMC.Notification(%s, %s, 2000, %s)' % (
         localization_notification_map.get(command, command),
         refresh_message, plugin_addon.getAddonInfo('icon')))
 

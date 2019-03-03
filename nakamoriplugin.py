@@ -55,7 +55,7 @@ def show_series_menu(series_id):
         for item in series:
             if item.get_file() is None:
                 continue
-            dir.append(item.get_listitem())
+            dir.append(item.get_listitem(), False)
 
 
 @routing_plugin.route('/menu/series/<series_id>/type/<episode_type>')
@@ -66,7 +66,7 @@ def show_series_episode_types_menu(series_id, episode_type):
     for item in types:
         if item.get_file() is None:
             continue
-        dir.append(item.get_listitem())
+        dir.append(item.get_listitem(), False)
 
 
 @routing_plugin.route('/dialog/wizard')
@@ -85,38 +85,24 @@ def show_episode_vote_dialog(ep_id):
 
 
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
-    # because we have an endpoint, we will not try to pass the series ID around
-    # we'll simply look it up from the episode
-    from shoko_models.v2 import Episode
-    ep = Episode(ep_id, build_full_object=True)
-    file = None
-    for f in ep.items:
-        if f.id == int(file_id):
-            file = f
-            break
-    if file is None:
-        # TODO error
-        return
-
-    # now we have a file
-    # quick hack to test, will be rewritten
-    kodi_utils.play_video(ep_id, file_id, False)
+    # all of real work is done here
+    kodi_utils.play_video(file_id, ep_id, mark_as_watched, resume)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')
 def play_video(ep_id, file_id):
-    play_video_internal(ep_id, file_id, plugin_addon.getSetting('file_resume') == 'true', True)
+    play_video_internal(ep_id, file_id)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play_without_marking')
 def play_video_without_marking(ep_id, file_id):
-    play_video_internal(ep_id, file_id, False)
+    play_video_internal(ep_id, file_id, mark_as_watched=False)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/resume')
 def resume_video(ep_id, file_id):
     # if we are resuming, then we'll assume that scrobbling and marking are True
-    play_video_internal(ep_id, file_id, True, True)
+    play_video_internal(ep_id, file_id, mark_as_watched=True, resume=True)
 
 
 @routing_plugin.route('/series/<series_id>/vote/<value>')

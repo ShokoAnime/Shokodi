@@ -41,7 +41,7 @@ def play_video(video_parameters):
         win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
         ctl = win.getControl(win.getFocusId())
         if kodi_utils.play_video(video_parameters['ep_id'],
-                                 video_parameters['raw_id'] if 'raw_id' in video_parameters else "0",
+                                 video_parameters['raw_id'] if 'raw_id' in video_parameters else '0',
                                  video_parameters['movie'] if 'movie' in video_parameters else 0) > 0:
             # noinspection PyTypeChecker
             ui_index = video_parameters.get('ui_index', '')
@@ -70,7 +70,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                     if 'mode' in parameters and parameters['mode'] is not None:
                         mode = int(parameters['mode'])
                 except Exception as exp:
-                    nt.error('valid_userid set \'mode\' util.error', str(exp) + " parameters: " + str(parameters))
+                    nt.error('valid_userid set \'mode\' util.error', str(exp) + ' parameters: ' + str(parameters))
 
             try:
                 if 'cmd' in parameters:
@@ -82,17 +82,17 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                 cmd = None
 
             if cmd is not None:
-                if cmd == "voteSer":
+                if cmd == 'voteSer':
                     nt.vote_series(parameters['serie_id'])
-                elif cmd == "voteEp":
+                elif cmd == 'voteEp':
                     nt.vote_episode(parameters['ep_id'])
-                elif cmd == "viewCast":
+                elif cmd == 'viewCast':
                     gb.build_cast_menu(parameters)
-                elif cmd == "searchCast":
+                elif cmd == 'searchCast':
                     gb.search_for(parameters.get('url', ''))
-                elif cmd == "watched":
+                elif cmd == 'watched':
                     if nt.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') == 0 or \
-                            plugin_addon.getSetting("select_unwatched") == "true":
+                            plugin_addon.getSetting('select_unwatched') == 'true':
                         try:
                             win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
                             ctl = win.getControl(win.getFocusId())
@@ -105,21 +105,21 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                             pass
                     parameters['watched'] = True
                     nt.mark_watch_status(parameters)
-                    if plugin_addon.getSetting("vote_always") == "true":
+                    if plugin_addon.getSetting('vote_always') == 'true':
                         if parameters.get('userrate', 0) == 0:
                             nt.vote_episode(parameters['ep_id'])
-                elif cmd == "unwatched":
+                elif cmd == 'unwatched':
                     parameters['watched'] = False
                     nt.mark_watch_status(parameters)
-                elif cmd == "playlist":
+                elif cmd == 'playlist':
                     kodi_utils.play_continue_item()
-                elif cmd == "no_mark":
+                elif cmd == 'no_mark':
                     plugin_addon.setSetting('no_mark', '1')
                     # noinspection PyTypeChecker
                     play_video(parameters)
-                elif cmd == "pickFile":
-                    if str(parameters['ep_id']) != "0":
-                        ep_url = server + "/api/ep?id=" + str(parameters['ep_id']) + "&level=2"
+                elif cmd == 'pickFile':
+                    if str(parameters['ep_id']) != '0':
+                        ep_url = server + '/api/ep?id=' + str(parameters['ep_id']) + '&level=2'
                         kodi_utils.file_list_gui(json.loads(nt.get_json(ep_url)))
                 elif cmd == 'rescan':
                     shoko_utils.rescan_file(parameters.get('vl', ''))
@@ -160,7 +160,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif mode == 3:  # Search
                     try:
                         if 'extras' in parameters:
-                            if parameters['extras'] == "force-search" and 'query' in parameters:
+                            if parameters['extras'] == 'force-search' and 'query' in parameters:
                                 url = server + '/api/search'
                                 url = pyproxy.set_parameter(url, 'query', parameters['query'])
                                 gb.search_for(url)
@@ -226,7 +226,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
             gb.build_network_menu()
 else:
     gb.build_network_menu()
-    if xbmcgui.Dialog().yesno("Error Connecting", "Would you like to open the setup wizard"):
+    if xbmcgui.Dialog().yesno('Error Connecting', 'Would you like to open the setup wizard'):
         xbmc.log('--- (get_server_status: wizard) ---', xbmc.LOGWARNING)
         plugin_addon.setSetting(id='wizard', value='0')
         nt.wizard()
