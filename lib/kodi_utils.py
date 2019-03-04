@@ -135,6 +135,7 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False):
         details = infolabel_utils.get_infolabels_for_episode(ep)
     else:
         f = File(file_id, build_full_object=True)
+        details = infolabel_utils.get_infolabels_for_file(f)
 
     if f is not None:
         item = f.get_listitem()
@@ -145,7 +146,7 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False):
     is_transcoded, m3u8_url = process_transcoder(file_id, file_url, f)
 
     player = nplayer.Player()
-    player.feed(file_id, ep_id, details.get('duration'), m3u8_url if is_transcoded else file_url, mark_as_watched)
+    player.feed(file_id, ep_id, details.get('duration', 0), m3u8_url if is_transcoded else file_url, mark_as_watched)
 
     try:
         if is_transcoded:

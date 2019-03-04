@@ -43,9 +43,8 @@ def show_filter_menu(filter_id):
     del dir
 
 
-# apparently the issues are related to not having any arguments. It works fine if you give it a bool that means nothing
-@routing_plugin.route('/menu/filter/unsorted/<nothing>')
-def show_unsorted_menu(nothing):
+@routing_plugin.route('/menu/filter/unsorted')
+def show_unsorted_menu():
     # this is really bad practice, but the unsorted files list is too special
     from shoko_models.v2 import File
     url = server + '/api/file/unsort'
