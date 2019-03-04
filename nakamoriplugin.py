@@ -1,3 +1,4 @@
+import json
 import sys
 
 import routing
@@ -27,8 +28,34 @@ def show_filter_menu(filter_id):
     from shoko_models.v2 import Filter
     filter = Filter(filter_id, build_full_object=True, get_children=True)
     dir = DirectoryListing('tvshows')
+    items = []
     for item in filter:
+        items.append(item)
+    # sort the filters
+    try:
+        # if they are all zero, preserve server sorting
+        if any(x.sort_index != 0 for x in items):
+            items.sort(key=lambda a: (a.sort_index, a.name))
+    except:
+        pass
+    for item in items:
         dir.append(item.get_listitem())
+    del dir
+
+
+# apparently the issues are related to not having any arguments. It works fine if you give it a bool that means nothing
+@routing_plugin.route('/menu/filter/unsorted/<nothing>')
+def show_unsorted_menu(nothing):
+    # this is really bad practice, but the unsorted files list is too special
+    from shoko_models.v2 import File
+    url = server + '/api/file/unsort'
+    json_body = nt.get_json(url, True)
+    json_node = json.loads(json_body)
+
+    dir = DirectoryListing('episodes')
+    for item in json_node:
+        f = File(item)
+        dir.append(f.get_listitem())
 
 
 @routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>')

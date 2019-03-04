@@ -54,28 +54,29 @@ def title_coloring(title, episode_count, total_count, special_count, total_speci
     :return: colorized title
     """
     color_title = title
-    if plugin_addon.getSetting('color_title') == 'true':
-        if airing:
-            if episode_count == total_count:
-                if total_special_count == 0:
-                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_airing'), title)
-                elif special_count == total_special_count:
-                    # its possible if set to local_size in setting
-                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_airing_special'), title)
-                elif special_count < total_special_count:
-                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_airing'), title)
-            elif episode_count < total_count:
-                color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_airing_missing'), title)
-        else:
-            if episode_count == total_count:
-                if total_special_count == 0:
-                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_finish'), title)
-                elif special_count == total_special_count:
-                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_finish_special'), title)
-                elif special_count < total_special_count:
-                    color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_finish'), title)
-            elif episode_count < total_count:
-                color_title = '[COLOR %s]%s[/COLOR]' % (plugin_addon.getSetting('title_color_finish_missing'), title)
+    if plugin_addon.getSetting('color_title') != 'true':
+        return color_title
+
+    color_format = '[COLOR %s]%s[/COLOR]'
+    if airing:
+        color = plugin_addon.getSetting('title_color_airing')
+        color_special = plugin_addon.getSetting('title_color_airing_special')
+        color_missing = plugin_addon.getSetting('title_color_airing_missing')
+    else:
+        color = plugin_addon.getSetting('title_color_finish')
+        color_special = plugin_addon.getSetting('title_color_finish_special')
+        color_missing = plugin_addon.getSetting('title_color_finish_missing')
+
+    if episode_count == total_count:
+        if total_special_count == 0:
+            return color_format % (color, title)
+        if special_count >= total_special_count:
+            # its possible if set to local_size in setting
+            return color_format % (color_special, title)
+        if special_count < total_special_count:
+            return color_format % (color, title)
+    elif episode_count < total_count:
+        return color_format % (color_missing, title)
 
     return color_title
 
@@ -943,7 +944,7 @@ def build_filters_menu():
     xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_DATE)
     xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
 
-    filters_sorting = {'Airing Today': 0, 'Seasons': 1, 'Years': 2, 'Tags': 3, 'Unsort': 4}
+    filters_sorting = {'Airing Today': 0, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4, 'Unsort': 5}
     try:
         filters_key = server + '/api/filter'
         filters_key = pyproxy.set_parameter(filters_key, 'level', 0)
