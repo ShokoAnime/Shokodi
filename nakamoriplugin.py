@@ -6,6 +6,7 @@ from lib import kodi_utils
 from nakamori_utils.globalvars import *
 from kodi_models.kodi_models import DirectoryListing
 import debug
+from error_handler import try_function, show_messages, ErrorPriority
 from nakamori_utils import nakamoritools as nt
 
 routing_plugin = routing.Plugin('plugin://plugin.video.nakamori')
@@ -24,11 +25,14 @@ def show_main_menu():
 
 
 @routing_plugin.route('/menu/filter/<filter_id>')
+@try_function(ErrorPriority.BLOCKING)
 def show_filter_menu(filter_id):
     from shoko_models.v2 import Filter
     filter = Filter(filter_id, build_full_object=True, get_children=True)
     dir = DirectoryListing('tvshows')
     items = []
+    # this just throws an error. It's for testing and should be removed later.
+    # filter = items[1]
     for item in filter:
         items.append(item)
     # sort the filters
@@ -44,6 +48,7 @@ def show_filter_menu(filter_id):
 
 
 @routing_plugin.route('/menu/filter/unsorted')
+@try_function(ErrorPriority.BLOCKING)
 def show_unsorted_menu():
     # this is really bad practice, but the unsorted files list is too special
     from shoko_models.v2 import File
@@ -58,6 +63,7 @@ def show_unsorted_menu():
 
 
 @routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>')
+@try_function(ErrorPriority.BLOCKING)
 def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id)
@@ -67,6 +73,7 @@ def show_group_menu(group_id, filter_id):
 
 
 @routing_plugin.route('/menu/series/<series_id>')
+@try_function(ErrorPriority.BLOCKING)
 def show_series_menu(series_id):
     from shoko_models.v2 import Series
     series = Series(series_id, build_full_object=True, get_children=True)
@@ -79,9 +86,7 @@ def show_series_menu(series_id):
     else:
         dir = DirectoryListing('episodes')
         for item in series:
-            if item.get_file() is None:
-                continue
-            dir.append(item.get_listitem(), False)
+            int_add_episode(item, dir)
 
 
 @routing_plugin.route('/menu/series/<series_id>/type/<episode_type>')
@@ -90,9 +95,14 @@ def show_series_episode_types_menu(series_id, episode_type):
     types = SeriesTypeList(series_id, episode_type)
     dir = DirectoryListing('episodes')
     for item in types:
-        if item.get_file() is None:
-            continue
-        dir.append(item.get_listitem(), False)
+        int_add_episode(item, dir)
+
+
+@try_function(ErrorPriority.HIGHEST, 'Failed to Add an Episode')
+def int_add_episode(item, dir):
+    if item.get_file() is None:
+        return
+    dir.append(item.get_listitem(), False)
 
 
 @routing_plugin.route('/dialog/wizard')
@@ -142,6 +152,7 @@ def vote_for_episode(ep_id, value):
 
 
 @routing_plugin.route('/episode/<ep_id>/set_watched/<watched>')
+@try_function(ErrorPriority.HIGH, 'Error Setting Watched Status')
 def set_episode_watched_status(ep_id, watched):
     from shoko_models.v2 import Episode
     ep = Episode(ep_id)
@@ -149,6 +160,7 @@ def set_episode_watched_status(ep_id, watched):
 
 
 @routing_plugin.route('/series/<series_id>/set_watched/<watched>')
+@try_function(ErrorPriority.HIGH, 'Error Setting Watched Status')
 def set_series_watched_status(series_id, watched):
     from shoko_models.v2 import Series
     series = Series(series_id)
@@ -162,10 +174,15 @@ def set_group_watched_status(group_id, watched):
     group.set_watched_status(watched)
 
 
-if __name__ == '__main__':
+@try_function(ErrorPriority.BLOCKING)
+def _main():
     debug.debug_init()
-    auth, apikey = nt.valid_user()
+    auth, apikey = try_function(ErrorPriority.BLOCKING, '')(nt.valid_user)()
     if not auth:
-        # error
-        sys.exit()
-    routing_plugin.run()
+        raise Exception('Wrong Username or Password, or unable to connect to the server.')
+    try_function(ErrorPriority.BLOCKING)(routing_plugin.run())()
+    show_messages()
+
+
+if __name__ == '__main__':
+    _main()
