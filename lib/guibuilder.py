@@ -3,7 +3,6 @@
 here are functions needed to create dirs/files
 """
 import json
-import os
 import sys
 import time
 from collections import defaultdict
@@ -964,35 +963,35 @@ def build_filters_menu():
                         airing['art'] = {}
                         airing['art']['fanart'] = []
                         airing['art']['thumb'] = []
-                        airing['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'airing.jpg')})
+                        airing['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'airing.png')})
                         airing['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'airing.png')})
                         if nt.get_version() >= LooseVersion('3.8'):
                             menu_append.insert(filters_sorting[title], airing)
                         menu['art'] = {}
                         menu['art']['fanart'] = []
                         menu['art']['thumb'] = []
-                        menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'seasons.jpg')})
+                        menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'seasons.png')})
                         menu['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'seasons.png')})
                         menu_append.insert(filters_sorting[title], menu)
                     elif title == 'Tags':
                         menu['art'] = {}
                         menu['art']['fanart'] = []
                         menu['art']['thumb'] = []
-                        menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'tags.jpg')})
+                        menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'tags.png')})
                         menu['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'tags.png')})
                         menu_append.insert(filters_sorting[title], menu)
                     elif title == 'Unsort' and plugin_addon.getSetting('show_unsort') == 'true':
                             menu['art'] = {}
                             menu['art']['fanart'] = []
                             menu['art']['thumb'] = []
-                            menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'unsort.jpg')})
+                            menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'unsort.png')})
                             menu['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'unsort.png')})
                             menu_append.insert(filters_sorting[title], menu)
                     elif title == 'Years':
                         menu['art'] = {}
                         menu['art']['fanart'] = []
                         menu['art']['thumb'] = []
-                        menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'years.jpg')})
+                        menu['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'years.png')})
                         menu['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'years.png')})
                         menu_append.insert(filters_sorting[title], menu)
                 for menu in json_menu['filters']:
@@ -1010,7 +1009,7 @@ def build_filters_menu():
                     liz = xbmcgui.ListItem(label=title, label2=title, path=soon_url)
                     thumb = os.path.join(_img, 'icons', 'calendar.png')
                     liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
-                                'fanart': os.path.join(_img, 'backgrounds', 'calendar.jpg')})
+                                'fanart': os.path.join(_img, 'backgrounds', 'calendar.png')})
                     liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', soon_url)
@@ -1026,7 +1025,7 @@ def build_filters_menu():
                     liz = xbmcgui.ListItem(label=title, label2=title, path=search_url)
                     thumb = os.path.join(_img, 'icons', 'search.png')
                     liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
-                                'fanart': os.path.join(_img, 'backgrounds', 'search.jpg')})
+                                'fanart': os.path.join(_img, 'backgrounds', 'search.png')})
                     liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', search_url)
@@ -1041,7 +1040,7 @@ def build_filters_menu():
                     liz = xbmcgui.ListItem(label=title, label2=title)
                     thumb = os.path.join(_img, 'icons', 'settings.png')
                     liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
-                                'fanart': os.path.join(_img, 'backgrounds', 'settings.jpg')})
+                                'fanart': os.path.join(_img, 'backgrounds', 'settings.png')})
                     liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', '')
@@ -1056,7 +1055,7 @@ def build_filters_menu():
                     liz = xbmcgui.ListItem(label=title, label2=title)
                     thumb = os.path.join(_img, 'icons', 'settings.png')
                     liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
-                                'fanart': os.path.join(_img, 'backgrounds', 'settings.jpg')})
+                                'fanart': os.path.join(_img, 'backgrounds', 'settings.png')})
                     liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', '')
@@ -1071,7 +1070,7 @@ def build_filters_menu():
                     liz = xbmcgui.ListItem(label=title, label2=title)
                     thumb = os.path.join(_img, 'icons', 'settings.png')
                     liz.setArt({'icon': thumb, 'poster': thumb, 'thumb': thumb,
-                                'fanart': os.path.join(_img, 'backgrounds', 'settings.jpg')})
+                                'fanart': os.path.join(_img, 'backgrounds', 'settings.png')})
                     liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
                     u = sys.argv[0]
                     u = pyproxy.set_parameter(u, 'url', '')
@@ -1716,7 +1715,7 @@ def build_search_directory():
         'mode': 3,
         'poster': 'none',
         'icon': os.path.join(_img, 'icons', 'new-search.png'),
-        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.png'),
         'type': '',
         'plot': '',
         'extras': 'true-search'
@@ -1726,7 +1725,7 @@ def build_search_directory():
         'mode': 31,
         'poster': 'none',
         'icon': os.path.join(_img, 'icons', 'clear-search.png'),
-        'fanart': os.path.join(_img, 'backgrounds', 'clear-search.jpg'),
+        'fanart': os.path.join(_img, 'backgrounds', 'clear-search.png'),
         'type': '',
         'plot': '',
         'extras': ''
@@ -1745,7 +1744,7 @@ def build_search_directory():
                     'mode': 3,
                     'poster': 'none',
                     'icon': os.path.join(_img, 'icons', 'search.png'),
-                    'fanart': os.path.join(_img, 'backgrounds', 'search.jpg'),
+                    'fanart': os.path.join(_img, 'backgrounds', 'search.png'),
                     'type': '',
                     'plot': '',
                     'extras': 'force-search',
@@ -1874,7 +1873,7 @@ def build_network_menu():
     title = plugin_addon.getLocalizedString(30197)
     liz = xbmcgui.ListItem(label=title, label2=title, path=network_url)
     liz.setArt({'icon': os.path.join(_img, 'icons', 'settings.png'),
-                'fanart': os.path.join(_img, 'backgrounds', 'settings.jpg')})
+                'fanart': os.path.join(_img, 'backgrounds', 'settings.png')})
     liz.setInfo(type='Video', infoLabels={'Title': title, 'Plot': title})
     u = sys.argv[0]
     u = pyproxy.set_parameter(u, 'url', network_url)
@@ -1977,7 +1976,7 @@ def build_shoko_menu():
         'cmd': 'missing',
         'poster': 'none',
         'icon': os.path.join(_img, 'icons', 'new-search.png'),
-        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.png'),
         'type': 'video',
         'plot': plugin_addon.getLocalizedString(30135),
         'extras': ''
@@ -1986,7 +1985,7 @@ def build_shoko_menu():
         'cmd': 'statsupdate',
         'poster': 'none',
         'icon': os.path.join(_img, 'icons', 'new-search.png'),
-        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.png'),
         'type': 'video',
         'plot': plugin_addon.getLocalizedString(30136),
         'extras': ''
@@ -1995,7 +1994,7 @@ def build_shoko_menu():
         'cmd': 'mediainfo',
         'poster': 'none',
         'icon': os.path.join(_img, 'icons', 'new-search.png'),
-        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.png'),
         'type': 'video',
         'plot': plugin_addon.getLocalizedString(30137),
         'extras': ''
@@ -2004,7 +2003,7 @@ def build_shoko_menu():
         'cmd': 'folderlist',
         'poster': 'none',
         'icon': os.path.join(_img, 'icons', 'new-search.png'),
-        'fanart': os.path.join(_img, 'backgrounds', 'new-search.jpg'),
+        'fanart': os.path.join(_img, 'backgrounds', 'new-search.png'),
         'type': 'video',
         'plot': plugin_addon.getLocalizedString(30140),
         'extras': '',
