@@ -3,7 +3,7 @@
 	<requires>
 		<import addon="xbmc.python" version="2.25.0" />
 		<import addon="script.module.future" version="0.16.0.4"/>
-		<import addon="script.module.routing" version="0.1.0"/>
+		<import addon="script.module.routing" version="0.2.2"/>
 		<import addon="script.module.web-pdb" optional="true"/>
 		<import addon="script.module.pydevd-pycharm" optional="true"/>
 		<import addon="script.module.nakamori" version="3.1.0~beta"/>
