@@ -5,9 +5,11 @@ import json
 
 import debug as dbg
 import lib.guibuilder as gb
+import nakamori_player
 from nakamori_utils import nakamoritools as nt
+from nakamori_utils import kodi_utils, shoko_utils
 from nakamori_utils.globalvars import *
-from lib import kodi_utils, shoko_utils, search
+from lib import search
 
 import xbmcplugin
 import xbmcaddon
@@ -40,7 +42,7 @@ def play_video(video_parameters):
     try:
         win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
         ctl = win.getControl(win.getFocusId())
-        if kodi_utils.play_video(video_parameters['ep_id'],
+        if nakamori_player.play_video(video_parameters['ep_id'],
                                  video_parameters['raw_id'] if 'raw_id' in video_parameters else '0',
                                  video_parameters['movie'] if 'movie' in video_parameters else 0) > 0:
             # noinspection PyTypeChecker

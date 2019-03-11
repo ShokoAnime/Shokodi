@@ -1,13 +1,15 @@
 import json
+import sys
 
 import debug
+import error_handler
+import nakamori_player
 import routing
+import xbmcplugin
 from error_handler import try_function, show_messages, ErrorPriority
 from kodi_models.kodi_models import DirectoryListing
-from lib import kodi_utils
 from nakamori_utils import nakamoritools as nt
 from nakamori_utils.globalvars import *
-
 
 plugin_localize = plugin_addon.getLocalizedString
 routing_plugin = routing.Plugin('plugin://plugin.video.nakamori')
@@ -43,7 +45,7 @@ def show_main_menu():
         if any(x.sort_index != 0 for x in items):
             items.sort(key=lambda a: (a.sort_index, a.name))
     except:
-        pass
+        error_handler.exception(ErrorPriority.HIGH)
     for item in items:
         dir.append(item.get_listitem())
 
@@ -72,11 +74,11 @@ def add_extra_main_menu_items(items):
     if plugin_addon.getSetting('show_airing_today') == 'true':
         items.append(CustomItem(plugin_localize(30223), 'airing.png', url_for(show_airing_today_menu), 1))
 
-    if plugin_addon.getSetting('show_calendar') == 'true':
-        items.append(CustomItem(plugin_localize(30222), 'calendar.png', url_for(show_calendar_menu), 2))
+    # if plugin_addon.getSetting('show_calendar') == 'true':
+    #    items.append(CustomItem(plugin_localize(30222), 'calendar.png', script47replace(nakamoriscript.calendar), 2))
 
-    if plugin_addon.getSetting('show_settings') == 'true':
-        items.append(CustomItem(plugin_localize(30107), 'settings.png', url_for(show_settings_dialog), 7))
+    # if plugin_addon.getSetting('show_settings') == 'true':
+    #    items.append(CustomItem(plugin_localize(30107), 'settings.png', script47replace(nakamoriscript.show_settings_dialog), 7))
 
     if plugin_addon.getSetting('show_shoko') == 'true':
         items.append(CustomItem(plugin_localize(30115), 'settings.png', url_for(show_shoko_menu), 8))
@@ -108,7 +110,7 @@ def show_unsorted_menu():
     dir = DirectoryListing('episodes')
     for item in json_node:
         f = File(item)
-        dir.append(f.get_listitem())
+        dir.append(f.get_listitem(), False)
 
 
 @routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>')
@@ -160,7 +162,7 @@ def show_airing_today_menu():
     pass
 
 
-@routing_plugin.route('/menu/calendar')
+@routing_plugin.route('/menu/calendar_old')
 @try_function(ErrorPriority.BLOCKING)
 def show_calendar_menu():
     pass
@@ -178,36 +180,15 @@ def show_shoko_menu():
     pass
 
 
-@routing_plugin.route('/dialog/settings')
-@try_function(ErrorPriority.BLOCKING)
-def show_settings_dialog():
-    pass
-
-
-@routing_plugin.route('/dialog/wizard')
-@try_function(ErrorPriority.BLOCKING)
-def show_wizard_dialog():
-    pass
-
-
-@routing_plugin.route('/dialog/vote_series/<series_id>')
-@try_function(ErrorPriority.BLOCKING)
-def show_series_vote_dialog(series_id):
-    pass
-
-
-@routing_plugin.route('/dialog/vote_episode/<ep_id>')
-@try_function(ErrorPriority.BLOCKING)
-def show_episode_vote_dialog(ep_id):
-    pass
-
-
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
+    # this prevents the spinning wheel
+    xbmcplugin.endOfDirectory(int(sys.argv[1]), succeeded=False, updateListing=False, cacheToDisc=False)
     # all of real work is done here
-    kodi_utils.play_video(file_id, ep_id, mark_as_watched, resume)
+    nakamori_player.play_video(file_id, ep_id, mark_as_watched, resume)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')
+@try_function(ErrorPriority.BLOCKING)
 def play_video(ep_id, file_id):
     play_video_internal(ep_id, file_id)
 
@@ -221,41 +202,6 @@ def play_video_without_marking(ep_id, file_id):
 def resume_video(ep_id, file_id):
     # if we are resuming, then we'll assume that scrobbling and marking are True
     play_video_internal(ep_id, file_id, mark_as_watched=True, resume=True)
-
-
-@routing_plugin.route('/series/<series_id>/vote/<value>')
-@try_function(ErrorPriority.BLOCKING)
-def vote_for_series(series_id, value):
-    pass
-
-
-@routing_plugin.route('/episode/<ep_id>/vote/<value>')
-@try_function(ErrorPriority.BLOCKING)
-def vote_for_episode(ep_id, value):
-    pass
-
-
-@routing_plugin.route('/episode/<ep_id>/set_watched/<watched>')
-@try_function(ErrorPriority.HIGH, 'Error Setting Watched Status')
-def set_episode_watched_status(ep_id, watched):
-    from shoko_models.v2 import Episode
-    ep = Episode(ep_id)
-    ep.set_watched_status(watched)
-
-
-@routing_plugin.route('/series/<series_id>/set_watched/<watched>')
-@try_function(ErrorPriority.HIGH, 'Error Setting Watched Status')
-def set_series_watched_status(series_id, watched):
-    from shoko_models.v2 import Series
-    series = Series(series_id)
-    series.set_watched_status(watched)
-
-
-@routing_plugin.route('/group/<group_id>/set_watched/<watched>')
-def set_group_watched_status(group_id, watched):
-    from shoko_models.v2 import Group
-    group = Group(group_id)
-    group.set_watched_status(watched)
 
 
 @try_function(ErrorPriority.BLOCKING)

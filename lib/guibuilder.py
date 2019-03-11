@@ -8,11 +8,11 @@ import time
 from collections import defaultdict
 from distutils.version import LooseVersion
 
+import nakamori_player
 import xbmcgui
 import xbmcplugin
-from lib import kodi_utils
 from lib import search
-from nakamori_utils import nakamoritools as nt, model_utils
+from nakamori_utils import nakamoritools as nt, model_utils, kodi_utils
 from nakamori_utils.globalvars import *
 from proxy.python_version_proxy import python_proxy as pyproxy
 from proxy.kodi_version_proxy import kodi_proxy
@@ -1954,7 +1954,7 @@ def create_playlist(serie_id):
             xbmc.log('play this : ' + str(ep), xbmc.LOGWARNING)
             video_parameters = dict()
             video_parameters['ep_id'] = str(ep)
-            if kodi_utils.play_video(video_parameters['ep_id'], '0', 0) >= 0:
+            if nakamori_player.play_video(video_parameters['ep_id'], '0', 0) >= 0:
                 video_parameters['watched'] = True
                 nt.mark_watch_status(video_parameters)
             else:
