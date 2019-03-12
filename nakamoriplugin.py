@@ -23,6 +23,8 @@ def main():
     show_main_menu()
 
 
+# Order matters on these. In this, it goes try -> route -> show_main_menu
+# Python is retarded, as you'd expect the opposite
 @routing_plugin.route('/menu/main')
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
@@ -207,9 +209,9 @@ def resume_video(ep_id, file_id):
 @try_function(ErrorPriority.BLOCKING)
 def _main():
     debug.debug_init()
-    auth, apikey = try_function(ErrorPriority.BLOCKING, '')(nt.valid_user)()
+    auth, apikey = try_function(ErrorPriority.BLOCKING)(nt.valid_user)()
     if not auth:
-        raise Exception('Wrong Username or Password, or unable to connect to the server.')
+        raise RuntimeError('Wrong Username or Password, or unable to connect to the server.')
     try_function(ErrorPriority.BLOCKING)(routing_plugin.run)()
     show_messages()
 
