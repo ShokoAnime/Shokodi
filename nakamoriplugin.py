@@ -8,7 +8,8 @@ import routing
 import xbmcplugin
 from error_handler import try_function, show_messages, ErrorPriority
 from kodi_models.kodi_models import DirectoryListing
-from nakamori_utils import nakamoritools as nt
+from nakamori_utils import nakamoritools as nt, kodi_utils
+from proxy.python_version_proxy import python_proxy as pyproxy
 from nakamori_utils.globalvars import *
 
 plugin_localize = plugin_addon.getLocalizedString
@@ -104,7 +105,7 @@ def show_unsorted_menu():
     # this is really bad practice, but the unsorted files list is too special
     from shoko_models.v2 import File
     url = server + '/api/file/unsort'
-    json_body = nt.get_json(url, True)
+    json_body = pyproxy.get_json(url, True)
     json_node = json.loads(json_body)
 
     d = DirectoryListing('episodes')
@@ -183,8 +184,14 @@ def show_shoko_menu():
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
     # this prevents the spinning wheel
     xbmcplugin.endOfDirectory(int(sys.argv[1]), succeeded=False, updateListing=False, cacheToDisc=False)
+
+    from shoko_models.v2 import Episode
+    ep = Episode(ep_id, build_full_object=True)
+    items = [(x.name, x.id) for x in ep]
+    selected_id = kodi_utils.show_file_list(items)
+
     # all of real work is done here
-    nakamori_player.play_video(file_id, ep_id, mark_as_watched, resume)
+    nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')

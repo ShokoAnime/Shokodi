@@ -9,6 +9,7 @@ from collections import defaultdict
 from distutils.version import LooseVersion
 
 import nakamori_player
+import nakamori_utils.kodi_utils
 import xbmcgui
 import xbmcplugin
 from lib import search
@@ -519,7 +520,7 @@ def add_serie_item(node, parent_title, destination_playlist=False):
     watched_sizes = node.get('watched_sizes', {})
     if len(watched_sizes) > 0:
         watched = nt.safe_int(watched_sizes.get('Episodes', 0))
-        if not nt.get_kodi_setting_bool('ignore_specials_watched'):
+        if not nakamori_utils.kodi_utils.get_kodi_setting_bool('ignore_specials_watched'):
             watched += nt.safe_int(watched_sizes.get('Specials', 0))
     else:
         watched = nt.safe_int(node.get('watchedsize', ''))
@@ -719,7 +720,7 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
     watched_sizes = node.get('watched_sizes', {})
     if len(watched_sizes) > 0:
         watched = nt.safe_int(watched_sizes.get('Episodes', 0))
-        if not nt.get_kodi_setting_bool('ignore_specials_watched'):
+        if not nakamori_utils.kodi_utils.get_kodi_setting_bool('ignore_specials_watched'):
             watched += nt.safe_int(watched_sizes.get('Specials', 0))
     else:
         watched = nt.safe_int(node.get('watchedsize', ''))
@@ -947,7 +948,7 @@ def build_filters_menu():
     try:
         filters_key = server + '/api/filter'
         filters_key = pyproxy.set_parameter(filters_key, 'level', 0)
-        retrieved_json = nt.get_json(filters_key)
+        retrieved_json = pyproxy.get_json(filters_key)
         if retrieved_json is not None:
             json_menu = json.loads(retrieved_json)
             kodi_utils.set_window_heading(json_menu['name'])
@@ -1126,7 +1127,7 @@ def build_groups_menu(params, json_body=None):
             temp_url = pyproxy.set_parameter(temp_url, 'notag', 1)
             temp_url = pyproxy.set_parameter(temp_url, 'level', 0)
             busy.update(20)
-            html = nt.get_json(temp_url)
+            html = pyproxy.get_json(temp_url)
             busy.update(50, plugin_addon.getLocalizedString(30162))
             if plugin_addon.getSetting('spamLog') == 'true':
                 xbmc.log(params['url'], xbmc.LOGWARNING)
@@ -1138,13 +1139,13 @@ def build_groups_menu(params, json_body=None):
                 # level 2 will fill group and series (for filter)
                 temp_url = params['url']
                 temp_url = pyproxy.set_parameter(temp_url, 'level', 2)
-                html = nt.get_json(temp_url)
+                html = pyproxy.get_json(temp_url)
                 body = json.loads(html)
             else:
                 # level 1 will fill group and series (for filter)
                 temp_url = params['url']
                 temp_url = pyproxy.set_parameter(temp_url, 'level', 1)
-                html = nt.get_json(temp_url)
+                html = pyproxy.get_json(temp_url)
                 body = json.loads(html)
         else:
             body = json_body
@@ -1211,7 +1212,7 @@ def build_serie_episodes_types(params):
     """
 
     try:
-        html = nt.get_json(params['url'])
+        html = pyproxy.get_json(params['url'])
         if plugin_addon.getSetting('spamLog') == 'true':
             xbmc.log(html, xbmc.LOGWARNING)
         body = json.loads(html)
@@ -1291,7 +1292,7 @@ def build_serie_episodes(params):
         if 'fake' in params:
             is_fake = params['fake']
         item_count = 0
-        html = nt.get_json(params['url'])
+        html = pyproxy.get_json(params['url'])
         busy.update(50, plugin_addon.getLocalizedString(30162))
         body = json.loads(html)
         if plugin_addon.getSetting('spamLog') == 'true':
@@ -1571,7 +1572,7 @@ def build_serie_episodes(params):
                                 select_this_item = True
                                 selected_list_item = True
                             # Hide plot and thumb for unwatched by kodi setting
-                            if not nt.get_kodi_setting_bool('videolibrary.showunwatchedplots'):
+                            if not nakamori_utils.kodi_utils.get_kodi_setting_bool('videolibrary.showunwatchedplots'):
                                 details['plot'] \
                                     = 'Hidden due to user setting.\nCheck Show Plot' + \
                                       ' for Unwatched Items in the Video Library Settings.'
@@ -1623,13 +1624,13 @@ def build_serie_episodes(params):
         busy.close()
         end_of_directory(place='episode')
     # settings / media / videos / {advanced} / Select first unwatched tv show season,episode (always)
-    if nt.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') > 0 or \
+    if nakamori_utils.kodi_utils.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') > 0 or \
             plugin_addon.getSetting('select_unwatched') == 'true':
         try:
             xbmc.sleep(150)
             new_window = xbmcgui.Window(xbmcgui.getCurrentWindowId())
             new_control = new_window.getControl(new_window.getFocusId())
-            nt.move_position_on_list(new_control, next_episode)
+            nakamori_utils.kodi_utils.move_position_on_list(new_control, next_episode)
         except:
             pass
 
@@ -1647,7 +1648,7 @@ def build_cast_menu(params):
         search_url = pyproxy.set_parameter(search_url, 'id', params.get('serie_id', ''))
         search_url = pyproxy.set_parameter(search_url, 'notag', 1)
         search_url = pyproxy.set_parameter(search_url, 'level', 0)
-        cast_nodes = json.loads(nt.get_json(search_url))
+        cast_nodes = json.loads(pyproxy.get_json(search_url))
         if plugin_addon.getSetting('spamLog') == 'true':
             nt.dump_dictionary(cast_nodes, 'cast_nodes')
 
@@ -1793,7 +1794,7 @@ def build_serie_soon(params):
         temp_url = pyproxy.set_parameter(temp_url, 'notag', 0)
         temp_url = pyproxy.set_parameter(temp_url, 'level', 0)
         busy.update(20)
-        html = nt.get_json(temp_url)
+        html = pyproxy.get_json(temp_url)
         busy.update(50, plugin_addon.getLocalizedString(30162))
         if plugin_addon.getSetting('spamLog') == 'true':
             xbmc.log(params['url'], xbmc.LOGWARNING)
@@ -1801,7 +1802,7 @@ def build_serie_soon(params):
         busy.update(70)
         temp_url = params['url']
         temp_url = pyproxy.set_parameter(temp_url, 'level', 2)
-        html = nt.get_json(temp_url)
+        html = pyproxy.get_json(temp_url)
         body = json.loads(html)
         busy.update(100)
         busy.close()
@@ -1849,7 +1850,7 @@ def build_raw_list(params):
     xbmcplugin.setContent(handle, 'videos')
     kodi_utils.set_window_heading(plugin_addon.getLocalizedString(30106))
     try:
-        html = nt.get_json(params['url'])
+        html = pyproxy.get_json(params['url'])
         body = json.loads(html)
         if plugin_addon.getSetting('spamLog') == 'true':
             xbmc.log(html, xbmc.LOGWARNING)
@@ -1892,7 +1893,7 @@ def search_for(search_url):
         search_url = pyproxy.set_parameter(search_url, 'level', 1)
         search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
         search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
-        json_body = json.loads(nt.get_json(search_url))
+        json_body = json.loads(pyproxy.get_json(search_url))
         if json_body['groups'][0]['size'] == 0:
             xbmc.executebuiltin('XBMC.Notification(%s, %s %s, 7500, %s)' % (plugin_addon.getLocalizedString(30180),
                                                                             plugin_addon.getLocalizedString(30181),
@@ -1908,7 +1909,7 @@ def execute_search_and_add_query():
     """
     Build a search query and if its not in Search History add it
     """
-    find = nt.search_box()
+    find = nakamori_utils.kodi_utils.search_box()
     # check search history
     if find == '':
         build_search_directory()
@@ -1929,7 +1930,7 @@ def create_playlist(serie_id):
     :return:
     """
     serie_url = server + '/api/serie?id=' + str(serie_id) + '&level=2&nocast=1&notag=1'
-    serie_body = json.loads(nt.get_json(serie_url))
+    serie_body = json.loads(pyproxy.get_json(serie_url))
     # playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     # playlist.clear()
     item_count = 0

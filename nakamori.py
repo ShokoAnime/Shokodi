@@ -6,6 +6,7 @@ import json
 import debug as dbg
 import lib.guibuilder as gb
 import nakamori_player
+import nakamori_utils.kodi_utils
 from nakamori_utils import nakamoritools as nt
 from nakamori_utils import kodi_utils, shoko_utils
 from nakamori_utils.globalvars import *
@@ -48,7 +49,7 @@ def play_video(video_parameters):
             # noinspection PyTypeChecker
             ui_index = video_parameters.get('ui_index', '')
             if ui_index != '':
-                nt.move_position_on_list(ctl, int(ui_index) + 1)
+                nakamori_utils.kodi_utils.move_position_on_list(ctl, int(ui_index) + 1)
             video_parameters['watched'] = True
             nt.mark_watch_status(video_parameters)
     except Exception as exp:
@@ -93,7 +94,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif cmd == 'searchCast':
                     gb.search_for(parameters.get('url', ''))
                 elif cmd == 'watched':
-                    if nt.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') == 0 or \
+                    if nakamori_utils.kodi_utils.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') == 0 or \
                             plugin_addon.getSetting('select_unwatched') == 'true':
                         try:
                             win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
@@ -101,7 +102,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                             # noinspection PyTypeChecker
                             ui_index = parameters.get('ui_index', '')
                             if ui_index != '':
-                                nt.move_position_on_list(ctl, int(ui_index) + 1)
+                                nakamori_utils.kodi_utils.move_position_on_list(ctl, int(ui_index) + 1)
                         except Exception as exp:
                             xbmc.log(str(exp), xbmc.LOGWARNING)
                             pass
@@ -122,7 +123,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif cmd == 'pickFile':
                     if str(parameters['ep_id']) != '0':
                         ep_url = server + '/api/ep?id=' + str(parameters['ep_id']) + '&level=2'
-                        kodi_utils.file_list_gui(json.loads(nt.get_json(ep_url)))
+                        kodi_utils.file_list_gui(json.loads(pyproxy.get_json(ep_url)))
                 elif cmd == 'rescan':
                     shoko_utils.rescan_file(parameters.get('vl', ''))
                 elif cmd == 'rehash':
@@ -138,7 +139,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                 elif cmd == 'createPlaylist':
                     gb.create_playlist(parameters['serie_id'])
                 elif cmd == 'refresh':
-                    nt.refresh()
+                    nakamori_utils.kodi_utils.refresh()
                 elif cmd == 'resume':
                     plugin_addon.setSetting('resume', '1')
                     # noinspection PyTypeChecker
