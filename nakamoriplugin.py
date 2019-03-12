@@ -29,7 +29,7 @@ def main():
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
     from shoko_models.v2 import Filter
-    filter = Filter(0, build_full_object=True, get_children=True)
+    filter = Filter(0, build_full_object=True)
     dir = DirectoryListing('tvshows')
     items = []
     # this just throws an error. It's for testing and should be removed later.
