@@ -29,12 +29,11 @@ def main():
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
     from shoko_models.v2 import Filter
-    filter = Filter(0, build_full_object=True)
-    dir = DirectoryListing('tvshows')
+    f = Filter(0, build_full_object=True)
+    d = DirectoryListing('tvshows')
     items = []
-    # this just throws an error. It's for testing and should be removed later.
-    # filter = items[1]
-    for item in filter:
+
+    for item in f:
         items.append(item)
     # apply settings for main menu
     items[:] = [x for x in items if not is_main_menu_item_enabled(x)]
@@ -49,7 +48,7 @@ def show_main_menu():
     except:
         error_handler.exception(ErrorPriority.HIGH)
     for item in items:
-        dir.append(item.get_listitem())
+        d.append(item.get_listitem())
 
 
 def is_main_menu_item_enabled(item):
@@ -89,7 +88,7 @@ def add_extra_main_menu_items(items):
         items.append(CustomItem(plugin_localize(30221), 'search.png', url_for(show_search_menu), 9))
 
 
-@routing_plugin.route('/menu/filter/byid/<filter_id>')
+@routing_plugin.route('/menu/filter/<filter_id>')
 @try_function(ErrorPriority.BLOCKING)
 def show_filter_menu(filter_id):
     from shoko_models.v2 import Filter
@@ -99,7 +98,6 @@ def show_filter_menu(filter_id):
         d.append(item.get_listitem())
 
 
-# do not make urls like /menu/filter/<filter_id> and /menu/filter/unsorted, as they will conflict randomly
 @routing_plugin.route('/menu/filter/unsorted')
 @try_function(ErrorPriority.BLOCKING)
 def show_unsorted_menu():
@@ -109,10 +107,10 @@ def show_unsorted_menu():
     json_body = nt.get_json(url, True)
     json_node = json.loads(json_body)
 
-    dir = DirectoryListing('episodes')
+    d = DirectoryListing('episodes')
     for item in json_node:
         f = File(item)
-        dir.append(f.get_listitem(), False)
+        d.append(f.get_listitem(), False)
 
 
 @routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>')
@@ -120,9 +118,9 @@ def show_unsorted_menu():
 def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id)
-    dir = DirectoryListing('tvshows')
+    d = DirectoryListing('tvshows')
     for item in group:
-        dir.append(item.get_listitem())
+        d.append(item.get_listitem())
 
 
 @routing_plugin.route('/menu/series/<series_id>')
@@ -132,30 +130,30 @@ def show_series_menu(series_id):
     series = Series(series_id, build_full_object=True, get_children=True)
 
     if len(series.episode_types) > 1:
-        dir = DirectoryListing('seasons')
+        d = DirectoryListing('seasons')
         # type listing
         for item in series.episode_types:
-            dir.append(item.get_listitem())
+            d.append(item.get_listitem())
     else:
-        dir = DirectoryListing('episodes')
+        d = DirectoryListing('episodes')
         for item in series:
-            int_add_episode(item, dir)
+            int_add_episode(item, d)
 
 
 @routing_plugin.route('/menu/series/<series_id>/type/<episode_type>')
 def show_series_episode_types_menu(series_id, episode_type):
     from shoko_models.v2 import SeriesTypeList
     types = SeriesTypeList(series_id, episode_type)
-    dir = DirectoryListing('episodes')
+    d = DirectoryListing('episodes')
     for item in types:
-        int_add_episode(item, dir)
+        int_add_episode(item, d)
 
 
 @try_function(ErrorPriority.HIGHEST, 'Failed to Add an Episode')
-def int_add_episode(item, dir):
+def int_add_episode(item, d):
     if item.get_file() is None:
         return
-    dir.append(item.get_listitem(), False)
+    d.append(item.get_listitem(), False)
 
 
 @routing_plugin.route('/menu/airing_today')
