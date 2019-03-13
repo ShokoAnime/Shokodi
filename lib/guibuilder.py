@@ -10,6 +10,7 @@ from distutils.version import LooseVersion
 
 import nakamori_player
 import nakamori_utils.kodi_utils
+import nakamori_utils.shoko_utils
 import xbmcgui
 import xbmcplugin
 from lib import search
@@ -390,7 +391,7 @@ def add_raw_files(node):
         }
 
         # as for now, there are few ways to mark these, but future or something!
-        watched = int(nt.safe_int(node.get('view', '0'))) == '1'
+        watched = int(pyproxy.safe_int(node.get('view', '0'))) == '1'
         if watched:
             details['playcount'] = 1
             details['overlay'] = 5
@@ -519,11 +520,11 @@ def add_serie_item(node, parent_title, destination_playlist=False):
 
     watched_sizes = node.get('watched_sizes', {})
     if len(watched_sizes) > 0:
-        watched = nt.safe_int(watched_sizes.get('Episodes', 0))
+        watched = pyproxy.safe_int(watched_sizes.get('Episodes', 0))
         if not nakamori_utils.kodi_utils.get_kodi_setting_bool('ignore_specials_watched'):
-            watched += nt.safe_int(watched_sizes.get('Specials', 0))
+            watched += pyproxy.safe_int(watched_sizes.get('Specials', 0))
     else:
-        watched = nt.safe_int(node.get('watchedsize', ''))
+        watched = pyproxy.safe_int(node.get('watchedsize', ''))
     list_cast = []
     list_cast_and_role = []
     actors = []
@@ -543,19 +544,19 @@ def add_serie_item(node, parent_title, destination_playlist=False):
     local_sizes = node.get('local_sizes', {})
     if plugin_addon.getSetting('local_total') == 'true':
         if len(local_sizes) > 0:
-            total = nt.safe_int(local_sizes.get('Episodes', 0)) + nt.safe_int(local_sizes.get('Specials', 0))
+            total = pyproxy.safe_int(local_sizes.get('Episodes', 0)) + pyproxy.safe_int(local_sizes.get('Specials', 0))
         else:
-            total = nt.safe_int(node.get('localsize', ''))
+            total = pyproxy.safe_int(node.get('localsize', ''))
     else:
         sizes = node.get('total_sizes', {})
         if len(sizes) > 0:
-            total = nt.safe_int(sizes.get('Episodes', 0)) + nt.safe_int(sizes.get('Specials', 0))
+            total = pyproxy.safe_int(sizes.get('Episodes', 0)) + pyproxy.safe_int(sizes.get('Specials', 0))
         else:
-            total = nt.safe_int(node.get('localsize', ''))
-    local_size = nt.safe_int(local_sizes.get('Episodes', 0))
-    total_size = nt.safe_int(node.get('total_sizes', {}).get('Episodes', 0))
-    local_special_size = nt.safe_int(local_sizes.get('Specials', 0))
-    total_special_size = nt.safe_int(node.get('total_sizes', {}).get('Specials', 0))
+            total = pyproxy.safe_int(node.get('localsize', ''))
+    local_size = pyproxy.safe_int(local_sizes.get('Episodes', 0))
+    total_size = pyproxy.safe_int(node.get('total_sizes', {}).get('Episodes', 0))
+    local_special_size = pyproxy.safe_int(local_sizes.get('Specials', 0))
+    total_special_size = pyproxy.safe_int(node.get('total_sizes', {}).get('Specials', 0))
 
     if watched > total:
         watched = total
@@ -580,7 +581,7 @@ def add_serie_item(node, parent_title, destination_playlist=False):
         'genre':            temp_genre,
         'year':             node.get('year', ''),
         'episode':          total,
-        'season':           nt.safe_int(node.get('season', '1')),
+        'season':           pyproxy.safe_int(node.get('season', '1')),
         # 'count'        : count,
         'size':             total,
         'rating':           float(str(node.get('rating', '0')).replace(',', '.')),
@@ -719,24 +720,24 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
 
     watched_sizes = node.get('watched_sizes', {})
     if len(watched_sizes) > 0:
-        watched = nt.safe_int(watched_sizes.get('Episodes', 0))
+        watched = pyproxy.safe_int(watched_sizes.get('Episodes', 0))
         if not nakamori_utils.kodi_utils.get_kodi_setting_bool('ignore_specials_watched'):
-            watched += nt.safe_int(watched_sizes.get('Specials', 0))
+            watched += pyproxy.safe_int(watched_sizes.get('Specials', 0))
     else:
-        watched = nt.safe_int(node.get('watchedsize', ''))
+        watched = pyproxy.safe_int(node.get('watchedsize', ''))
 
     if plugin_addon.getSetting('local_total') == 'true':
         local_sizes = node.get('local_sizes', {})
         if len(local_sizes) > 0:
-            total = nt.safe_int(local_sizes.get('Episodes', 0)) + nt.safe_int(local_sizes.get('Specials', 0))
+            total = pyproxy.safe_int(local_sizes.get('Episodes', 0)) + pyproxy.safe_int(local_sizes.get('Specials', 0))
         else:
-            total = nt.safe_int(node.get('localsize', ''))
+            total = pyproxy.safe_int(node.get('localsize', ''))
     else:
         sizes = node.get('total_sizes', {})
         if len(sizes) > 0:
-            total = nt.safe_int(sizes.get('Episodes', 0)) + nt.safe_int(sizes.get('Specials', 0))
+            total = pyproxy.safe_int(sizes.get('Episodes', 0)) + pyproxy.safe_int(sizes.get('Specials', 0))
         else:
-            total = nt.safe_int(node.get('localsize', ''))
+            total = pyproxy.safe_int(node.get('localsize', ''))
 
     if node.get('type', '') == 'filter':
         total = node.get('size', 0)
@@ -760,7 +761,7 @@ def add_group_item(node, parent_title, filter_id, is_filter=False):
         'genre':            temp_genre,
         'year':             node.get('year', ''),
         'episode':          total,
-        'season':           nt.safe_int(node.get('season', '1')),
+        'season':           pyproxy.safe_int(node.get('season', '1')),
         'size':             total,
         'rating':           float(str(node.get('rating', '0')).replace(',', '.')),
         'userrating':       float(str(node.get('userrating', '0')).replace(',', '.')),
@@ -864,7 +865,7 @@ def add_filter_item(menu):
     """
     use_mode = 4
     key = menu['url']
-    size = nt.safe_int(menu.get('size'))
+    size = pyproxy.safe_int(menu.get('size'))
     title = menu['name']
 
     if title == 'Continue Watching (SYSTEM)':
@@ -966,7 +967,7 @@ def build_filters_menu():
                         airing['art']['thumb'] = []
                         airing['art']['fanart'].append({'url': os.path.join(_img, 'backgrounds', 'airing.png')})
                         airing['art']['thumb'].append({'url': os.path.join(_img, 'icons', 'airing.png')})
-                        if nt.get_version() >= LooseVersion('3.8'):
+                        if nakamori_utils.shoko_utils.get_version() >= LooseVersion('3.8'):
                             menu_append.insert(filters_sorting[title], airing)
                         menu['art'] = {}
                         menu['art']['fanart'] = []
@@ -1362,7 +1363,7 @@ def build_serie_episodes(params):
                         'cast': list_cast,
                         'aired': body['air'],
                         'tvshowtitle': body['name'],
-                        'size': nt.safe_int(body.get('size', '0')),
+                        'size': pyproxy.safe_int(body.get('size', '0')),
                         'genre': temp_genre,
                         'tagline': temp_genre
                     }
@@ -1406,16 +1407,16 @@ def build_serie_episodes(params):
                                 else:  # flat folders
                                     row_type = str(body.get('local_sizes', {}).keys()[0])
                                     types = map_types.keys()[map_types.values().index(row_type)]
-                                ep_size = nt.safe_int(body.get('local_sizes', {}).get(row_type, 0))
-                                ep_total_size = nt.safe_int(body.get('total_sizes', {}).get(row_type, 0))
+                                ep_size = pyproxy.safe_int(body.get('local_sizes', {}).get(row_type, 0))
+                                ep_total_size = pyproxy.safe_int(body.get('total_sizes', {}).get(row_type, 0))
                                 status_label = '[ %s: %s/%s ]' % (map_shortcuts_x_types[types],
                                                                   ep_size, ep_total_size)
                             # show all type status for server size settings - that way you know what you are missing
                             else:
                                 status_label = '[ '
                                 for row_type in body.get('total_sizes', {}).keys():
-                                    size_local = nt.safe_int(body.get('local_sizes', {}).get(row_type, 0))
-                                    total_size = nt.safe_int(body.get('total_sizes', {}).get(row_type, 0))
+                                    size_local = pyproxy.safe_int(body.get('local_sizes', {}).get(row_type, 0))
+                                    total_size = pyproxy.safe_int(body.get('total_sizes', {}).get(row_type, 0))
                                     if total_size != 0:
                                         status_label += '%s: %s/%s' % (map_shortcuts_x_types[map_types.keys()[
                                             map_types.values().index(row_type)]], size_local, total_size)
@@ -1458,13 +1459,13 @@ def build_serie_episodes(params):
                         if title is None:
                             title = 'Episode ' + str(video.get('epnumber', '??'))
 
-                        is_watched = int(nt.safe_int(video.get('view', '0')))
+                        is_watched = int(pyproxy.safe_int(video.get('view', '0')))
                         # Required listItem entries for XBMC
                         details = {
-                            'size': nt.safe_int(video['files'][0].get('size', '0')),
+                            'size': pyproxy.safe_int(video['files'][0].get('size', '0')),
                             'genre': temp_genre,
-                            'year': nt.safe_int(video.get('year', '')),
-                            'episode': nt.safe_int(video.get('epnumber', '')),
+                            'year': pyproxy.safe_int(video.get('year', '')),
+                            'episode': pyproxy.safe_int(video.get('epnumber', '')),
                             'rating': float(str(video.get('rating', '0')).replace(',', '.')),
                             'userrating': float(str(video.get('UserRating', '0')).replace(',', '.')),
                             'cast': list_cast,
@@ -1479,7 +1480,7 @@ def build_serie_episodes(params):
                             'premiered': air,
                             'tag': temp_genre,  # k18
                             'aired': air,
-                            'votes': nt.safe_int(video.get('votes', '')),
+                            'votes': pyproxy.safe_int(video.get('votes', '')),
                             'mediatype': 'episode',  # 'video', 'movie', 'tvshow', 'season', 'episode', 'musicvideo'
 
                             # CUSTOM
@@ -1498,7 +1499,7 @@ def build_serie_episodes(params):
                                 nt.error(w, season)
                         else:
                             season = '0'
-                        details['season'] = nt.safe_int(season)
+                        details['season'] = pyproxy.safe_int(season)
 
                         temp_date = str(details['aired']).split('-')
                         if len(temp_date) == 3:  # format is 2016-01-24, we want it 24.01.2016
@@ -1538,13 +1539,13 @@ def build_serie_episodes(params):
                             'key':              key,
                             'resume':           int(int(video['files'][0].get('offset', '0')) / 1000),
                             'parentKey':        parent_key,
-                            'jmmepisodeid':     nt.safe_int(body.get('id', '')),
+                            'jmmepisodeid':     pyproxy.safe_int(body.get('id', '')),
                             'actors':           actors,
                             'VideoStreams':     defaultdict(dict),
                             'AudioStreams':     defaultdict(dict),
                             'SubStreams':       defaultdict(dict),
-                            'ep_id':            nt.safe_int(video.get('id', '')),
-                            'serie_id':         nt.safe_int(body.get('id', '')),
+                            'ep_id':            pyproxy.safe_int(video.get('id', '')),
+                            'serie_id':         pyproxy.safe_int(body.get('id', '')),
                             'file_id':          video['files'][0].get('offset', '0'),
                             'multiep':          True if len(video['files']) > 1 else False
                         }

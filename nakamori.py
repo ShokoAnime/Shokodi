@@ -7,6 +7,7 @@ import debug as dbg
 import lib.guibuilder as gb
 import nakamori_player
 import nakamori_utils.kodi_utils
+import nakamori_utils.shoko_utils
 from nakamori_utils import nakamoritools as nt
 from nakamori_utils import kodi_utils, shoko_utils
 from nakamori_utils.globalvars import *
@@ -57,7 +58,7 @@ def play_video(video_parameters):
         pass
 
 
-if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
+if plugin_addon.getSetting('wizard') != '0' and nakamori_utils.shoko_utils.get_server_status():
     try:
         auth, apikey = nt.valid_user()
         if auth:
@@ -86,9 +87,9 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
 
             if cmd is not None:
                 if cmd == 'voteSer':
-                    nt.vote_series(parameters['serie_id'])
+                    nakamori_utils.shoko_utils.vote_series(parameters['serie_id'])
                 elif cmd == 'voteEp':
-                    nt.vote_episode(parameters['ep_id'])
+                    nakamori_utils.shoko_utils.vote_episode(parameters['ep_id'])
                 elif cmd == 'viewCast':
                     gb.build_cast_menu(parameters)
                 elif cmd == 'searchCast':
@@ -110,7 +111,7 @@ if plugin_addon.getSetting('wizard') != '0' and nt.get_server_status():
                     nt.mark_watch_status(parameters)
                     if plugin_addon.getSetting('vote_always') == 'true':
                         if parameters.get('userrate', 0) == 0:
-                            nt.vote_episode(parameters['ep_id'])
+                            nakamori_utils.shoko_utils.vote_episode(parameters['ep_id'])
                 elif cmd == 'unwatched':
                     parameters['watched'] = False
                     nt.mark_watch_status(parameters)

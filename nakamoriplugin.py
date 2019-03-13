@@ -8,7 +8,7 @@ import routing
 import xbmcplugin
 from error_handler import try_function, show_messages, ErrorPriority
 from kodi_models.kodi_models import DirectoryListing
-from nakamori_utils import nakamoritools as nt, kodi_utils
+from nakamori_utils import nakamoritools as nt, kodi_utils, shoko_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
 from nakamori_utils.globalvars import *
 
@@ -94,7 +94,7 @@ def add_extra_main_menu_items(items):
 def show_filter_menu(filter_id):
     from shoko_models.v2 import Filter
     f = Filter(filter_id, build_full_object=True, get_children=True)
-    d = DirectoryListing('tvshows')
+    d = DirectoryListing('tvshows', cache=True)
     for item in f:
         d.append(item.get_listitem())
 
@@ -214,6 +214,15 @@ def resume_video(ep_id, file_id):
 @try_function(ErrorPriority.BLOCKING)
 def _main():
     debug.debug_init()
+    # stage 1 - check connection
+    if not shoko_utils.can_connect():
+        # TODO handle it with connection settings
+        raise RuntimeError('Cannot connect to Shoko Server. Please check your ip settings.')
+
+    # stage 2 - Check server startup status
+    if not shoko_utils.get_server_status():
+        return
+
     auth, apikey = try_function(ErrorPriority.BLOCKING)(nt.valid_user)()
     if not auth:
         raise RuntimeError('Wrong Username or Password, or unable to connect to the server.')
