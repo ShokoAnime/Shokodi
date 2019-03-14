@@ -350,9 +350,9 @@ def end_of_directory(cache=True, force_sort=-1, place='filter'):
     xbmcplugin.addDirectoryItems(handle, list_items, len(list_items))
 
     if force_sort == -1:
-        nt.set_user_sort_method(place)
+        nakamori_utils.kodi_utils.set_user_sort_method(place)
     else:
-        nt.set_sort_method(str(force_sort))
+        nakamori_utils.kodi_utils.set_sort_method(str(force_sort))
 
     xbmcplugin.endOfDirectory(handle, cacheToDisc=cache)
 

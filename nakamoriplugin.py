@@ -95,6 +95,7 @@ def show_filter_menu(filter_id):
     from shoko_models.v2 import Filter
     f = Filter(filter_id, build_full_object=True, get_children=True)
     d = DirectoryListing('tvshows', cache=True)
+    f.apply_sorting(routing_plugin.handle)
     for item in f:
         d.append(item.get_listitem())
 
@@ -120,6 +121,7 @@ def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id)
     d = DirectoryListing('tvshows')
+    group.apply_sorting(routing_plugin.handle)
     for item in group:
         d.append(item.get_listitem())
 
@@ -137,6 +139,7 @@ def show_series_menu(series_id):
             d.append(item.get_listitem())
     else:
         d = DirectoryListing('episodes')
+        series.apply_sorting(routing_plugin.handle)
         for item in series:
             int_add_episode(item, d)
 
@@ -146,6 +149,7 @@ def show_series_episode_types_menu(series_id, episode_type):
     from shoko_models.v2 import SeriesTypeList
     types = SeriesTypeList(series_id, episode_type)
     d = DirectoryListing('episodes')
+    types.apply_sorting(routing_plugin.handle)
     for item in types:
         int_add_episode(item, d)
 
