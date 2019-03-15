@@ -8,7 +8,6 @@ import time
 from collections import defaultdict
 from distutils.version import LooseVersion
 
-import nakamori_player
 import nakamori_utils.kodi_utils
 import nakamori_utils.shoko_utils
 import xbmcgui
@@ -1903,7 +1902,7 @@ def search_for(search_url):
             search_url = pyproxy.parse_parameters(search_url)
             build_groups_menu(search_url, json_body)
     except:
-        nt.error('util.error in findVideo')
+        pass
 
 
 def execute_search_and_add_query():
@@ -1956,13 +1955,7 @@ def create_playlist(serie_id):
             xbmc.log('play this : ' + str(ep), xbmc.LOGWARNING)
             video_parameters = dict()
             video_parameters['ep_id'] = str(ep)
-            if nakamori_player.play_video(video_parameters['ep_id'], '0', 0) >= 0:
-                video_parameters['watched'] = True
-                nt.mark_watch_status(video_parameters)
-            else:
-                # should be -1 when STOP
-                xbmc.log('You hit STOP, so we end playlist', xbmc.LOGWARNING)
-                break
+            # play it
 
 
 def build_shoko_menu():
