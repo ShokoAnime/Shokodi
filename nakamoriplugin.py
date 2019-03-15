@@ -8,7 +8,7 @@ import routing
 import xbmcplugin
 from error_handler import try_function, show_messages, ErrorPriority
 from kodi_models.kodi_models import DirectoryListing
-from nakamori_utils import nakamoritools as nt, kodi_utils, shoko_utils
+from nakamori_utils import kodi_utils, shoko_utils, script_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
 from nakamori_utils.globalvars import *
 
@@ -220,16 +220,22 @@ def _main():
     debug.debug_init()
     # stage 1 - check connection
     if not shoko_utils.can_connect():
-        # TODO handle it with connection settings
-        raise RuntimeError('Cannot connect to Shoko Server. Please check your ip settings.')
+        script_utils.wizard_connection()
+        if not shoko_utils.can_connect():
+            raise RuntimeError('Could not connect. Please check your connection settings.')
 
     # stage 2 - Check server startup status
     if not shoko_utils.get_server_status():
         return
 
-    auth, apikey = try_function(ErrorPriority.BLOCKING)(nt.valid_user)()
+    # stage 3 - auth
+    auth = try_function(ErrorPriority.BLOCKING)(shoko_utils.auth)()
     if not auth:
-        raise RuntimeError('Wrong Username or Password, or unable to connect to the server.')
+        script_utils.wizard_login()
+        auth = try_function(ErrorPriority.BLOCKING)(shoko_utils.auth)()
+        if not auth:
+            raise RuntimeError('Could not log in. Please check your user settings.')
+
     try_function(ErrorPriority.BLOCKING)(routing_plugin.run)()
     show_messages()
 

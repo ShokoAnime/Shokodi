@@ -58,9 +58,9 @@ def play_video(video_parameters):
         pass
 
 
-if plugin_addon.getSetting('wizard') != '0' and nakamori_utils.shoko_utils.get_server_status():
+if plugin_addon.getSetting('wizard') != '0' and shoko_utils.get_server_status():
     try:
-        auth, apikey = nt.valid_user()
+        auth, apikey = shoko_utils.auth()
         if auth:
             try:
                 parameters = pyproxy.parse_parameters(sys.argv[2])
