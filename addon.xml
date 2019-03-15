@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.nakamori" name="Nakamori" version="3.1.0~beta" provider-name="BigRetroMike, da3dsoul">
+<addon id="plugin.video.nakamori" name="Nakamori" version="3.1.0~beta2" provider-name="BigRetroMike, da3dsoul">
 	<requires>
 		<import addon="xbmc.python" version="2.25.0" />
 		<import addon="script.module.future" version="0.16.0.4"/>
 		<import addon="script.module.routing" version="0.2.2"/>
 		<import addon="script.module.web-pdb" optional="true"/>
 		<import addon="script.module.pydevd-pycharm" optional="true"/>
-		<import addon="script.module.nakamori" version="3.1.0~beta"/>
-		<import addon="script.module.nakamoriplayer" version="3.1.0~beta"/>
+		<import addon="script.module.nakamori" version="3.1.0~beta2"/>
+		<import addon="script.module.nakamoriplayer" version="3.1.0~beta2"/>
 		<import addon="resource.images.nakamori" version="3.0.0"/>
-		<import addon="script.module.nakamori-lib" version="3.1.0~beta" />
+		<import addon="script.module.nakamori-lib" version="3.1.0~beta2" />
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="nakamoriplugin.py">
 		<provides>video</provides>
