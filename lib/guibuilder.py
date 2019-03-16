@@ -39,47 +39,6 @@ map_shortcuts_x_types = {
                     'Trailer': 'T',
                     'Parody': 'P',
                     'Other': 'O'
-}
-
-
-def title_coloring(title, episode_count, total_count, special_count, total_special_count, airing=False):
-    """
-    Color title based on conditions
-    :param title: title to color
-    :param episode_count: episode number
-    :param total_count: total episode number
-    :param special_count: special episode number
-    :param total_special_count: total special episode number
-    :param airing: is series still airing
-    :return: colorized title
-    """
-    color_title = title
-    if plugin_addon.getSetting('color_title') != 'true':
-        return color_title
-
-    color_format = '[COLOR %s]%s[/COLOR]'
-    if airing:
-        color = plugin_addon.getSetting('title_color_airing')
-        color_special = plugin_addon.getSetting('title_color_airing_special')
-        color_missing = plugin_addon.getSetting('title_color_airing_missing')
-    else:
-        color = plugin_addon.getSetting('title_color_finish')
-        color_special = plugin_addon.getSetting('title_color_finish_special')
-        color_missing = plugin_addon.getSetting('title_color_finish_missing')
-
-    if episode_count == total_count:
-        if total_special_count == 0:
-            return color_format % (color, title)
-        if special_count >= total_special_count:
-            # its possible if set to local_size in setting
-            return color_format % (color_special, title)
-        if special_count < total_special_count:
-            return color_format % (color, title)
-    elif episode_count < total_count:
-        return color_format % (color_missing, title)
-
-    return color_title
-
 
 def add_gui_item(gui_url, details, extra_data, context=None, folder=True, index=0, force_select=False):
     """Adds an item to the menu and populates its info labels
