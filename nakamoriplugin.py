@@ -209,8 +209,13 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
 
     from shoko_models.v2 import Episode
     ep = Episode(ep_id, build_full_object=True)
-    items = [(x.name, x.id) for x in ep]
-    selected_id = kodi_utils.show_file_list(items)
+    # follow pick_file setting
+    if plugin_addon.getSetting('pick_file') == 'true':
+        items = [(x.name, x.id) for x in ep]
+        selected_id = kodi_utils.show_file_list(items)
+    else:
+        f = ep.get_file()
+        selected_id = f.id
 
     # all of real work is done here
     nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
