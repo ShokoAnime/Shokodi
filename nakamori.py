@@ -1,20 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, unicode_literals
 
-import json
-
-import debug as dbg
 import lib.guibuilder as gb
-import nakamori_player
-import nakamori_utils.kodi_utils
-import nakamori_utils.shoko_utils
-from nakamori_utils import nakamoritools as nt
 from nakamori_utils import kodi_utils, shoko_utils
 from nakamori_utils.globalvars import *
 from lib import search
 
-import xbmcplugin
-import xbmcaddon
 import xbmcgui
 import xbmc
 
@@ -52,7 +43,8 @@ if plugin_addon.getSetting('wizard') != '0' and shoko_utils.get_server_status():
             elif cmd == 'searchCast':
                 gb.search_for(parameters.get('url', ''))
             elif cmd == 'playlist':
-                kodi_utils.play_continue_item()
+                # kodi_utils.play_continue_item()
+                pass
             elif cmd == 'mediainfo':
                 shoko_utils.mediainfo_update()
             elif cmd == 'statsupdate':
@@ -70,35 +62,33 @@ if plugin_addon.getSetting('wizard') != '0' and shoko_utils.get_server_status():
                             url = pyproxy.set_parameter(url, 'query', parameters['query'])
                             gb.search_for(url)
                         else:
-                            xbmcplugin.setContent(int(gb.handle), 'movies')
+                            # xbmcplugin.setContent(int(gb.handle), 'movies')
                             gb.execute_search_and_add_query()
                     else:
                         gb.build_search_directory()
                 except Exception as search_ex:
                     gb.build_search_directory()
             elif mode == 7:  # Playlist -continue-
-                kodi_utils.play_continue_item()
+                # kodi_utils.play_continue_item()
+                pass
             elif mode == 9:  # Calendar
                 if plugin_addon.getSetting('calendar_basic') == 'true':
                     gb.build_serie_soon(parameters)
-                else:
-                    nt.calendar()
+                # else:
+                    # nt.calendar()
             elif mode == 31:  # Clear Search History
                 search.clear_search_history(parameters)
             elif mode == 32:  # remove watch marks from kodi db
                 kodi_utils.fix_mark_watch_in_kodi_db()
             elif mode == 33:  # clear image cache from kodi db
                 kodi_utils.clear_image_cache_in_kodi_db()
-            else:
-                # starting point
-                    gb.build_filters_menu()
     except HTTPError as err:
         if err.code == 401:
             xbmc.log('--- (httperror = 401: wizard) ---', xbmc.LOGWARNING)
-            gb.build_network_menu()
+            # gb.build_network_menu()
 else:
-    gb.build_network_menu()
+    # gb.build_network_menu()
     if xbmcgui.Dialog().yesno('Error Connecting', 'Would you like to open the setup wizard'):
         xbmc.log('--- (get_server_status: wizard) ---', xbmc.LOGWARNING)
         plugin_addon.setSetting(id='wizard', value='0')
-        nt.wizard()
+        # nt.wizard()

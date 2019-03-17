@@ -874,8 +874,8 @@ msgstr "Hide Episode plot for unwatched episodes"
 
 #: guibuilder.py
 msgctxt "#30079"
-msgid " - spoiler protection -"
-msgstr " - spoiler protection -"
+msgid "Hidden Due to User Settings"
+msgstr "Hidden Due to User Settings"
 
 #: settings.xml
 msgctxt "#30080"

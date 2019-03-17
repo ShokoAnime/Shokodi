@@ -4,8 +4,8 @@ import debug
 import error_handler
 import nakamori_player
 import routing
-from error_handler import try_function, show_messages, ErrorPriority
-from kodi_models import DirectoryListing
+from error_handler import try_function, show_messages, ErrorPriority, exception
+from kodi_models import DirectoryListing, WatchedStatus
 from nakamori_utils import kodi_utils, shoko_utils, script_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
 from nakamori_utils.globalvars import *
@@ -51,7 +51,7 @@ def show_main_menu():
     except:
         error_handler.exception(ErrorPriority.HIGH)
     for item in items:
-        plugin_dir.append(item.get_listitem())
+        plugin_dir.append(item.get_listitem(), item.IsKodiFolder)
 
 
 def is_main_menu_item_enabled(item):
@@ -79,13 +79,13 @@ def add_extra_main_menu_items(items):
         items.append(CustomItem(plugin_localize(30223), 'airing.png', url_for(show_airing_today_menu), 1))
 
     if plugin_addon.getSetting('show_calendar') == 'true':
-        items.append(CustomItem(plugin_localize(30222), 'calendar.png', script(script_utils.url_calendar()), 2))
+        items.append(CustomItem(plugin_localize(30222), 'calendar.png', script(script_utils.url_calendar()), 2, False))
 
     if plugin_addon.getSetting('show_settings') == 'true':
-        items.append(CustomItem(plugin_localize(30107), 'settings.png', script(script_utils.url_settings()), 7))
+        items.append(CustomItem(plugin_localize(30107), 'settings.png', script(script_utils.url_settings()), 7, False))
 
     if plugin_addon.getSetting('show_shoko') == 'true':
-        items.append(CustomItem(plugin_localize(30115), 'settings.png', script(script_utils.url_shoko_menu()), 8))
+        items.append(CustomItem(plugin_localize(30115), 'settings.png', script(script_utils.url_shoko_menu()), 8, False))
 
     if plugin_addon.getSetting('show_search') == 'true':
         items.append(CustomItem(plugin_localize(30221), 'search.png', url_for(show_search_menu), 9))
@@ -141,10 +141,7 @@ def show_series_menu(series_id):
         for item in series.episode_types:
             plugin_dir.append(item.get_listitem())
     else:
-        plugin_dir.set_content('episodes')
-        series.apply_sorting(routing_plugin.handle)
-        for item in series:
-            int_add_episode(item, plugin_dir)
+        add_episodes(series)
 
 
 @routing_plugin.route('/menu/series/<series_id>/type/<episode_type>')
@@ -152,17 +149,38 @@ def show_series_menu(series_id):
 def show_series_episode_types_menu(series_id, episode_type):
     from shoko_models.v2 import SeriesTypeList
     types = SeriesTypeList(series_id, episode_type)
+    add_episodes(types)
+
+
+def add_episodes(series):
+    from kodi_models import ListItem
     plugin_dir.set_content('episodes')
-    types.apply_sorting(routing_plugin.handle)
-    for item in types:
-        int_add_episode(item, plugin_dir)
-
-
-@try_function(ErrorPriority.HIGHEST, 'Failed to Add an Episode')
-def int_add_episode(item, d):
-    if item.get_file() is None:
-        return
-    d.append(item.get_listitem(), False)
+    series.apply_sorting(routing_plugin.handle)
+    select = kodi_utils.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') > 0 \
+        or plugin_addon.getSetting('select_unwatched') == 'true'
+    watched_index = 0
+    i = 0
+    for item in series:
+        try:
+            if item.get_file() is None:
+                continue
+            listitem = item.get_listitem()
+            assert isinstance(listitem, ListItem)
+            if watched_index == i and item.is_watched() == WatchedStatus.WATCHED:
+                watched_index += 1
+            plugin_dir.append(listitem, False)
+            i += 1
+        except:
+            exception(ErrorPriority.HIGHEST, 'Unable to Add Episode')
+    if plugin_addon.getSetting('show_continue') == 'true':
+        from shoko_models.v2 import CustomItem
+        continue_url = script(script_utils.url_move_to_item(watched_index))
+        continue_item = CustomItem('*Go to First Unwatched Episode*', '', continue_url, 0, False)
+        plugin_dir.insert(0, (continue_item.get_listitem(), continue_item.IsKodiFolder))
+    if select:
+        plugin_dir.__del__()
+        xbmc.sleep(250)
+        kodi_utils.move_to_index(watched_index)
 
 
 @routing_plugin.route('/menu/airing_today')
