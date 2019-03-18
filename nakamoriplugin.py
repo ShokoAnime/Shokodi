@@ -254,8 +254,7 @@ def run_script(script_url):
 
 
 def restart_plugin():
-    script_utils.arbiter('RunPlugin(plugin.video.nakamori/)')
-    xbmc.sleep(1000)
+    script_utils.arbiter('RunAddon("plugin.video.nakamori")')
 
 
 @try_function(ErrorPriority.BLOCKING)
@@ -264,6 +263,8 @@ def main():
     # stage 1 - check connection
     if not shoko_utils.can_connect():
         fail_menu()
+        kodi_utils.message_box('Unable to Connect', 'We were unable to connect to Shoko Server.\n'
+                                                    'Please enter a valid IP or host.')
         if wizard.open_connection_wizard():
             restart_plugin()
             return
@@ -278,6 +279,9 @@ def main():
     auth = shoko_utils.auth()
     if not auth:
         fail_menu()
+        kodi_utils.message_box('Unable to Login', 'We were unable to log in to Shoko Server.\n'
+                                                    'Please enter a valid Username and Password.\n'
+                                                    'The default is U: "Default" P: "" (no quotes)')
         if wizard.open_login_wizard():
             restart_plugin()
             return
