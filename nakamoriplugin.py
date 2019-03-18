@@ -9,6 +9,7 @@ from kodi_models import DirectoryListing, WatchedStatus
 from nakamori_utils import kodi_utils, shoko_utils, script_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
 from nakamori_utils.globalvars import *
+from windows import wizard
 
 plugin_localize = plugin_addon.getLocalizedString
 routing_plugin = routing.Plugin('plugin://plugin.video.nakamori')
@@ -23,7 +24,9 @@ plugin_dir = DirectoryListing()
 
 
 def fail_menu():
+    global plugin_dir
     plugin_dir.success = False
+    del plugin_dir
 
 
 # Order matters on these. In this, it goes try -> route -> show_main_menu
@@ -148,7 +151,7 @@ def show_series_menu(series_id):
 @try_function(ErrorPriority.BLOCKING, fail_menu)
 def show_series_episode_types_menu(series_id, episode_type):
     from shoko_models.v2 import SeriesTypeList
-    types = SeriesTypeList(series_id, episode_type)
+    types = SeriesTypeList(series_id, episode_type, get_children=True)
     add_episodes(types)
 
 
@@ -203,9 +206,7 @@ def show_search_menu():
 
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
     # this prevents the spinning wheel
-    global plugin_dir
-    plugin_dir.success = False
-    del plugin_dir
+    fail_menu()
 
     from shoko_models.v2 import Episode
     ep = Episode(ep_id, build_full_object=True)
@@ -252,12 +253,20 @@ def run_script(script_url):
     xbmc.executebuiltin(pyproxy.unquote(pyproxy.unquote(script_url)))
 
 
+def restart_plugin():
+    script_utils.arbiter('RunPlugin(plugin.video.nakamori/)')
+    xbmc.sleep(1000)
+
+
 @try_function(ErrorPriority.BLOCKING)
 def main():
     debug.debug_init()
     # stage 1 - check connection
     if not shoko_utils.can_connect():
-        script_utils.wizard_connection()
+        fail_menu()
+        if wizard.open_connection_wizard():
+            restart_plugin()
+            return
         if not shoko_utils.can_connect():
             raise RuntimeError('Could not connect. Please check your connection settings.')
 
@@ -268,7 +277,10 @@ def main():
     # stage 3 - auth
     auth = shoko_utils.auth()
     if not auth:
-        script_utils.wizard_login()
+        fail_menu()
+        if wizard.open_login_wizard():
+            restart_plugin()
+            return
         auth = shoko_utils.auth()
         if not auth:
             raise RuntimeError('Could not log in. Please check your user settings.')
