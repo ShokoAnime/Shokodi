@@ -254,7 +254,7 @@ def run_script(script_url):
 
 
 def restart_plugin():
-    script_utils.arbiter('RunAddon("plugin.video.nakamori")')
+    script_utils.arbiter(0,'RunAddon("plugin.video.nakamori")')
 
 
 @try_function(ErrorPriority.BLOCKING)
