@@ -12,7 +12,7 @@ from nakamori_utils.globalvars import *
 from windows import wizard
 
 plugin_localize = plugin_addon.getLocalizedString
-routing_plugin = routing.Plugin('plugin://plugin.video.nakamori')
+routing_plugin = routing.Plugin('plugin://plugin.video.nakamori', convert_args=True)
 url_for = routing_plugin.url_for
 
 # I had to read up on this. Functions have read access to this if they don't declare a plugin_dir
@@ -208,15 +208,18 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
     # this prevents the spinning wheel
     fail_menu()
 
-    from shoko_models.v2 import Episode
-    ep = Episode(ep_id, build_full_object=True)
-    # follow pick_file setting
-    if plugin_addon.getSetting('pick_file') == 'true':
-        items = [(x.name, x.id) for x in ep]
-        selected_id = kodi_utils.show_file_list(items)
+    if ep_id > 0:
+        from shoko_models.v2 import Episode
+        ep = Episode(ep_id, build_full_object=True)
+        # follow pick_file setting
+        if plugin_addon.getSetting('pick_file') == 'true':
+            items = [(x.name, x.id) for x in ep]
+            selected_id = kodi_utils.show_file_list(items)
+        else:
+            f = ep.get_file()
+            selected_id = f.id
     else:
-        f = ep.get_file()
-        selected_id = f.id
+        selected_id = file_id
 
     # all of real work is done here
     nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
@@ -254,7 +257,7 @@ def run_script(script_url):
 
 
 def restart_plugin():
-    script_utils.arbiter(0,'RunAddon("plugin.video.nakamori")')
+    script_utils.arbiter(0, 'RunAddon("plugin.video.nakamori")')
 
 
 @try_function(ErrorPriority.BLOCKING)
