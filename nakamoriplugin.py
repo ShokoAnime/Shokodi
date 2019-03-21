@@ -101,24 +101,11 @@ def show_filter_menu(filter_id):
     f = Filter(filter_id, build_full_object=True, get_children=True)
     plugin_dir.set_content('tvshows')
     plugin_dir.set_cached()
+    f.add_sort_methods(routing_plugin.handle)
     for item in f:
         plugin_dir.append(item.get_listitem())
-    f.apply_sorting(routing_plugin.handle)
 
-
-@routing_plugin.route('/menu/filter/unsorted')
-@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_unsorted_menu():
-    # this is really bad practice, but the unsorted files list is too special
-    from shoko_models.v2 import File
-    url = server + '/api/file/unsort'
-    json_body = pyproxy.get_json(url, True)
-    json_node = json.loads(json_body)
-
-    plugin_dir.set_content('episodes')
-    for item in json_node:
-        f = File(item)
-        plugin_dir.append(f.get_listitem(), False)
+    f.apply_default_sorting()
 
 
 @routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>')
@@ -127,9 +114,11 @@ def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id)
     plugin_dir.set_content('tvshows')
+    group.add_sort_methods(routing_plugin.handle)
     for item in group:
         plugin_dir.append(item.get_listitem())
-    group.apply_sorting(routing_plugin.handle)
+
+    group.apply_default_sorting()
 
 
 @routing_plugin.route('/menu/series/<series_id>')
@@ -158,6 +147,7 @@ def show_series_episode_types_menu(series_id, episode_type):
 def add_episodes(series):
     from kodi_models import ListItem
     plugin_dir.set_content('episodes')
+    series.add_sort_methods(routing_plugin.handle)
     select = kodi_utils.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') > 0 \
         or plugin_addon.getSetting('select_unwatched') == 'true'
     watched_index = 0
@@ -180,7 +170,7 @@ def add_episodes(series):
         continue_item = CustomItem('*Go to First Unwatched Episode*', '', continue_url, 0, False)
         plugin_dir.insert(0, (continue_item.get_listitem(), continue_item.IsKodiFolder))
 
-    series.apply_sorting(routing_plugin.handle)
+    series.apply_default_sorting()
     if select:
         plugin_dir.__del__()
         xbmc.sleep(250)
@@ -197,6 +187,21 @@ def show_airing_today_menu():
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_calendar_menu():
     pass
+
+
+@routing_plugin.route('/menu/filter/unsorted')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def show_unsorted_menu():
+    # this is really bad practice, but the unsorted files list is too special
+    from shoko_models.v2 import File
+    url = server + '/api/file/unsort'
+    json_body = pyproxy.get_json(url, True)
+    json_node = json.loads(json_body)
+
+    plugin_dir.set_content('episodes')
+    for item in json_node:
+        f = File(item)
+        plugin_dir.append(f.get_listitem(), False)
 
 
 @routing_plugin.route('/menu/search')

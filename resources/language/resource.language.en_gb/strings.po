@@ -248,11 +248,6 @@ msgid "Use Server Title"
 msgstr "Use Server Title"
 
 #: settings.xml
-msgctxt "#30053"
-msgid "Default sorting method for Filters"
-msgstr "Default sorting method for Filters"
-
-#: settings.xml
 msgctxt "#30054"
 msgid "Browsing"
 msgstr "Browsing"
@@ -604,8 +599,8 @@ msgstr "Resume"
 
 #: settings.xml
 msgctxt "#30142"
-msgid "Default sorting method for Group/Series"
-msgstr "Default sorting method for Group/Series"
+msgid "Default sorting method for Series"
+msgstr "Default sorting method for Series"
 
 #: settings.xml
 msgctxt "#30143"
