@@ -101,9 +101,9 @@ def show_filter_menu(filter_id):
     f = Filter(filter_id, build_full_object=True, get_children=True)
     plugin_dir.set_content('tvshows')
     plugin_dir.set_cached()
-    f.apply_sorting(routing_plugin.handle)
     for item in f:
         plugin_dir.append(item.get_listitem())
+    f.apply_sorting(routing_plugin.handle)
 
 
 @routing_plugin.route('/menu/filter/unsorted')
@@ -127,9 +127,9 @@ def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id)
     plugin_dir.set_content('tvshows')
-    group.apply_sorting(routing_plugin.handle)
     for item in group:
         plugin_dir.append(item.get_listitem())
+    group.apply_sorting(routing_plugin.handle)
 
 
 @routing_plugin.route('/menu/series/<series_id>')
@@ -158,7 +158,6 @@ def show_series_episode_types_menu(series_id, episode_type):
 def add_episodes(series):
     from kodi_models import ListItem
     plugin_dir.set_content('episodes')
-    series.apply_sorting(routing_plugin.handle)
     select = kodi_utils.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') > 0 \
         or plugin_addon.getSetting('select_unwatched') == 'true'
     watched_index = 0
@@ -180,6 +179,8 @@ def add_episodes(series):
         continue_url = script(script_utils.url_move_to_item(watched_index))
         continue_item = CustomItem('*Go to First Unwatched Episode*', '', continue_url, 0, False)
         plugin_dir.insert(0, (continue_item.get_listitem(), continue_item.IsKodiFolder))
+
+    series.apply_sorting(routing_plugin.handle)
     if select:
         plugin_dir.__del__()
         xbmc.sleep(250)
@@ -206,7 +207,7 @@ def show_search_menu():
 
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
     # this prevents the spinning wheel
-    except_func=fail_menu()
+    fail_menu()
 
     if ep_id > 0:
         from shoko_models.v2 import Episode
@@ -265,7 +266,7 @@ def main():
     debug.debug_init()
     # stage 1 - check connection
     if not shoko_utils.can_connect():
-        except_func=fail_menu()
+        fail_menu()
         kodi_utils.message_box('Unable to Connect', 'We were unable to connect to Shoko Server.\n'
                                                     'Please enter a valid IP or host.')
         if wizard.open_connection_wizard():
@@ -281,7 +282,7 @@ def main():
     # stage 3 - auth
     auth = shoko_utils.auth()
     if not auth:
-        except_func=fail_menu()
+        fail_menu()
         kodi_utils.message_box('Unable to Login', 'We were unable to log in to Shoko Server.\n'
                                                     'Please enter a valid Username and Password.\n'
                                                     'The default is U: "Default" P: "" (no quotes)')
