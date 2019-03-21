@@ -29,6 +29,11 @@ def fail_menu():
     del plugin_dir
 
 
+def finish_menu():
+    global plugin_dir
+    del plugin_dir
+
+
 # Order matters on these. In this, it goes try -> route -> show_main_menu
 # Python is retarded, as you'd expect the opposite
 @routing_plugin.route('/')
@@ -105,6 +110,7 @@ def show_filter_menu(filter_id):
     for item in f:
         plugin_dir.append(item.get_listitem())
 
+    finish_menu()
     f.apply_default_sorting()
 
 
@@ -118,6 +124,7 @@ def show_group_menu(group_id, filter_id):
     for item in group:
         plugin_dir.append(item.get_listitem())
 
+    finish_menu()
     group.apply_default_sorting()
 
 
@@ -170,9 +177,9 @@ def add_episodes(series):
         continue_item = CustomItem('*Go to First Unwatched Episode*', '', continue_url, 0, False)
         plugin_dir.insert(0, (continue_item.get_listitem(), continue_item.IsKodiFolder))
 
+    finish_menu()
     series.apply_default_sorting()
     if select:
-        plugin_dir.__del__()
         xbmc.sleep(250)
         kodi_utils.move_to_index(watched_index)
 
