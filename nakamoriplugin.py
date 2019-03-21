@@ -95,7 +95,7 @@ def add_extra_main_menu_items(items):
 
 
 @routing_plugin.route('/menu/filter/<filter_id>')
-@try_function(ErrorPriority.BLOCKING, fail_menu)
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_filter_menu(filter_id):
     from shoko_models.v2 import Filter
     f = Filter(filter_id, build_full_object=True, get_children=True)
@@ -107,7 +107,7 @@ def show_filter_menu(filter_id):
 
 
 @routing_plugin.route('/menu/filter/unsorted')
-@try_function(ErrorPriority.BLOCKING, fail_menu)
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_unsorted_menu():
     # this is really bad practice, but the unsorted files list is too special
     from shoko_models.v2 import File
@@ -122,7 +122,7 @@ def show_unsorted_menu():
 
 
 @routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>')
-@try_function(ErrorPriority.BLOCKING, fail_menu)
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id)
@@ -133,7 +133,7 @@ def show_group_menu(group_id, filter_id):
 
 
 @routing_plugin.route('/menu/series/<series_id>')
-@try_function(ErrorPriority.BLOCKING, fail_menu)
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_series_menu(series_id):
     from shoko_models.v2 import Series
     series = Series(series_id, build_full_object=True, get_children=True)
@@ -148,7 +148,7 @@ def show_series_menu(series_id):
 
 
 @routing_plugin.route('/menu/series/<series_id>/type/<episode_type>')
-@try_function(ErrorPriority.BLOCKING, fail_menu)
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_series_episode_types_menu(series_id, episode_type):
     from shoko_models.v2 import SeriesTypeList
     types = SeriesTypeList(series_id, episode_type, get_children=True)
@@ -187,26 +187,26 @@ def add_episodes(series):
 
 
 @routing_plugin.route('/menu/airing_today')
-@try_function(ErrorPriority.BLOCKING, fail_menu)
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_airing_today_menu():
     pass
 
 
 @routing_plugin.route('/menu/calendar_old')
-@try_function(ErrorPriority.BLOCKING, fail_menu)
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_calendar_menu():
     pass
 
 
 @routing_plugin.route('/menu/search')
-@try_function(ErrorPriority.BLOCKING, fail_menu)
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_search_menu():
     pass
 
 
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
     # this prevents the spinning wheel
-    fail_menu()
+    except_func=fail_menu()
 
     if ep_id > 0:
         from shoko_models.v2 import Episode
@@ -265,7 +265,7 @@ def main():
     debug.debug_init()
     # stage 1 - check connection
     if not shoko_utils.can_connect():
-        fail_menu()
+        except_func=fail_menu()
         kodi_utils.message_box('Unable to Connect', 'We were unable to connect to Shoko Server.\n'
                                                     'Please enter a valid IP or host.')
         if wizard.open_connection_wizard():
@@ -281,7 +281,7 @@ def main():
     # stage 3 - auth
     auth = shoko_utils.auth()
     if not auth:
-        fail_menu()
+        except_func=fail_menu()
         kodi_utils.message_box('Unable to Login', 'We were unable to log in to Shoko Server.\n'
                                                     'Please enter a valid Username and Password.\n'
                                                     'The default is U: "Default" P: "" (no quotes)')
