@@ -59,7 +59,7 @@ def show_main_menu():
     except:
         error_handler.exception(ErrorPriority.HIGH)
     for item in items:
-        plugin_dir.append(item.get_listitem(), item.IsKodiFolder)
+        plugin_dir.append(item.get_listitem(), item.is_kodi_folder)
 
 
 def is_main_menu_item_enabled(item):
@@ -84,19 +84,32 @@ def add_extra_main_menu_items(items):
     # { 'Airing Today': 0, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4, 'Unsort': 5, 'Settings': 7,
     # 'Shoko Menu': 8, 'Search': 9 }
     if plugin_addon.getSetting('show_airing_today') == 'true':
-        items.append(CustomItem(plugin_localize(30223), 'airing.png', url_for(show_airing_today_menu), 1))
+        item = CustomItem(plugin_localize(30223), 'airing.png', url_for(show_airing_today_menu))
+        item.sort_index = 1
+        items.append(item)
 
     if plugin_addon.getSetting('show_calendar') == 'true':
-        items.append(CustomItem(plugin_localize(30222), 'calendar.png', script(script_utils.url_calendar()), 2, False))
+        item = CustomItem(plugin_localize(30222), 'calendar.png', script(script_utils.url_calendar()))
+        item.sort_index = 2
+        item.is_kodi_folder = False
+        items.append(item)
 
     if plugin_addon.getSetting('show_settings') == 'true':
-        items.append(CustomItem(plugin_localize(30107), 'settings.png', script(script_utils.url_settings()), 7, False))
+        item = CustomItem(plugin_localize(30107), 'settings.png', script(script_utils.url_settings()))
+        item.sort_index = 7
+        item.is_kodi_folder = False
+        items.append(item)
 
     if plugin_addon.getSetting('show_shoko') == 'true':
-        items.append(CustomItem(plugin_localize(30115), 'settings.png', script(script_utils.url_shoko_menu()), 8, False))
+        item = CustomItem(plugin_localize(30115), 'settings.png', script(script_utils.url_shoko_menu()))
+        item.sort_index = 8
+        item.is_kodi_folder = False
+        items.append(item)
 
     if plugin_addon.getSetting('show_search') == 'true':
-        items.append(CustomItem(plugin_localize(30221), 'search.png', url_for(show_search_menu), 9))
+        item = CustomItem(plugin_localize(30221), 'search.png', url_for(show_search_menu))
+        item.sort_index = 9
+        items.append(item)
 
 
 @routing_plugin.route('/menu/filter/<filter_id>')
@@ -155,7 +168,7 @@ def add_episodes(series):
     from kodi_models import ListItem
     plugin_dir.set_content('episodes')
     series.add_sort_methods(routing_plugin.handle)
-    select = kodi_utils.get_kodi_setting_int('videolibrary.tvshowsselectfirstunwatcheditem') > 0 \
+    select = kodi_utils.get_kodi_setting('videolibrary.tvshowsselectfirstunwatcheditem') > 0 \
         or plugin_addon.getSetting('select_unwatched') == 'true'
     watched_index = 0
     i = 0
@@ -175,7 +188,7 @@ def add_episodes(series):
         from shoko_models.v2 import CustomItem
         continue_url = script(script_utils.url_move_to_item(watched_index))
         continue_item = CustomItem('*Go to First Unwatched Episode*', '', continue_url, 0, False)
-        plugin_dir.insert(0, (continue_item.get_listitem(), continue_item.IsKodiFolder))
+        plugin_dir.insert(0, (continue_item.get_listitem(), continue_item.is_kodi_folder))
 
     finish_menu()
     series.apply_default_sorting()
@@ -214,6 +227,16 @@ def show_unsorted_menu():
 @routing_plugin.route('/menu/search')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_search_menu():
+    # search for new
+    # quick search
+    # clear search in context_menu
+    from shoko_models.v2 import CustomItem
+    item = CustomItem(plugin_addon.getLocalizedString(30224), 'new-search.png')
+
+
+@routing_plugin.route('/menu/search/<path:query>')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def show_search_result_menu(query):
     pass
 
 
@@ -257,7 +280,7 @@ def resume_video(ep_id, file_id):
 
 
 def script(script_url):
-    return url_for(run_script, pyproxy.quote(pyproxy.quote(script_url)))
+    return url_for(run_script, script_url)
 
 
 @routing_plugin.route('/script/<path:script_url>')
@@ -266,7 +289,7 @@ def run_script(script_url):
     plugin_dir.success = False
     del plugin_dir
 
-    xbmc.executebuiltin(pyproxy.unquote(pyproxy.unquote(script_url)))
+    xbmc.executebuiltin(script_url)
 
 
 def restart_plugin():
@@ -296,8 +319,8 @@ def main():
     if not auth:
         fail_menu()
         kodi_utils.message_box('Unable to Login', 'We were unable to log in to Shoko Server.\n'
-                                                    'Please enter a valid Username and Password.\n'
-                                                    'The default is U: "Default" P: "" (no quotes)')
+                                                  'Please enter a valid Username and Password.\n'
+                                                  'The default is U: "Default" P: "" (no quotes)')
         if wizard.open_login_wizard():
             restart_plugin()
             return
