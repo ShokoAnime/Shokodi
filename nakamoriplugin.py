@@ -232,18 +232,21 @@ def show_search_menu():
     # clear search in context_menu
     from shoko_models.v2 import CustomItem
     plugin_dir.set_content('videos')
+
+    clear_items = (plugin_localize(30110), script_utils.url_clear_search_terms())
+
     # Search
     item = CustomItem(plugin_localize(30224), 'new-search.png', script(script_utils.url_new_search(True)))
     item.is_kodi_folder = False
+    item.set_context_menu_items([clear_items])
     plugin_dir.append(item.get_listitem())
 
     # quick search
     # TODO Setting for this, localize, etc
     item = CustomItem(plugin_localize(30224), 'new-search.png', script(script_utils.url_new_search(False)))
     item.is_kodi_folder = False
+    item.set_context_menu_items([clear_items])
     plugin_dir.append(item.get_listitem())
-
-    # TODO Add context menu items to remove things and clear the list
 
     import search
     # This is sorted by most recent
@@ -254,6 +257,10 @@ def show_search_menu():
             if len(query) == 0:
                 continue
             item = CustomItem(query, 'search.png', url_for(show_search_result_menu, query))
+
+            remove_item = (plugin_localize(30204), script_utils.url_remove_search_term(query))
+            item.set_context_menu_items([remove_item, clear_items])
+
             plugin_dir.append(item.get_listitem())
         except:
             error_handler.exception(ErrorPriority.HIGHEST, 'Unable to Add Query to List')

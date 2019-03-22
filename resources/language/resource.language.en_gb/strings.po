@@ -907,3 +907,6 @@ msgctxt "#30139"
 msgid "Fix Desynced Images in Kodi database"
 msgstr "Fix Desynced Images in Kodi database"
 
+msgctxt "#30204"
+msgid "Remove"
+msgstr "Remove"

@@ -54,21 +54,7 @@ if plugin_addon.getSetting('wizard') != '0' and shoko_utils.get_server_status():
             elif cmd == 'createPlaylist':
                 gb.create_playlist(parameters['serie_id'])
         else:
-            if mode == 3:  # Search
-                try:
-                    if 'extras' in parameters:
-                        if parameters['extras'] == 'force-search' and 'query' in parameters:
-                            url = server + '/api/search'
-                            url = pyproxy.set_parameter(url, 'query', parameters['query'])
-                            gb.search_for(url)
-                        else:
-                            # xbmcplugin.setContent(int(gb.handle), 'movies')
-                            gb.execute_search_and_add_query()
-                    else:
-                        gb.build_search_directory()
-                except Exception as search_ex:
-                    gb.build_search_directory()
-            elif mode == 7:  # Playlist -continue-
+            if mode == 7:  # Playlist -continue-
                 # kodi_utils.play_continue_item()
                 pass
             elif mode == 9:  # Calendar

@@ -5,10 +5,8 @@ here are functions needed to create dirs/files
 import json
 import sys
 
-import nakamori_utils.kodi_utils
-import nakamori_utils.shoko_utils
 import xbmcgui
-import search
+
 from nakamori_utils import model_utils, kodi_utils
 from nakamori_utils.globalvars import *
 from proxy.python_version_proxy import python_proxy as pyproxy
@@ -82,73 +80,6 @@ def build_cast_menu(params):
         pass
 
 
-def build_search_directory():
-    """
-    Build Search directory 'New Search' and read Search History
-    :return:
-    """
-    items = [{
-        'title': plugin_addon.getLocalizedString(30224),
-        'url': server + '/api/serie',
-        'mode': 3,
-        'poster': 'none',
-        'icon': os.path.join(plugin_img_path, 'icons', 'new-search.png'),
-        'fanart': os.path.join(plugin_img_path, 'backgrounds', 'new-search.png'),
-        'type': '',
-        'plot': '',
-        'extras': 'true-search'
-    }, {
-        'title': '[COLOR yellow]Clear Search Terms[/COLOR]',
-        'url': 'delete-all',
-        'mode': 31,
-        'poster': 'none',
-        'icon': os.path.join(plugin_img_path, 'icons', 'clear-search.png'),
-        'fanart': os.path.join(plugin_img_path, 'backgrounds', 'clear-search.png'),
-        'type': '',
-        'plot': '',
-        'extras': ''
-    }]
-
-    # read search history
-    search_history = search.get_search_history()
-    search_history.sort()
-    for ss in search_history:
-        try:
-            if len(ss[0]) > 0:
-                items.append({
-                    'title': ss[0],
-                    'url': server + '/api/search',
-                    'query': ss[0],
-                    'mode': 3,
-                    'poster': 'none',
-                    'icon': os.path.join(plugin_img_path, 'icons', 'search.png'),
-                    'fanart': os.path.join(plugin_img_path, 'backgrounds', 'search.png'),
-                    'type': '',
-                    'plot': '',
-                    'extras': 'force-search',
-                    'extras2': 'db-search'
-                })
-        except:
-            pass
-
-    for detail in items:
-        u = sys.argv[0]
-        u = pyproxy.set_parameter(u, 'url', detail['url'])
-        u = pyproxy.set_parameter(u, 'mode', detail['mode'])
-        u = pyproxy.set_parameter(u, 'name', pyproxy.encode(detail['title']))
-        u = pyproxy.set_parameter(u, 'extras', detail['extras'])
-        if 'query' in detail:
-            u = pyproxy.set_parameter(u, 'query', detail['query'])
-        liz = xbmcgui.ListItem(pyproxy.encode(detail['title']))
-        liz.setArt({'thumb': detail['icon'],
-                    'poster': detail['poster'],
-                    'icon': detail['icon'],
-                    'fanart': detail['fanart']})
-        liz.setInfo(type=detail['type'], infoLabels={'Title': pyproxy.encode(detail['title']), 'Plot': detail['plot']})
-        #list_items.append((u, liz, True))
-    #end_of_directory(False)
-
-
 def build_serie_soon(params):
     """
         Builds the list of items for Calendar via Directory and ListItems ( Basic Mode )
@@ -216,46 +147,6 @@ def build_serie_soon(params):
         # nt.error('Invalid JSON Received in build_serie_soon', str(e))
         pass
     # end_of_directory()
-
-
-def search_for(search_url):
-    """
-    Actually do the search and build the result
-    :param search_url: search url with query
-    """
-    try:
-        search_url = pyproxy.set_parameter(search_url, 'tags', 2)
-        search_url = pyproxy.set_parameter(search_url, 'level', 1)
-        search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
-        search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
-        json_body = json.loads(pyproxy.get_json(search_url))
-        if json_body['groups'][0]['size'] == 0:
-            xbmc.executebuiltin('XBMC.Notification(%s, %s %s, 7500, %s)' % (plugin_addon.getLocalizedString(30180),
-                                                                            plugin_addon.getLocalizedString(30181),
-                                                                            '!', plugin_addon.getAddonInfo('icon')))
-        else:
-            search_url = pyproxy.parse_parameters(search_url)
-            # build_groups_menu(search_url, json_body)
-    except:
-        pass
-
-
-def execute_search_and_add_query():
-    """
-    Build a search query and if its not in Search History add it
-    """
-    find = nakamori_utils.kodi_utils.search_box()
-    # check search history
-    if find == '':
-        build_search_directory()
-        return
-    if not search.check_in_database(find):
-        # if its not add to history & refresh
-        search.add_search_history(find)
-        xbmc.executebuiltin('Container.Refresh')
-    search_url = server + '/api/search'
-    search_url = pyproxy.set_parameter(search_url, 'query', find)
-    search_for(search_url)
 
 
 def create_playlist(serie_id):
