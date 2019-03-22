@@ -231,13 +231,57 @@ def show_search_menu():
     # quick search
     # clear search in context_menu
     from shoko_models.v2 import CustomItem
-    item = CustomItem(plugin_addon.getLocalizedString(30224), 'new-search.png')
+    plugin_dir.set_content('videos')
+    # Search
+    item = CustomItem(plugin_localize(30224), 'new-search.png', script(script_utils.url_new_search(True)))
+    item.is_kodi_folder = False
+    plugin_dir.append(item.get_listitem())
+
+    # quick search
+    # TODO Setting for this, localize, etc
+    item = CustomItem(plugin_localize(30224), 'new-search.png', script(script_utils.url_new_search(False)))
+    item.is_kodi_folder = False
+    plugin_dir.append(item.get_listitem())
+
+    # TODO Add context menu items to remove things and clear the list
+
+    import search
+    # This is sorted by most recent
+    search_history = search.get_search_history()
+    for ss in search_history:
+        try:
+            query = ss[0]
+            if len(query) == 0:
+                continue
+            item = CustomItem(query, 'search.png', url_for(show_search_result_menu, query))
+            plugin_dir.append(item.get_listitem())
+        except:
+            error_handler.exception(ErrorPriority.HIGHEST, 'Unable to Add Query to List')
 
 
 @routing_plugin.route('/menu/search/<path:query>')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_search_result_menu(query):
-    pass
+    search_url = server + '/api/search'
+    search_url = pyproxy.set_parameter(search_url, 'query', query)
+    search_url = pyproxy.set_parameter(search_url, 'tags', 2)
+    search_url = pyproxy.set_parameter(search_url, 'level', 1)
+    search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
+    search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
+    json_body = json.loads(pyproxy.get_json(search_url))
+    groups = json_body['groups'][0]
+    if groups['size'] == 0:
+        # Show message about no results
+        kodi_utils.message_box(plugin_localize(30180), plugin_localize(30181))
+        fail_menu()
+        return
+
+    plugin_dir.set_content('tvshows')
+    from shoko_models.v2 import Group, Series
+    Group(0).add_sort_methods(routing_plugin.handle)
+    for item in groups['series']:
+        series = Series(item)
+        plugin_dir.append(series.get_listitem())
 
 
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):

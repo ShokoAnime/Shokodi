@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, unicode_literals
 import lib.guibuilder as gb
 from nakamori_utils import kodi_utils, shoko_utils
 from nakamori_utils.globalvars import *
-from lib import search
+import search
 
 import xbmcgui
 import xbmc

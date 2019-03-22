@@ -8,7 +8,7 @@ import sys
 import nakamori_utils.kodi_utils
 import nakamori_utils.shoko_utils
 import xbmcgui
-from lib import search
+import search
 from nakamori_utils import model_utils, kodi_utils
 from nakamori_utils.globalvars import *
 from proxy.python_version_proxy import python_proxy as pyproxy
