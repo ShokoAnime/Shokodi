@@ -65,9 +65,9 @@ if plugin_addon.getSetting('wizard') != '0' and shoko_utils.get_server_status():
             elif mode == 31:  # Clear Search History
                 search.clear_search_history(parameters)
             elif mode == 32:  # remove watch marks from kodi db
-                kodi_utils.fix_mark_watch_in_kodi_db()
+                kodi_utils.clear_listitem_cache()
             elif mode == 33:  # clear image cache from kodi db
-                kodi_utils.clear_image_cache_in_kodi_db()
+                kodi_utils.clear_image_cache()
     except HTTPError as err:
         if err.code == 401:
             xbmc.log('--- (httperror = 401: wizard) ---', xbmc.LOGWARNING)

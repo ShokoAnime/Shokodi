@@ -780,6 +780,10 @@ msgctxt "#30224"
 msgid "New Search"
 msgstr "New Search"
 
+msgctxt "#30225"
+msgid "Quick Search"
+msgstr "Quick Search"
+
 #: settings.xml
 msgctxt "#30150"
 msgid "Hide What's New"
@@ -874,8 +878,8 @@ msgstr "Hidden Due to User Settings"
 
 #: settings.xml
 msgctxt "#30080"
-msgid "Fix unsync watch marks in Kodi database"
-msgstr "Fix unsync watch marks in Kodi database"
+msgid "Fix desynced watch marks in Kodi's database"
+msgstr "Fix desynced watch marks in Kodi's database"
 
 #: kodi_utils.py
 msgctxt "#30081"

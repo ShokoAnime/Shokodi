@@ -243,7 +243,7 @@ def show_search_menu():
 
     # quick search
     # TODO Setting for this, localize, etc
-    item = CustomItem(plugin_localize(30224), 'new-search.png', script(script_utils.url_new_search(False)))
+    item = CustomItem(plugin_localize(30225), 'search.png', script(script_utils.url_new_search(False)))
     item.is_kodi_folder = False
     item.set_context_menu_items([clear_items])
     plugin_dir.append(item.get_listitem())

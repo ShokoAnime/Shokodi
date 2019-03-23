@@ -22,7 +22,8 @@
 		<setting type="text" id="good_version" default="" visible="false"/>
         <setting type="bool" id="onepunchmen" default="false" visible="false"/>
 		<!-- wizard -->
-		<setting label="30082" type="action" id="action4" action="RunPlugin(plugin://plugin.video.nakamori/?cmd=wizard)" option="close"/>
+        <!-- TODO REPLACE ME WITH LOG OUT ETC -->
+		<!--<setting label="30082" type="action" id="action4" action="" option="close"/>-->
     </category>
 	<!-- Main Menu Items -->
     <category label="30098">
@@ -84,8 +85,8 @@
         <setting label="30131" type="bool" id="context_refresh" default="true"/>
         <!-- maintenance -->
 		<setting label="30097" type="lsep"/>
-        <setting label="30080" type="action" id="action1" action="RunPlugin(plugin://plugin.video.nakamori/?mode=32)" option="close"/>
-        <setting label="30139" type="action" id="action2" action="RunPlugin(plugin://plugin.video.nakamori/?mode=33)" option="close"/>
+        <setting label="30080" type="action" id="action1" action="RunScript(script.module.nakamori,/kodi/clear_listitem_cache)" option="close"/>
+        <setting label="30139" type="action" id="action2" action="RunScript(script.module.nakamori,/kodi/clear_image_cache)" option="close"/>
     </category>
     <category label="30046">
         <!-- tag blacklist -->
@@ -104,7 +105,7 @@
         <setting label="30033" type="number" id="maxlimit_tag" default="100"/>
         <!-- maintenance -->
 		<setting label="30097" type="lsep"/>
-        <setting label="30110" type="action" id="action3" action="RunPlugin(plugin://plugin.video.nakamori/?mode=31)" enable="System.HasAddon(script.module.nakamori)" option="close"/>
+        <setting label="30110" type="action" id="action3" action="RunScript(script.module.nakamori,/search/clear)" enable="System.HasAddon(script.module.nakamori)" option="close"/>
     </category>
 	<!-- video settings -->
     <category label="30023">
@@ -136,7 +137,6 @@
         <setting label="30042" type="bool" id="spamLog" default="false"/>
         <setting label="30063" type="bool" id="remote_debug" default="false" enable="System.HasAddon(script.module.web-pdb)|System.HasAddon(script.module.pydevd-pycharm)"/>
         <setting label="30086" type="text" id="remote_ip" default="localhost" visible="System.HasAddon(script.module.pydevd-pycharm)" enable="System.HasAddon(script.module.pydevd-pycharm)"/>
-        <setting label="30013" type="bool" id="use_gzip" default="true"/>
         <setting label="30066" type="bool" id="request_nocast" default="false"/>
         <!-- calendar -->
 		<setting label="30012" type="lsep"/>
