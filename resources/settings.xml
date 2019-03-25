@@ -97,6 +97,7 @@
         <setting label="30049" type="bool" id="hideUsefulMiscTags" default="false"/>
         <setting label="30050" type="bool" id="hideSpoilerTags" default="false"/>
         <setting label="30070" type="bool" id="hideSettingTags" default="false"/>
+        <setting label="30013" type="bool" id="hideProgrammingTags" default="false"/>
     </category>
     <category label="30221">
         <!-- searching -->

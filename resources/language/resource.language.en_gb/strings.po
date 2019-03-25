@@ -68,11 +68,6 @@ msgid "Calendar"
 msgstr "Calendar"
 
 #: settings.xml
-msgctxt "#30013"
-msgid "Use gzip"
-msgstr "Use gzip"
-
-#: settings.xml
 msgctxt "#30014"
 msgid "Enable \'Pick file\' on multi files episodes"
 msgstr "Enable \'Pick file\' on multi files episodes"
@@ -236,6 +231,11 @@ msgstr "Hide useful helper tags (mostly related to OP/ED style)"
 msgctxt "#30050"
 msgid "Hide plot spoiler tags (so and so dies/wins/etc)"
 msgstr "Hide plot spoiler tags (so and so dies/wins/etc)"
+
+#: settings.xml
+msgctxt "#30013"
+msgid "Hide Programming Related Tags (how/where it aired, awards, etc)"
+msgstr "Hide Programming Related Tags (how/where it aired, awards, etc)"
 
 #: settings.xml
 msgctxt "#30051"

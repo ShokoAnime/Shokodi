@@ -6,7 +6,7 @@ import nakamori_player
 import routing
 from error_handler import try_function, show_messages, ErrorPriority, exception
 from kodi_models import DirectoryListing, WatchedStatus
-from nakamori_utils import kodi_utils, shoko_utils, script_utils
+from nakamori_utils import kodi_utils, shoko_utils, script_utils, model_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
 from nakamori_utils.globalvars import *
 from windows import wizard
@@ -270,9 +270,9 @@ def show_search_menu():
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_search_result_menu(query):
     search_url = server + '/api/search'
+    search_url = model_utils.add_default_parameters(search_url, 0, 1)
     search_url = pyproxy.set_parameter(search_url, 'query', query)
     search_url = pyproxy.set_parameter(search_url, 'tags', 2)
-    search_url = pyproxy.set_parameter(search_url, 'level', 1)
     search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
     search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
     json_body = json.loads(pyproxy.get_json(search_url))
