@@ -244,8 +244,8 @@ msgstr "Spoiler Tags (so and so dies/wins/etc)"
 
 #: settings.xml
 msgctxt "#30013"
-msgid "Hide Programming Related Tags (how/where it aired, awards, etc)"
-msgstr "Hide Programming Related Tags (how/where it aired, awards, etc)"
+msgid "Programming Tags (how/where it aired, awards, etc)"
+msgstr "Programming Tags (how/where it aired, awards, etc)"
 
 #: settings.xml
 msgctxt "#30051"
