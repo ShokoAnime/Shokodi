@@ -204,8 +204,8 @@ msgstr "Advanced"
 
 #: settings.xml
 msgctxt "#30045"
-msgid "Hide AniDB Helper or Otherwise Useless Tags"
-msgstr "Hide AniDB Helper or Otherwise Useless Tags"
+msgid "AniDB Helper or Otherwise Useless Tags"
+msgstr "AniDB Helper or Otherwise Useless Tags"
 
 #: settings.xml
 msgctxt "#30046"
@@ -213,24 +213,34 @@ msgid "Tag Blacklist"
 msgstr "Tag Blacklist"
 
 #: settings.xml
+msgctxt "#30227"
+msgid "Filter Tags to "
+msgstr "Filter Tags to "
+
+#: settings.xml
+msgctxt "#30226"
+msgid "Genre Tags"
+msgstr "Genre Tags"
+
+#: settings.xml
 msgctxt "#30047"
-msgid "Hide art style related tags"
-msgstr "Hide art style related tags"
+msgid "Art Style Tags"
+msgstr "Art Style Tags"
 
 #: settings.xml
 msgctxt "#30048"
-msgid "Hide source tags (Manga, original, etc)"
-msgstr "Hide source tags (Manga, original, etc)"
+msgid "Source Tags (Manga, original, etc)"
+msgstr "Source Tags (Manga, original, etc)"
 
 #: settings.xml
 msgctxt "#30049"
-msgid "Hide useful helper tags (mostly related to OP/ED style)"
-msgstr "Hide useful helper tags (mostly related to OP/ED style)"
+msgid "Useful Helper Tags (mostly related to OP/ED style)"
+msgstr "Useful Helper Tags (mostly related to OP/ED style)"
 
 #: settings.xml
 msgctxt "#30050"
-msgid "Hide plot spoiler tags (so and so dies/wins/etc)"
-msgstr "Hide plot spoiler tags (so and so dies/wins/etc)"
+msgid "Spoiler Tags (so and so dies/wins/etc)"
+msgstr "Spoiler Tags (so and so dies/wins/etc)"
 
 #: settings.xml
 msgctxt "#30013"
@@ -319,8 +329,8 @@ msgstr "Cached data expiration time (s)"
 
 #: settings.xml
 msgctxt "#30070"
-msgid "Hide setting tags (time/place/etc)"
-msgstr "Hide setting tags (time/place/etc)"
+msgid "Setting tags (time/place/etc)"
+msgstr "Setting tags (time/place/etc)"
 
 #: settings.xml
 msgctxt "#30082"
