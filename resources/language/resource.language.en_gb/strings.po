@@ -134,8 +134,8 @@ msgstr "Max time to wait for buffer (in ms)"
 
 #: settings.xml
 msgctxt "#30028"
-msgid "Use short Tag list"
-msgstr "Use short Tag list"
+msgid "Shorten Tag List"
+msgstr "Shorten Tag List"
 
 #: settings.xml
 msgctxt "#30029"
@@ -209,8 +209,8 @@ msgstr "AniDB Helper or Otherwise Useless Tags"
 
 #: settings.xml
 msgctxt "#30046"
-msgid "Tag Blacklist"
-msgstr "Tag Blacklist"
+msgid "Tag Filter"
+msgstr "Tag Filter"
 
 #: settings.xml
 msgctxt "#30227"

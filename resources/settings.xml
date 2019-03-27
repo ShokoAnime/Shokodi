@@ -69,7 +69,6 @@
 		<setting label="30083" type="bool" id="select_unwatched" default="true"/>
         <setting label="30040" type="bool" id="local_total" default="true"/>
         <setting label="30068" type="bool" id="ignore_specials_watched" default="false"/>
-        <setting label="30028" type="bool" id="short_tag_list" default="true"/>
         <!-- Context Menu Settings -->
 		<setting label="30057" type="lsep"/>
         <setting label="30065" type="bool" id="context_show_play" default="true" />
@@ -92,6 +91,7 @@
         <!-- tag blacklist -->
 		<setting label="30046" type="lsep"/>
         <setting label="30227" type="labelenum" id="InvertTags" default="Hide" values="Show|Hide"/>
+        <setting label="30028" type="bool" id="short_tag_list" default="true"/>
         <setting label="30045" type="bool" id="MiscTags" default="false"/>
         <setting label="30047" type="bool" id="ArtTags" default="false"/>
         <setting label="30048" type="bool" id="SourceTags" default="false"/>
