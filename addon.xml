@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.nakamori" name="Nakamori" version="3.1.0~beta15" provider-name="BigRetroMike, da3dsoul">
+<addon id="plugin.video.nakamori" name="Nakamori" version="3.1.0~beta16" provider-name="BigRetroMike, da3dsoul">
 	<requires>
 		<import addon="xbmc.python" version="2.25.0" />
 		<import addon="script.module.future" version="0.16.0.4"/>
@@ -9,7 +9,7 @@
 		<import addon="script.module.nakamori" version="3.1.0~beta13"/>
 		<import addon="script.module.nakamoriplayer" version="3.1.0~beta10"/>
 		<import addon="resource.images.nakamori" version="3.1.0"/>
-		<import addon="script.module.nakamori-lib" version="3.1.0~beta20" />
+		<import addon="script.module.nakamori-lib" version="3.1.0~beta23" />
 		<import addon="service.nakamori" version="3.1.0~beta5" />
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="nakamoriplugin.py">
