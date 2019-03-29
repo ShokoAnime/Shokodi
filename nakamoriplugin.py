@@ -152,8 +152,10 @@ def show_series_menu(series_id):
         # type listing
         for item in series.episode_types:
             plugin_dir.append(item.get_listitem())
+    elif len(series.episode_types) == 1:
+        add_episodes(series, series.episode_types[0].episode_type)
     else:
-        add_episodes(series)
+        raise RuntimeError('No Episodes in Series')
 
 
 @routing_plugin.route('/menu/series/<series_id>/type/<episode_type>')
@@ -161,10 +163,10 @@ def show_series_menu(series_id):
 def show_series_episode_types_menu(series_id, episode_type):
     from shoko_models.v2 import SeriesTypeList
     types = SeriesTypeList(series_id, episode_type, get_children=True)
-    add_episodes(types)
+    add_episodes(types, episode_type)
 
 
-def add_episodes(series):
+def add_episodes(series, episode_type):
     from kodi_models import ListItem
     plugin_dir.set_content('episodes')
     series.add_sort_methods(routing_plugin.handle)
@@ -184,11 +186,8 @@ def add_episodes(series):
             i += 1
         except:
             exception(ErrorPriority.HIGHEST, 'Unable to Add Episode')
-    if plugin_addon.getSetting('show_continue') == 'true':
-        from shoko_models.v2 import CustomItem
-        continue_url = script(script_utils.url_move_to_item(watched_index))
-        continue_item = CustomItem('*Go to First Unwatched Episode*', '', continue_url, 0, False)
-        plugin_dir.insert(0, (continue_item.get_listitem(), continue_item.is_kodi_folder))
+
+    add_continue_item(series, episode_type, watched_index)
 
     finish_menu()
     series.apply_default_sorting()
@@ -196,6 +195,27 @@ def add_episodes(series):
         # the list is definitely not there yet, so try after 0.25s.
         xbmc.sleep(250)
         kodi_utils.move_to_index(watched_index)
+
+
+def add_continue_item(series, episode_type, watched_index):
+    if plugin_addon.getSetting('show_continue') != 'true':
+        return
+    from shoko_models.v2 import CustomItem
+    continue_url = script(script_utils.url_move_to_item(watched_index))
+
+    continue_text = '*Go to First Unwatched Episode*'
+    if plugin_addon.getSetting('replace_continue') == 'true':
+        eps = series.sizes.watched_episodes
+        if plugin_addon.getSetting('local_only') == 'true':
+            total = series.sizes.local_episodes
+        else:
+            total = series.sizes.total_episodes
+        continue_text = '[ %s: %s/%s ]' % (episode_type, eps, total)
+
+    continue_item = CustomItem(continue_text, '', continue_url, -1, False)
+    continue_item.infolabels['episode'] = 0
+    continue_item.infolabels['season'] = 0
+    plugin_dir.insert(0, continue_item.get_listitem(), continue_item.is_kodi_folder)
 
 
 @routing_plugin.route('/menu/airing_today')
