@@ -203,6 +203,7 @@ def add_continue_item(series, episode_type, watched_index):
     from shoko_models.v2 import CustomItem
     continue_url = script(script_utils.url_move_to_item(watched_index))
 
+    # TODO LOCALIZE
     continue_text = '*Go to First Unwatched Episode*'
     if plugin_addon.getSetting('replace_continue') == 'true':
         eps = series.sizes.watched_episodes
@@ -373,12 +374,14 @@ def main():
     # stage 1 - check connection
     if not shoko_utils.can_connect():
         fail_menu()
+        # TODO LOCALIZE
         kodi_utils.message_box('Unable to Connect', 'We were unable to connect to Shoko Server.\n'
                                                     'Please enter a valid IP or host.')
         if wizard.open_connection_wizard():
             restart_plugin()
             return
         if not shoko_utils.can_connect():
+            # TODO LOCALIZE
             raise RuntimeError('Could not connect. Please check your connection settings.')
 
     # stage 2 - Check server startup status
@@ -389,6 +392,7 @@ def main():
     auth = shoko_utils.auth()
     if not auth:
         fail_menu()
+        # TODO LOCALIZE
         kodi_utils.message_box('Unable to Login', 'We were unable to log in to Shoko Server.\n'
                                                   'Please enter a valid Username and Password.\n'
                                                   'The default is U: "Default" P: "" (no quotes)')
@@ -397,6 +401,7 @@ def main():
             return
         auth = shoko_utils.auth()
         if not auth:
+            # TODO LOCALIZE
             raise RuntimeError('Could not log in. Please check your user settings.')
 
     routing_plugin.run()
