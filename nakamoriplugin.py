@@ -316,7 +316,7 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
     # this prevents the spinning wheel
     fail_menu()
 
-    if ep_id > 0:
+    if ep_id > 0 and file_id == 0:
         from shoko_models.v2 import Episode
         ep = Episode(ep_id, build_full_object=True)
         # follow pick_file setting
@@ -324,8 +324,7 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
             items = [(x.name, x.id) for x in ep]
             selected_id = kodi_utils.show_file_list(items)
         else:
-            f = ep.get_file()
-            selected_id = f.id
+            selected_id = ep.get_file().id
     else:
         selected_id = file_id
 

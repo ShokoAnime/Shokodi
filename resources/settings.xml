@@ -74,8 +74,7 @@
         <setting label="30065" type="bool" id="context_show_play" default="true" />
 		<setting type="bool" id="trakt_scrobble" default="false" visible="false"/>
         <setting label="30132" type="bool" id="context_show_play_no_watch" default="false" enable="eq(-1,true)"/>
-        <setting type="bool" id="pick_file" default="true" visible="false"/>
-        <setting label="30133" type="bool" id="context_pick_file" default="true" enable="eq(-1,true)" visible="eq(-1,true)"/>
+        <setting label="30133" type="bool" id="context_pick_file" default="true"/>
         <setting label="30130" type="bool" id="context_playlist" default="true"/>
         <setting label="30062" type="bool" id="context_krypton_watched" default="true"/>
         <setting label="30125" type="bool" id="context_show_vote_Episode" default="true"/>
