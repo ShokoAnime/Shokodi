@@ -68,6 +68,11 @@ msgid "Calendar"
 msgstr "Calendar"
 
 #: settings.xml
+msgctxt "#30013"
+msgid "Programming Tags (how/where it aired, awards, etc)"
+msgstr "Programming Tags (how/where it aired, awards, etc)"
+
+#: settings.xml
 msgctxt "#30014"
 msgid "Enable \'Pick file\' on multi files episodes"
 msgstr "Enable \'Pick file\' on multi files episodes"
@@ -91,6 +96,11 @@ msgstr "Device name"
 msgctxt "#30018"
 msgid "API Key"
 msgstr "API Key"
+
+#: settings.xml
+msgctxt "#30019"
+msgid "Title color conditions"
+msgstr "Title color conditions "
 
 #: settings.xml
 msgctxt "#30020"
@@ -148,6 +158,11 @@ msgid "Enable cache"
 msgstr "Enable cache"
 
 #: settings.xml
+msgctxt "#30031"
+msgid "Finished Series with all normal episodes"
+msgstr "Finished Series with all normal episodes"
+
+#: settings.xml
 msgctxt "#30032"
 msgid "Trigger Voting after each episode"
 msgstr "Trigger Voting after each episode"
@@ -193,9 +208,19 @@ msgid "Use local file count for total episodes"
 msgstr "Use local file count for total episodes"
 
 #: settings.xml
+msgctxt "#30041"
+msgid "Airing Series with all normal episodes"
+msgstr "Airing Series with all normal episodes "
+
+#: settings.xml
 msgctxt "#30042"
 msgid "Spam the Log with info (only enable if told to)"
 msgstr "Spam the Log with info (only enable if told to)"
+
+#: settings.xml
+msgctxt "#30043"
+msgid "Finished Series with missing normal episodes"
+msgstr "Finished Series with missing normal episodes"
 
 #: settings.xml
 msgctxt "#30044"
@@ -211,16 +236,6 @@ msgstr "AniDB Helper or Otherwise Useless Tags"
 msgctxt "#30046"
 msgid "Tag Filter"
 msgstr "Tag Filter"
-
-#: settings.xml
-msgctxt "#30227"
-msgid "Filter Tags to "
-msgstr "Filter Tags to "
-
-#: settings.xml
-msgctxt "#30226"
-msgid "Genre Tags"
-msgstr "Genre Tags"
 
 #: settings.xml
 msgctxt "#30047"
@@ -243,11 +258,6 @@ msgid "Spoiler Tags (so and so dies/wins/etc)"
 msgstr "Spoiler Tags (so and so dies/wins/etc)"
 
 #: settings.xml
-msgctxt "#30013"
-msgid "Programming Tags (how/where it aired, awards, etc)"
-msgstr "Programming Tags (how/where it aired, awards, etc)"
-
-#: settings.xml
 msgctxt "#30051"
 msgid "Treat Subgroups as 'Seasons'"
 msgstr "Treat Subgroups as 'Seasons'"
@@ -256,6 +266,11 @@ msgstr "Treat Subgroups as 'Seasons'"
 msgctxt "#30052"
 msgid "Use Server Title"
 msgstr "Use Server Title"
+
+#: nakamoriplugin.py
+msgctxt "#30053"
+msgid "*Go to First Unwatched Episode*"
+msgstr "*Go to First Unwatched Episode*"
 
 #: settings.xml
 msgctxt "#30054"
@@ -281,6 +296,16 @@ msgstr "Context Menu Settings"
 msgctxt "#30058"
 msgid "Date format"
 msgstr "Date format"
+
+#: settings.xml
+msgctxt "#30059"
+msgid "Airing Series with missing normal episodes"
+msgstr "Airing Series with missing normal episodes"
+
+#: settings.xml
+msgctxt "#30060"
+msgid "Finished Series with all episodes (including specials)"
+msgstr "Finished Series with all episodes (including specials)"
 
 #: settings.xml
 msgctxt "#30061"
@@ -333,6 +358,62 @@ msgid "Setting tags (time/place/etc)"
 msgstr "Setting tags (time/place/etc)"
 
 #: settings.xml
+msgctxt "#30071"
+msgid "Airing Series with all episodes (including specials)"
+msgstr "Airing Series with all episodes (including specials)"
+
+#. convert this to a selection!
+#: settings.xml
+msgctxt "#30072"
+msgid "Replace -continue- with Episode counter"
+msgstr "Replace -continue- with Episode counter"
+
+#: settings.xml
+msgctxt "#30073"
+msgid "Enable Title colorization"
+msgstr "Enable Title colorization"
+
+#: settings.xml
+msgctxt "#30074"
+msgid "Spoiler control"
+msgstr "Spoiler control"
+
+#: settings.xml
+msgctxt "#30075"
+msgid "Hide episode title for unwatched"
+msgstr "Hide episode title for unwatched\n"
+
+#: guibuilder.py
+msgctxt "#30076"
+msgid "Episode"
+msgstr "Episode"
+
+#: settings.xml
+msgctxt "#30077"
+msgid "Replace images for unwatched episodes"
+msgstr "Replace images for unwatched episodes"
+
+#: settings.xml
+msgctxt "#30078"
+msgid "Hide Episode plot for unwatched episodes"
+msgstr "Hide Episode plot for unwatched episodes"
+
+#: guibuilder.py
+msgctxt "#30079"
+msgid "Hidden Due to User Settings"
+msgstr "Hidden Due to User Settings"
+
+#: settings.xml
+msgctxt "#30080"
+msgid "Fix Desynced Watched Status in Kodi database"
+msgstr "Fix Desynced Watched Status in Kodi database"
+
+#: kodi_utils.py
+msgctxt "#30081"
+msgid "This function will execute a DELETE command against your Kodi Database file. This shouldn't affect you in any negative way, but you have been warned."
+msgstr "This function will execute a DELETE command against your Kodi Database file. This shouldn't affect you in any negative way, but you have been warned."
+
+#: settings.xml
 msgctxt "#30082"
 msgid "Setup Wizard"
 msgstr "Setup Wizard"
@@ -371,6 +452,11 @@ msgstr "Number Attempts Before Giving Up"
 msgctxt "#30089"
 msgid "Wait (s) to buffer starting"
 msgstr "Wait (s) to buffer starting"
+
+#: settings.xml
+msgctxt "#30090"
+msgid "Advanced settings"
+msgstr "Advanced settings"
 
 #: settings.xml
 msgctxt "#30091"
@@ -437,6 +523,11 @@ msgctxt "#30103"
 msgid "Show Calendar"
 msgstr "Show Calendar"
 
+#: kodi_utils.py
+msgctxt "#30104"
+msgid "Warning"
+msgstr "Warning"
+
 #: settings.xml
 msgctxt "#30105"
 msgid "Show Unsorted"
@@ -471,6 +562,11 @@ msgstr "Clear Search Terms"
 msgctxt "#30111"
 msgid "Hide Ratings ..."
 msgstr "Hide Ratings ..."
+
+#: kodi_utils.py
+msgctxt "#30112"
+msgid "Would you like to Proceed?"
+msgstr "Would you like to Proceed?"
 
 #: settings.xml
 msgctxt "#30113"
@@ -510,7 +606,7 @@ msgstr "Import Folder"
 #: guibuilder.py
 msgctxt "#30120"
 msgid "Rescan File"
-msgstr "#---------------Start-Context-Menu--------------------"
+msgstr "Rescan File"
 
 #: guibuilder.py
 msgctxt "#30121"
@@ -597,6 +693,16 @@ msgctxt "#30137"
 msgid "Generate Missing MediaInfo"
 msgstr "Generate Missing MediaInfo"
 
+#: kodi_utils.py
+msgctxt "#30138"
+msgid "Job finished"
+msgstr "Job finished"
+
+#:
+msgctxt "#30139"
+msgid "Fix Desynced Images in Kodi database"
+msgstr "Fix Desynced Images in Kodi database"
+
 #: guibuilder.py
 msgctxt "#30140"
 msgid "Import Folders"
@@ -647,11 +753,60 @@ msgctxt "#30149"
 msgid "External player watch fix"
 msgstr "External player watch fix"
 
-#. 150 - 159 empty
+#: settings.xml
+msgctxt "#30150"
+msgid "Hide What's New"
+msgstr "Hide What's New"
+
+#: nakamoriplugin.py
+msgctxt "#30151"
+msgid "Unable to Add Query to List"
+msgstr "Unable to Add Query to List"
+
+#: nakamoriplugin.py
+msgctxt "#30152"
+msgid "No Episodes in Series"
+msgstr "No Episodes in Series"
+
+#: nakamoriplugin.py
+msgctxt "#30153"
+msgid "Unable to Add Episode"
+msgstr "Unable to Add Episode"
+
+#: nakamoriplugin.py
+msgctxt "#30154"
+msgid "We were unable to connect to Shoko Server.\n Please enter a valid IP or host."
+msgstr "We were unable to connect to Shoko Server.\n Please enter a valid IP or host."
+
+#: nakamoriplugin.py
+msgctxt "#30155"
+msgid "Could not connect. Please check your connection settings."
+msgstr "Could not connect. Please check your connection settings."
+
+#: nakamoriplugin.py
+msgctxt "#30156"
+msgid "Unable to Login"
+msgstr "Unable to Login"
+
+#: nakamoriplugin.py
+msgctxt "#30157"
+msgid "We were unable to log in to Shoko Server.\n Please enter a valid Username and Password.\n The default is U: \"Default\" P: \"\" (no quotes)"
+msgstr "We were unable to log in to Shoko Server.\n Please enter a valid Username and Password.\n The default is U: \"Default\" P: \"\" (no quotes)"
+
+#: nakamoriplugin.py
+msgctxt "#30158"
+msgid "Could not log in. Please check your user settings."
+msgstr "Could not log in. Please check your user settings."
+
+#: nakamoriplugin.py
+msgctxt "#30159"
+msgid "Unable to Connect"
+msgstr "Unable to Connect"
+
 #: guibuilder.py, kodi_utils.py
 msgctxt "#30160"
 msgid "Please Wait"
-msgstr "#---------------Start-Progress------------------------"
+msgstr "Please Wait"
 
 #: guibuilder.py
 msgctxt "#30161"
@@ -669,6 +824,11 @@ msgid "Getting Episodes from Server..."
 msgstr "Getting Episodes from Server..."
 
 #: kodi_utils.py
+msgctxt "#30164"
+msgid "Waiting for response from Server..."
+msgstr "Waiting for response from Server..."
+
+#: kodi_utils.py
 msgctxt "#30165"
 msgid "Sending request to Transcode server..."
 msgstr "Sending request to Transcode server..."
@@ -678,11 +838,10 @@ msgctxt "#30166"
 msgid "Waiting given time (postpone)"
 msgstr "Waiting given time (postpone)"
 
-#. 167 - 179 empty
 #: guibuilder.py
 msgctxt "#30180"
 msgid "No Results Found"
-msgstr "#---------------Start-Windows-------------------------"
+msgstr "No Results Found"
 
 #: guibuilder.py
 msgctxt "#30181"
@@ -769,11 +928,14 @@ msgctxt "#30203"
 msgid "Unwatched"
 msgstr "Unwatched"
 
-#. 200 - 220 empty
+msgctxt "#30204"
+msgid "Remove"
+msgstr "Remove"
+
 #: settings.xml, guibuilder.py
 msgctxt "#30221"
 msgid "Search"
-msgstr "#---------------Start=Items--------------------------"
+msgstr "Search"
 
 #: guibuilder.py
 msgctxt "#30222"
@@ -795,132 +957,12 @@ msgid "Quick Search"
 msgstr "Quick Search"
 
 #: settings.xml
-msgctxt "#30150"
-msgid "Hide What's New"
-msgstr "Hide What's New"
+msgctxt "#30226"
+msgid "Genre Tags"
+msgstr "Genre Tags"
 
 #: settings.xml
-msgctxt "#30019"
-msgid "Title color conditions"
-msgstr "Title color conditions "
+msgctxt "#30227"
+msgid "Filter Tags to "
+msgstr "Filter Tags to "
 
-#: settings.xml
-msgctxt "#30031"
-msgid "Finished Series with all normal episodes"
-msgstr "Finished Series with all normal episodes"
-
-#: settings.xml
-msgctxt "#30041"
-msgid "Airing Series with all normal episodes"
-msgstr "Airing Series with all normal episodes "
-
-#: settings.xml
-msgctxt "#30043"
-msgid "Finished Series with missing normal episodes"
-msgstr "Finished Series with missing normal episodes"
-
-#: settings.xml
-msgctxt "#30059"
-msgid "Airing Series with missing normal episodes"
-msgstr "Airing Series with missing normal episodes"
-
-#: settings.xml
-msgctxt "#30060"
-msgid "Finished Series with all episodes (including specials)"
-msgstr "Finished Series with all episodes (including specials)"
-
-#: settings.xml
-msgctxt "#30071"
-msgid "Airing Series with all episodes (including specials)"
-msgstr "Airing Series with all episodes (including specials)"
-
-#. convert this to a selection!
-#: settings.xml
-msgctxt "#30072"
-msgid "Replace -continue- with Episode counter"
-msgstr "Replace -continue- with Episode counter"
-
-#: settings.xml
-msgctxt "#30073"
-msgid "Enable Title colorization"
-msgstr "Enable Title colorization"
-
-#: settings.xml
-msgctxt "#30090"
-msgid "Advanced settings"
-msgstr "Advanced settings"
-
-#: kodi_utils.py
-msgctxt "#30164"
-msgid "Waiting for response from Server..."
-msgstr "Waiting for response from Server..."
-
-#: settings.xml
-msgctxt "#30074"
-msgid "Spoiler control"
-msgstr "Spoiler control"
-
-#: settings.xml
-msgctxt "#30075"
-msgid "Hide episode title for unwatched"
-msgstr "Hide episode title for unwatched\n"
-""
-
-#: guibuilder.py
-msgctxt "#30076"
-msgid "Episode"
-msgstr "Episode"
-
-#: settings.xml
-msgctxt "#30077"
-msgid "Replace images for unwatched episodes"
-msgstr "Replace images for unwatched episodes"
-
-#: settings.xml
-msgctxt "#30078"
-msgid "Hide Episode plot for unwatched episodes"
-msgstr "Hide Episode plot for unwatched episodes"
-
-#: guibuilder.py
-msgctxt "#30079"
-msgid "Hidden Due to User Settings"
-msgstr "Hidden Due to User Settings"
-
-#: settings.xml
-msgctxt "#30080"
-msgid "Fix desynced watch marks in Kodi's database"
-msgstr "Fix desynced watch marks in Kodi's database"
-
-#: kodi_utils.py
-msgctxt "#30081"
-msgid "This function will execute a DELETE command against your Kodi Database file. This shouldn't affect you in any negative way, but you have been warned."
-msgstr "This function will execute a DELETE command against your Kodi Database file. This shouldn't affect you in any negative way, but you have been warned."
-
-#: kodi_utils.py
-msgctxt "#30104"
-msgid "Warning"
-msgstr "Warning"
-
-#: kodi_utils.py
-msgctxt "#30112"
-msgid "Would you like to Proceed?"
-msgstr "Would you like to Proceed?"
-
-#: kodi_utils.py
-msgctxt "#30138"
-msgid "Job finished"
-msgstr "Job finished"
-
-#: settings.xml
-msgctxt "#30080"
-msgid "Fix Desynced Watched Status in Kodi database"
-msgstr "Fix Desynced Watched Status in Kodi database"
-
-#: 
-msgctxt "#30139"
-msgid "Fix Desynced Images in Kodi database"
-msgstr "Fix Desynced Images in Kodi database"
-
-msgctxt "#30204"
-msgid "Remove"
-msgstr "Remove"
