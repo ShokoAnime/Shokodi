@@ -11,6 +11,8 @@ from nakamori_utils import model_utils, kodi_utils
 from nakamori_utils.globalvars import *
 from proxy.python_version_proxy import python_proxy as pyproxy
 
+plugin_localize = plugin_localize
+
 
 def build_cast_menu(params):
     """
@@ -92,7 +94,7 @@ def build_serie_soon(params):
     # xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_UNSORTED)
 
     try:
-        # busy.create(plugin_addon.getLocalizedString(30160), plugin_addon.getLocalizedString(30161))
+        # busy.create(plugin_localize(30160), plugin_localize(30161))
         # busy.update(20)
         temp_url = params['url']
         temp_url = pyproxy.set_parameter(temp_url, 'level', 2)
@@ -103,7 +105,7 @@ def build_serie_soon(params):
         temp_url = pyproxy.set_parameter(temp_url, 'level', 0)
         # busy.update(20)
         html = pyproxy.get_json(temp_url)
-        # busy.update(50, plugin_addon.getLocalizedString(30162))
+        # busy.update(50, plugin_localize(30162))
         if plugin_addon.getSetting('spamLog') == 'true':
             xbmc.log(params['url'], xbmc.LOGWARNING)
             xbmc.log(html, xbmc.LOGWARNING)
@@ -119,7 +121,7 @@ def build_serie_soon(params):
         try:
             kodi_utils.set_window_heading(body.get('name', ''))
         except:
-            kodi_utils.set_window_heading(plugin_addon.getLocalizedString(30222))
+            kodi_utils.set_window_heading(plugin_localize(30222))
 
         try:
             parent_title = body.get('name', '')
@@ -190,43 +192,43 @@ def build_shoko_menu():
     :return:
     """
     # xbmcplugin.setContent(handle, 'tvshows')
-    kodi_utils.set_window_heading(plugin_addon.getLocalizedString(30115))
+    kodi_utils.set_window_heading(plugin_localize(30115))
 
     items = [{
-        'title': plugin_addon.getLocalizedString(30122),
+        'title': plugin_localize(30122),
         'cmd': 'missing',
         'poster': 'none',
         'icon': os.path.join(plugin_img_path, 'icons', 'new-search.png'),
         'fanart': os.path.join(plugin_img_path, 'backgrounds', 'new-search.png'),
         'type': 'video',
-        'plot': plugin_addon.getLocalizedString(30135),
+        'plot': plugin_localize(30135),
         'extras': ''
     }, {
-        'title': plugin_addon.getLocalizedString(30117),
+        'title': plugin_localize(30117),
         'cmd': 'statsupdate',
         'poster': 'none',
         'icon': os.path.join(plugin_img_path, 'icons', 'new-search.png'),
         'fanart': os.path.join(plugin_img_path, 'backgrounds', 'new-search.png'),
         'type': 'video',
-        'plot': plugin_addon.getLocalizedString(30136),
+        'plot': plugin_localize(30136),
         'extras': ''
     }, {
-        'title': plugin_addon.getLocalizedString(30118),
+        'title': plugin_localize(30118),
         'cmd': 'mediainfo',
         'poster': 'none',
         'icon': os.path.join(plugin_img_path, 'icons', 'new-search.png'),
         'fanart': os.path.join(plugin_img_path, 'backgrounds', 'new-search.png'),
         'type': 'video',
-        'plot': plugin_addon.getLocalizedString(30137),
+        'plot': plugin_localize(30137),
         'extras': ''
     }, {
-        'title': plugin_addon.getLocalizedString(30116),
+        'title': plugin_localize(30116),
         'cmd': 'folderlist',
         'poster': 'none',
         'icon': os.path.join(plugin_img_path, 'icons', 'new-search.png'),
         'fanart': os.path.join(plugin_img_path, 'backgrounds', 'new-search.png'),
         'type': 'video',
-        'plot': plugin_addon.getLocalizedString(30140),
+        'plot': plugin_localize(30140),
         'extras': '',
     }]
 
