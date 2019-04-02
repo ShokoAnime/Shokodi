@@ -11,7 +11,7 @@ from nakamori_utils import model_utils, kodi_utils
 from nakamori_utils.globalvars import *
 from proxy.python_version_proxy import python_proxy as pyproxy
 
-plugin_localize = plugin_localize
+plugin_localize = plugin_addon.getLocalizedString
 
 
 def build_cast_menu(params):
