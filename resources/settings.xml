@@ -3,27 +3,21 @@
 	<!-- shoko settings -->
     <category label="30001"> <!-- Shoko Settings -->
         <setting label="30006" type="lsep"/> <!-- Shoko Server -->
-        <setting label="30002" type="text" id="ipaddress" default="127.0.0.1"/>
-        <setting label="30003" type="number" id="port" default="8111"/>
-        <setting label="30011" type="lsep"/> <!-- Shoko User -->
-        <setting label="30015" type="text" id="login" default="Default"/>
-        <setting label="30016" type="text" id="password" options="hidden"/>
+        <setting label="30082" type="action" id="action4" action="RunScript(script.module.nakamori,/dialog/wizard/connection)" option="close"/>
+        <setting label="30099" type="action" id="action5" action="RunScript(script.module.nakamori,/dialog/wizard/login)" option="close"/>
 		<setting label="30100" type="bool" id="more_30001" default="false"/>
 		<!-- advanced -->
         <setting label="30044" type="lsep" visible="eq(-1,true)"/> <!-- Advanced -->
 		<setting label="30017" type="text" id="device" default="nakamori" visible="eq(-2,true)"/>
 		<!-- hidden -->
         <setting label="30018" type="text" id="apikey" visible="false"/>
-        <setting type="number" id="no_mark" default="0" visible="false"/>
-        <setting type="number" id="resume" default="0" visible="false"/>
-        <setting type="number" id="wizard" default="0" visible="false"/>
-        <setting type="text" id="good_ip" default="" visible="false"/>
-        <setting type="text" id="good_port" default="" visible="false"/>
-		<setting type="text" id="good_version" default="" visible="false"/>
-        <setting type="bool" id="onepunchmen" default="false" visible="false"/>
+        <setting label="30002" type="text" id="ipaddress" default="127.0.0.1" visible="false"/>
+        <setting label="30003" type="number" id="port" default="8111" visible="false"/>
+        <setting label="30015" type="text" id="login" default="Default" visible="false"/>
+        <setting label="30016" type="text" id="password" options="hidden" visible="false"/>
 		<!-- wizard -->
         <!-- TODO REPLACE ME WITH LOG OUT ETC -->
-		<!--<setting label="30082" type="action" id="action4" action="" option="close"/>-->
+		<!--<setting label="30082" type="action" id="action4" action="RunScript(script.module.nakamori,/logout)" option="close"/>-->
     </category>
 	<!-- Main Menu Items -->
     <category label="30098">

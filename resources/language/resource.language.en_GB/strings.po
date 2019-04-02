@@ -334,8 +334,8 @@ msgstr "Setting tags (time/place/etc)"
 
 #: settings.xml
 msgctxt "#30082"
-msgid "Setup Wizard"
-msgstr "Setup Wizard"
+msgid "Connection Wizard"
+msgstr "Connection Wizard"
 
 #: settings.xml
 msgctxt "#30083"
@@ -414,8 +414,8 @@ msgstr "Main Menu Items"
 
 #: settings.xml
 msgctxt "#30099"
-msgid "Enable setup-wizard"
-msgstr "Enable setup-wizard"
+msgid "Login Wizard"
+msgstr "Login Wizard"
 
 #: settings.xml
 msgctxt "#30100"
