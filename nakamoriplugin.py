@@ -155,7 +155,7 @@ def show_series_menu(series_id):
     elif len(series.episode_types) == 1:
         add_episodes(series, series.episode_types[0].episode_type)
     else:
-        raise RuntimeError('No Episodes in Series')
+        raise RuntimeError(plugin_localize(30152))
 
 
 @routing_plugin.route('/menu/series/<series_id>/type/<episode_type>')
@@ -185,7 +185,7 @@ def add_episodes(series, episode_type):
             plugin_dir.append(listitem, False)
             i += 1
         except:
-            exception(ErrorPriority.HIGHEST, 'Unable to Add Episode')
+            exception(ErrorPriority.HIGHEST, plugin_localize(30153))
 
     add_continue_item(series, episode_type, watched_index)
 
@@ -203,8 +203,7 @@ def add_continue_item(series, episode_type, watched_index):
     from shoko_models.v2 import CustomItem
     continue_url = script(script_utils.url_move_to_item(watched_index))
 
-    # TODO LOCALIZE
-    continue_text = '*Go to First Unwatched Episode*'
+    continue_text = plugin_localize(30053)
     if plugin_addon.getSetting('replace_continue') == 'true':
         eps = series.sizes.watched_episodes
         if plugin_addon.getSetting('local_only') == 'true':
@@ -264,7 +263,7 @@ def show_search_menu():
     plugin_dir.append(item.get_listitem())
 
     # quick search
-    # TODO Setting for this, localize, etc
+    # TODO Setting for this, etc
     item = CustomItem(plugin_localize(30225), 'search.png', script(script_utils.url_new_search(False)))
     item.is_kodi_folder = False
     item.set_context_menu_items([clear_items])
@@ -285,7 +284,7 @@ def show_search_menu():
 
             plugin_dir.append(item.get_listitem())
         except:
-            error_handler.exception(ErrorPriority.HIGHEST, 'Unable to Add Query to List')
+            error_handler.exception(ErrorPriority.HIGHEST, plugin_localize(30151))
 
 
 @routing_plugin.route('/menu/search/<path:query>')
@@ -374,15 +373,12 @@ def main():
     # stage 1 - check connection
     if not shoko_utils.can_connect():
         fail_menu()
-        # TODO LOCALIZE
-        kodi_utils.message_box('Unable to Connect', 'We were unable to connect to Shoko Server.\n'
-                                                    'Please enter a valid IP or host.')
+        kodi_utils.message_box(plugin_localize(30159), plugin_localize(30154))
         if wizard.open_connection_wizard():
             restart_plugin()
             return
         if not shoko_utils.can_connect():
-            # TODO LOCALIZE
-            raise RuntimeError('Could not connect. Please check your connection settings.')
+            raise RuntimeError(plugin_localize(30155))
 
     # stage 2 - Check server startup status
     if not shoko_utils.get_server_status():
@@ -392,17 +388,13 @@ def main():
     auth = shoko_utils.auth()
     if not auth:
         fail_menu()
-        # TODO LOCALIZE
-        kodi_utils.message_box('Unable to Login', 'We were unable to log in to Shoko Server.\n'
-                                                  'Please enter a valid Username and Password.\n'
-                                                  'The default is U: "Default" P: "" (no quotes)')
+        kodi_utils.message_box(plugin_localize(30156), plugin_localize(30157))
         if wizard.open_login_wizard():
             restart_plugin()
             return
         auth = shoko_utils.auth()
         if not auth:
-            # TODO LOCALIZE
-            raise RuntimeError('Could not log in. Please check your user settings.')
+            raise RuntimeError(plugin_localize(30158))
 
     routing_plugin.run()
     show_messages()
