@@ -375,6 +375,21 @@ def restart_plugin():
     script_utils.arbiter(0, 'RunAddon("plugin.video.nakamori")')
 
 
+@routing_plugin.route('/tvshows/<apikey>/')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def tvshow_menu(apikey):
+    from shoko_models.v2 import Filter, set_in_memory_apikey
+    set_in_memory_apikey(apikey)
+    filter_id = 1  # until everything is fixed lets use continue-watching
+    f = Filter(filter_id, build_full_object=True, get_children=True)
+    plugin_dir.set_content('tvshows')
+    plugin_dir.set_cached()
+    for item in f:
+        plugin_dir.append(item.get_listitem())
+
+    finish_menu()
+
+	
 @try_function(ErrorPriority.BLOCKING)
 def main():
     debug.debug_init()
