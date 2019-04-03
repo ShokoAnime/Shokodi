@@ -1,4 +1,5 @@
 import json
+from distutils.version import LooseVersion
 
 import debug
 import error_handler
@@ -9,7 +10,7 @@ from kodi_models import DirectoryListing, WatchedStatus
 from nakamori_utils import kodi_utils, shoko_utils, script_utils, model_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
 from nakamori_utils.globalvars import *
-from windows import wizard
+from windows import wizard, information
 
 plugin_localize = plugin_addon.getLocalizedString
 routing_plugin = routing.Plugin('plugin://plugin.video.nakamori', convert_args=True)
@@ -39,6 +40,13 @@ def finish_menu():
 @routing_plugin.route('/')
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
+    version = LooseVersion(plugin_addon.getAddonInfo('version'))
+    if version > LooseVersion(plugin_addon.getSetting('version')):
+        fail_menu()
+        information.open_information()
+        restart_plugin()
+        return
+
     from shoko_models.v2 import Filter
     f = Filter(0, build_full_object=True)
     plugin_dir.set_content('tvshows')

@@ -10,11 +10,12 @@
         <setting label="30044" type="lsep" visible="eq(-1,true)"/> <!-- Advanced -->
 		<setting label="30017" type="text" id="device" default="nakamori" visible="eq(-2,true)"/>
 		<!-- hidden -->
-        <setting label="30018" type="text" id="apikey" visible="false"/>
-        <setting label="30002" type="text" id="ipaddress" default="127.0.0.1" visible="false"/>
-        <setting label="30003" type="number" id="port" default="8111" visible="false"/>
-        <setting label="30015" type="text" id="login" default="Default" visible="false"/>
-        <setting label="30016" type="text" id="password" options="hidden" visible="false"/>
+        <setting type="text" id="apikey" visible="false"/>
+        <setting type="text" id="ipaddress" default="127.0.0.1" visible="false"/>
+        <setting type="number" id="port" default="8111" visible="false"/>
+        <setting type="text" id="login" default="Default" visible="false"/>
+        <setting type="text" id="password" options="hidden" visible="false"/>
+        <setting type="text" id="version" visible="false" default="3.0.9"/>
 		<!-- wizard -->
         <!-- TODO REPLACE ME WITH LOG OUT ETC -->
 		<!--<setting label="30082" type="action" id="action4" action="RunScript(script.module.nakamori,/logout)" option="close"/>-->

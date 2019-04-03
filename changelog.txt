@@ -1,0 +1,38 @@
+# Comments start with #
+# This file is a proper, parsable changelog with proper formatting. The news section in addon.xml will have only the latest news.
+# This will have all relevant news going back a long time.
+# Initially only starting at 3.0.8
+# version numbers start with !--
+!-- 3.1.0
+Rewrite Basically Everything
+Move to proper plugin architecture (script, plugin, etc)
+New startup logic and Wizards
+Reorganize settings - CHECK YOUR SETTINGS! SOME ARE WIPED
+Compatibility with Leia
+More info for series and episodes in certain windows
+Include a stub image for replacing episode thumbnail
+Update Tag settings for new Shoko version
+- DO NOT USE "SHOW" IF YOU ARE NOT UPDATED TO 3.9.5 (or daily equivalent)
+New Search Menu
+Support for Pycharm debugging (useful if you're into that)
+Fix stream info
+Fix watched states on several sections
+Fix pick files dialog
+Fix Several Playback issues
+Fix some sorting bugs
+Fix voting in some cases when it broke
+
+!-- 3.0.9
+Disable votes/watch_marks for unsorted files
+Fix rescan and rehash commands
+Better icon support for non-default skins
+Disable resume for already watched episodes
+Populate more metadata about unsorted files
+Sort the filters menu more nicely
+
+!-- 3.0.8
+Proper handling episode numbers for specials seasons
+Option to replace -continue- item to series information counter
+New commands inside Settings to clear commons errors with Nakamori
+Spoiler control in settings that give control over what you want to see before watching series
+A lot of logic error bugs have been fixed!
