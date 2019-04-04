@@ -161,5 +161,7 @@
         <setting label="30094" type="text" id="vbitrateEigakan" default="3000000" visible="eq(-16,true)+eq(-4,true)"/>
 		<!-- noname -->
 		<setting label="30108" type="bool" id="send_data" default="true" visible="false"/>
+        <!-- do not delete (again) -->
+        <setting type="bool" id="onepunchmen" default="false" visible="false"/>
     </category>
 </settings>

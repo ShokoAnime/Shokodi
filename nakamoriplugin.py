@@ -119,6 +119,11 @@ def add_extra_main_menu_items(items):
         item.sort_index = 9
         items.append(item)
 
+    if plugin_addon.getSetting('onepunchmen') == 'true':
+        item = CustomItem(plugin_localize(30145), 'airing.png', url_for(tvshow_menu, apikey=plugin_addon.getSetting('apikey')))
+        item.sort_index = 99
+        items.append(item)
+
 
 @routing_plugin.route('/menu/filter/<filter_id>')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
@@ -389,7 +394,7 @@ def tvshow_menu(apikey):
 
     finish_menu()
 
-	
+
 @try_function(ErrorPriority.BLOCKING)
 def main():
     debug.debug_init()
