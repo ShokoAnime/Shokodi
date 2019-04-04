@@ -20,7 +20,7 @@
 		<summary lang="en_GB">Nakamori - allows to interact with your Anime collection (ShokoServer)</summary>
 		<description lang="en_GB">Nakamori gives you the ability to interact with your Anime collection (inside ShokoServer) for Kodi-enabled devices. You are able to use many of the commands available to Desktop right from inside Kodi, such as marking watched status, voting, rescanning and rehashing files, and more!</description>
 		<disclaimer lang="en_GB">This plugin to work require working ShokoServer instance. https://shokoanime.com</disclaimer>
-		<news>Version 3.1.0[CR]- Rewrite Basically Everything[CR]- Move to proper plugin architecture (script, plugin, etc)[CR]- New startup logic and Wizards[CR]- Reorganize settings - CHECK YOUR SETTINGS! SOME ARE WIPED[CR]- Compatibility with Leia[CR]- More info for series and episodes in certain windows[CR]- Include a stub image for replacing episode thumbnail[CR]- Update Tag settings for new Shoko version[CR]- - DO NOT USE "SHOW" IF YOU ARE NOT UPDATED TO 3.9.5 (or daily equivalent)[CR]- New Search Menu[CR]- Support for Pycharm debugging (useful if you're into that)[CR]- Fix stream info[CR]- Fix watched states on several sections[CR]- Fix pick files dialog[CR]- Fix Several Playback issues[CR]- Fix some sorting bugs[CR]- Fix voting in some cases when it broke</news>
+		<news>{NEWS REPLACE ME}</news>
 		<platform>all</platform>
 		<language>en de es fr nl pl ru</language>
 		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
