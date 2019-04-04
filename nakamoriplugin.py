@@ -41,7 +41,8 @@ def finish_menu():
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
     version = LooseVersion(plugin_addon.getAddonInfo('version'))
-    if version > LooseVersion(plugin_addon.getSetting('version')):
+    if plugin_addon.getSetting('skip_information') == 'true' and \
+            version > LooseVersion(plugin_addon.getSetting('version')):
         fail_menu()
         information.open_information()
         restart_plugin()
@@ -184,7 +185,7 @@ def add_episodes(series, episode_type):
     plugin_dir.set_content('episodes')
     series.add_sort_methods(routing_plugin.handle)
     select = kodi_utils.get_kodi_setting('videolibrary.tvshowsselectfirstunwatcheditem') > 0 \
-        or plugin_addon.getSetting('select_unwatched') == 'true'
+             or plugin_addon.getSetting('select_unwatched') == 'true'
     watched_index = 0
     i = 0
     for item in series:
