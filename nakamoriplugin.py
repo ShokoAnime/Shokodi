@@ -381,7 +381,6 @@ def restart_plugin():
 
 
 @routing_plugin.route('/tvshows/<apikey>/')
-@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def tvshow_menu(apikey):
     from shoko_models.v2 import Filter, set_in_memory_apikey
     set_in_memory_apikey(apikey)
@@ -391,7 +390,6 @@ def tvshow_menu(apikey):
     plugin_dir.set_cached()
     for item in f:
         plugin_dir.append(item.get_listitem())
-
     finish_menu()
 
 
