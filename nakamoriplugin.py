@@ -5,8 +5,9 @@ import debug
 import error_handler
 import nakamori_player
 import routing
+import xbmcplugin
 from error_handler import try_function, show_messages, ErrorPriority, exception
-from kodi_models import DirectoryListing, WatchedStatus
+from kodi_models import DirectoryListing, WatchedStatus, ListItem
 from nakamori_utils import kodi_utils, shoko_utils, script_utils, model_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
 from nakamori_utils.globalvars import *
@@ -124,8 +125,7 @@ def add_extra_main_menu_items(items):
         items.append(item)
 
     if plugin_addon.getSetting('onepunchmen') == 'true':
-        item = CustomItem(plugin_localize(30145), 'airing.png',
-                          url_for(scrape_tvshows, apikey=plugin_addon.getSetting('apikey')))
+        item = CustomItem(plugin_localize(30145), 'airing.png', url_for(scrape_all_tvshows))
         item.sort_index = 99
         items.append(item)
 
@@ -385,49 +385,88 @@ def restart_plugin():
     script_utils.arbiter(0, 'RunAddon("plugin.video.nakamori")')
 
 
-@routing_plugin.route('/tvshows/<apikey>/')
+@routing_plugin.route('/tvshows/')
+def scrape_all_tvshows():
+    scrape_tvshows(0, 0)
+
+
+@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>')
 @try_function(ErrorPriority.BLOCKING)
-def scrape_tvshows(apikey):
-    from shoko_models.v2 import Series
-    plugin_dir.set_content('tvshows')
-    plugin_dir.set_cached()
-    pyproxy.set_temporary_apikey(apikey)
-    # url for get all series
-    url = server + '/api/serie'
-    url = model_utils.add_default_parameters(url, 0, 0)
-    # get it
-    body = pyproxy.get_json(url)
-    # parse it
-    json_node = json.loads(body)
-    # it's a list of series nodes
-    for node in json_node:
-        series = Series(node)
-        if series.is_movie:
-            continue
-        plugin_dir.append(series.get_listitem())
+def scrape_tvshows(series_id, ep_id):
+    # handle refresh, check, etc
+    if 'kodi-action' in routing_plugin.args:
+        if routing_plugin.args['kodi-action'] == 'check_exists':
+            # TODO actually check it
+            xbmcplugin.setResolvedUrl(routing_plugin.handle, True, ListItem())
+        if routing_plugin.args['kodi-action'] == 'refresh_info':
+            get_scraped_data(series_id, ep_id, False)
+        return
+
+    # List series items
+    get_scraped_data(series_id, ep_id, False)
     # finish_menu is only needed if you need to do something after it
 
 
-@routing_plugin.route('/movies/<apikey>/')
+@routing_plugin.route('/movies/')
+def scrape_all_movies():
+    scrape_movies(0, 0)
+
+
+@routing_plugin.route('/movies/<series_id>/ep/<ep_id>')
 @try_function(ErrorPriority.BLOCKING)
-def scrape_movies(apikey):
-    from shoko_models.v2 import Series
-    plugin_dir.set_content('movies')
-    plugin_dir.set_cached()
-    pyproxy.set_temporary_apikey(apikey)
-    # url for get all series
-    url = server + '/api/serie'
-    url = model_utils.add_default_parameters(url, 0, 0)
-    # get it
-    body = pyproxy.get_json(url)
-    # parse it
-    json_node = json.loads(body)
-    # it's a list of series nodes
-    for node in json_node:
-        series = Series(node)
-        if not series.is_movie:
-            continue
-        plugin_dir.append(series.get_listitem())
+def scrape_movies(series_id, ep_id):
+    # handle refresh, check, etc
+    if 'kodi-action' in routing_plugin.args:
+        if routing_plugin.args['kodi-action'] == 'check_exists':
+            # TODO actually check it
+            xbmcplugin.setResolvedUrl(routing_plugin.handle, True, ListItem())
+        if routing_plugin.args['kodi-action'] == 'refresh_info':
+            get_scraped_data(series_id, ep_id, True)
+        return
+
+    # List series items
+    get_scraped_data(series_id, ep_id, True)
+
+
+def get_scraped_data(series_id, ep_id, movies):
+    from shoko_models.v2 import Series, Episode
+    if series_id == 0 and ep_id == 0:
+        plugin_dir.set_content('tvshows')
+        # url for get all series
+        url = server + '/api/serie'
+        url = model_utils.add_default_parameters(url, 0, 0)
+        # get it
+        body = pyproxy.get_json(url)
+        # parse it
+        json_node = json.loads(body)
+        # it's a list of series nodes
+        for node in json_node:
+            series = Series(node)
+            if series.is_movie != movies:
+                continue
+            li = series.get_listitem()
+            if not movies:
+                li.setPath(url_for(scrape_tvshows, series.id, 0))
+            else:
+                li.setPath(url_for(scrape_movies, series.id, 0))
+            plugin_dir.append(li)
+    elif series_id != 0 and ep_id == 0:
+        # getting series info
+        plugin_dir.set_content('episodes')
+        series = Series(series_id, build_full_object=True, get_children=True)
+        if series.is_movie != movies:
+            return
+        for i in series:
+            li = i.get_listitem()
+            plugin_dir.append(li, False)
+    elif ep_id != 0:
+        plugin_dir.set_content('episodes')
+        series = Series(series_id, build_full_object=True)
+        if series.is_movie != movies:
+            return
+        # get episode info
+        ep = Episode(ep_id, series, True)
+        plugin_dir.append(ep.get_listitem(), False)
 
 
 @try_function(ErrorPriority.BLOCKING)
