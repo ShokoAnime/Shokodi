@@ -383,8 +383,8 @@ def restart_plugin():
 
 @routing_plugin.route('/tvshows/<apikey>/')
 def tvshow_menu(apikey):
-    from shoko_models.v2 import Filter, set_in_memory_apikey
-    set_in_memory_apikey(apikey)
+    from shoko_models.v2 import Filter
+    pyproxy.set_temporary_apikey(apikey)
     filter_id = 1  # until everything is fixed lets use continue-watching
     f = Filter(filter_id, build_full_object=True, get_children=True)
     plugin_dir.set_content('tvshows')
