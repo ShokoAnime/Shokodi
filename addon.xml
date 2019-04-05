@@ -15,6 +15,7 @@
 	<extension point="xbmc.python.pluginsource" library="nakamoriplugin.py">
 		<provides>video</provides>
 		<medialibraryscanpath content="tvshows">tvshows/</medialibraryscanpath>
+		<medialibraryscanpath content="movies">movies/</medialibraryscanpath>
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en_GB">Nakamori - allows to interact with your Anime collection (ShokoServer)</summary>

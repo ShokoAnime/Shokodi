@@ -41,8 +41,11 @@ def finish_menu():
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
     version = LooseVersion(plugin_addon.getAddonInfo('version'))
+    previous_version = plugin_addon.getSetting('version')
+    if previous_version == '':
+        previous_version = '3.0.9'
     if plugin_addon.getSetting('skip_information') != 'true' and \
-            LooseVersion(plugin_addon.getSetting('version') < version):
+            LooseVersion(previous_version) < version:
         fail_menu()
         information.open_information()
         restart_plugin()
@@ -121,7 +124,8 @@ def add_extra_main_menu_items(items):
         items.append(item)
 
     if plugin_addon.getSetting('onepunchmen') == 'true':
-        item = CustomItem(plugin_localize(30145), 'airing.png', url_for(tvshow_menu, apikey=plugin_addon.getSetting('apikey')))
+        item = CustomItem(plugin_localize(30145), 'airing.png',
+                          url_for(scrape_tvshows, apikey=plugin_addon.getSetting('apikey')))
         item.sort_index = 99
         items.append(item)
 
@@ -382,16 +386,48 @@ def restart_plugin():
 
 
 @routing_plugin.route('/tvshows/<apikey>/')
-def tvshow_menu(apikey):
-    from shoko_models.v2 import Filter
-    pyproxy.set_temporary_apikey(apikey)
-    filter_id = 1  # until everything is fixed lets use continue-watching
-    f = Filter(filter_id, build_full_object=True, get_children=True)
+@try_function(ErrorPriority.BLOCKING)
+def scrape_tvshows(apikey):
+    from shoko_models.v2 import Series
     plugin_dir.set_content('tvshows')
     plugin_dir.set_cached()
-    for item in f:
-        plugin_dir.append(item.get_listitem())
-    finish_menu()
+    pyproxy.set_temporary_apikey(apikey)
+    # url for get all series
+    url = server + '/api/serie'
+    url = model_utils.add_default_parameters(url, 0, 0)
+    # get it
+    body = pyproxy.get_json(url)
+    # parse it
+    json_node = json.loads(body)
+    # it's a list of series nodes
+    for node in json_node:
+        series = Series(node)
+        if series.is_movie:
+            continue
+        plugin_dir.append(series.get_listitem())
+    # finish_menu is only needed if you need to do something after it
+
+
+@routing_plugin.route('/movies/<apikey>/')
+@try_function(ErrorPriority.BLOCKING)
+def scrape_movies(apikey):
+    from shoko_models.v2 import Series
+    plugin_dir.set_content('movies')
+    plugin_dir.set_cached()
+    pyproxy.set_temporary_apikey(apikey)
+    # url for get all series
+    url = server + '/api/serie'
+    url = model_utils.add_default_parameters(url, 0, 0)
+    # get it
+    body = pyproxy.get_json(url)
+    # parse it
+    json_node = json.loads(body)
+    # it's a list of series nodes
+    for node in json_node:
+        series = Series(node)
+        if not series.is_movie:
+            continue
+        plugin_dir.append(series.get_listitem())
 
 
 @try_function(ErrorPriority.BLOCKING)
