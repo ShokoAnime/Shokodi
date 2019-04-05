@@ -41,8 +41,8 @@ def finish_menu():
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
     version = LooseVersion(plugin_addon.getAddonInfo('version'))
-    if plugin_addon.getSetting('skip_information') == 'true' and \
-            version > LooseVersion(plugin_addon.getSetting('version')):
+    if plugin_addon.getSetting('skip_information') != 'true' and \
+            LooseVersion(plugin_addon.getSetting('version') < version):
         fail_menu()
         information.open_information()
         restart_plugin()
