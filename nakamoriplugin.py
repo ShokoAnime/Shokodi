@@ -523,8 +523,8 @@ def main():
             raise RuntimeError(plugin_localize(30158))
 
     routing_plugin.run()
-    show_messages()
 
 
 if __name__ == '__main__':
     main()
+    show_messages()
