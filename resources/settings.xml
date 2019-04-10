@@ -113,8 +113,9 @@
         <setting label="30024" type="number" id="watched_mark" default="75"/>
 		<setting label="30032" type="bool" id="vote_always" default="false"/>
         <setting label="30034" type="bool" id="vote_on_series" default="false"/>
+        <setting label="30168" type="bool" id="sync_to_library" default="false"/>
         <!-- trakt support -->
-        <setting label="30038" type="lsep"/> <!--  -->
+        <setting label="30038" type="lsep"/>
         <setting label="30035" type="bool" id="trakt" default="false"/>
         <setting label="30036" type="bool" id="trakt_scrobble" default="false"/>
         <setting label="30037" type="bool" id="trakt_scrobble_notification" default="false" enable="eq(-1,true)" subsetting="true" visible="eq(-1,true)"/>
