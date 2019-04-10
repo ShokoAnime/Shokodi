@@ -698,7 +698,7 @@ msgctxt "#30138"
 msgid "Job finished"
 msgstr "Job finished"
 
-#:
+#: settings.xml
 msgctxt "#30139"
 msgid "Fix Desynced Images in Kodi database"
 msgstr "Fix Desynced Images in Kodi database"
@@ -837,6 +837,16 @@ msgstr "Sending request to Transcode server..."
 msgctxt "#30166"
 msgid "Waiting given time (postpone)"
 msgstr "Waiting given time (postpone)"
+
+#:
+msgctxt "#30167"
+msgid "Video Library"
+msgstr "Video Library"
+
+#: settings.xml
+msgctxt "#30168"
+msgid "Sync watched with Video Library"
+msgstr "Sync watched with Video Library"
 
 #: guibuilder.py
 msgctxt "#30180"
