@@ -480,6 +480,7 @@ def scrape_episodes(episodes_label, series_id):
         url = url_for(play_episode, i.id)
 
         li = i.get_listitem(url)
+        li.setProperty('IsPlayable', 'true')
         if not plugin_dir.append(li, folder=False, total_items=len(series.items)):
             error_handler.exception(ErrorPriority.HIGHEST, 'Unable to scan episode')
             break
