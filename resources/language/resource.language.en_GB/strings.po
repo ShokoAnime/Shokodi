@@ -848,6 +848,11 @@ msgctxt "#30168"
 msgid "Sync watched with Video Library"
 msgstr "Sync watched with Video Library"
 
+#: settings.xml
+msgctxt "#30169"
+msgid "Use seiyuu picture for cast data"
+msgstr "Use seiyuu picture for cast data"
+
 #: guibuilder.py
 msgctxt "#30180"
 msgid "No Results Found"

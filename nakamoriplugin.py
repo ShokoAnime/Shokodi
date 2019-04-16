@@ -454,7 +454,7 @@ def scrape_series(tvshows_label):
     json_node = json.loads(body)
     # it's a list of series nodes
     for node in json_node:
-        series = Series(node, compute_hash=True)
+        series = Series(node, compute_hash=True, seiyuu_pic=True)
         if series.is_movie:
             continue
         url = url_for(scrape_tvshows, series.id)
@@ -470,7 +470,7 @@ def scrape_episodes(episodes_label, series_id):
     from shoko_models.v2 import Series
     plugin_dir.set_content(episodes_label)
     # get series info
-    series = Series(series_id, build_full_object=True, get_children=True, compute_hash=True)
+    series = Series(series_id, build_full_object=True, get_children=True, compute_hash=True, seiyuu_pic=True)
     if series.is_movie:
         return
     # series iterates Episodes
