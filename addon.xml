@@ -9,7 +9,7 @@
 		<import addon="script.module.nakamori" version="3.1.0~beta15"/>
 		<import addon="script.module.nakamoriplayer" version="3.1.0~beta13"/>
 		<import addon="resource.images.nakamori" version="3.1.0"/>
-		<import addon="script.module.nakamori-lib" version="3.1.0~beta32" />
+		<import addon="script.module.nakamori-lib" version="3.1.0~beta34" />
 		<import addon="service.nakamori" version="3.1.0~beta5" />
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="nakamoriplugin.py">

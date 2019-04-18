@@ -136,6 +136,7 @@
         <setting label="30086" type="text" id="remote_ip" default="localhost" visible="System.HasAddon(script.module.pydevd-pycharm)" enable="System.HasAddon(script.module.pydevd-pycharm)"/>
         <setting label="30066" type="bool" id="request_nocast" default="false"/>
 		<setting label="30169" type="bool" id="fix_seiyuu_pic" default="false"/>
+		<setting label="30169" type="bool" id="seiyuu_gif" default="false"/>
         <!-- calendar -->
 		<setting label="30012" type="lsep"/>
         <setting label="30058" type="select" id="calendar_format" default="%d/%m" values="%d-%m|%d-%m-%y|%d/%m|%d/%m/%y|%m-%d|%m-%d-%y|%m/%d|%m/%d/%y|"/>
