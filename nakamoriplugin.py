@@ -225,11 +225,17 @@ def add_continue_item(series, episode_type, watched_index):
 
     continue_text = plugin_localize(30053)
     if plugin_addon.getSetting('replace_continue') == 'true':
-        eps = series.sizes.watched_episodes
-        if plugin_addon.getSetting('local_only') == 'true':
-            total = series.sizes.local_episodes
+        if episode_type == "Special":
+            eps = series.sizes.watched_specials
+            total = series.sizes.total_specials
+            if plugin_addon.getSetting('local_only') == 'true':
+                total = series.sizes.local_specials
         else:
-            total = series.sizes.total_episodes
+            eps = series.sizes.watched_episodes
+            if plugin_addon.getSetting('local_only') == 'true':
+                total = series.sizes.local_episodes
+            else:
+                total = series.sizes.total_episodes
         continue_text = '[ %s: %s/%s ]' % (episode_type, eps, total)
 
     continue_item = CustomItem(continue_text, '', continue_url, -1, False)
