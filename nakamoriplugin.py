@@ -483,13 +483,21 @@ def scrape_episodes(episodes_label, series_id):
     for i in series:
         if i.episode_type.lower() not in ('episode', 'special', 'ova'):
             continue
-        url = url_for(play_episode, i.id)
+        # url = url_for(play_episode, i.id)
+        url = 'plugin://plugin.video.nakamori/tvshows/%s/ep/%s/play' % (series.id, i.id)
 
         li = i.get_listitem(url)
         li.setProperty('IsPlayable', 'true')
         if not plugin_dir.append(li, folder=False, total_items=len(series.items)):
             error_handler.exception(ErrorPriority.HIGHEST, 'Unable to scan episode')
             break
+
+
+@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/')
+@try_function(ErrorPriority.BLOCKING)
+def play_episode2(series_id, ep_id):
+    # because you wanted that way :/
+    play_video_internal(ep_id, file_id=0)
 
 
 @routing_plugin.route('/tvshows/<ep_id>/play')
