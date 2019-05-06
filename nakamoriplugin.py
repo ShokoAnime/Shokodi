@@ -493,7 +493,7 @@ def scrape_episodes(episodes_label, series_id):
             break
 
 
-@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/')
+@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/play')
 @try_function(ErrorPriority.BLOCKING)
 def play_episode2(series_id, ep_id):
     # because you wanted that way :/
