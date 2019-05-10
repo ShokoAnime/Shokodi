@@ -1,51 +1,57 @@
+# Translators:
+# BigRetroMike, 2019
+# 
 msgid ""
 msgstr ""
+"Project-Id-Version: Nakamori\n"
+"Last-Translator: BigRetroMike, 2019\n"
+"Language-Team: Spanish (Spain) (https://www.transifex.com/nakamori/teams/97622/es_ES/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es_ES\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: Nakamori\n"
-"Language: es\n"
 
 #: settings.xml
 msgctxt "#30001"
 msgid "Shoko Settings"
-msgstr "Configuraciones de Shoko" 
+msgstr "Configuraciones de Shoko"
 
 #: settings.xml
 msgctxt "#30002"
 msgid "IP Address or Hostname"
-msgstr "Dirección IP o nombre de host" 
+msgstr "Dirección IP o nombre de host"
 
 #: settings.xml
 msgctxt "#30003"
 msgid "Port"
-msgstr "Puerto" 
+msgstr "Puerto"
 
 #: settings.xml
 msgctxt "#30004"
 msgid "Query Timeout (s)"
-msgstr "Tiempo de espera de consulta (s)" 
+msgstr "Tiempo de espera de consulta (s)"
 
 #: settings.xml
 msgctxt "#30005"
 msgid "Sync 'Watched status' to Shoko"
-msgstr "Sincronizar 'Estado observado' con Shoko" 
+msgstr "Sincronizar 'Estado observado' con Shoko"
 
 #: settings.xml
 msgctxt "#30006"
 msgid "Shoko Server"
-msgstr "Servidor shoko" 
+msgstr "Servidor shoko"
 
 #: settings.xml
 msgctxt "#30007"
 msgid "Watched Status Settings"
-msgstr "Configuraciones de estado vigilado" 
+msgstr "Configuraciones de estado vigilado"
 
 #: settings.xml
 msgctxt "#30008"
 msgid "Language Display Priority"
-msgstr "Prioridad de visualización de idioma" 
+msgstr "Prioridad de visualización de idioma"
 
 #: settings.xml
 msgctxt "#30009"
@@ -55,112 +61,112 @@ msgstr "Lenguaje"
 #: settings.xml
 msgctxt "#30010"
 msgid "Title Type"
-msgstr "Tipo de título" 
+msgstr "Tipo de título"
 
 #: settings.xml
 msgctxt "#30011"
 msgid "Shoko User"
-msgstr "Usuario Shoko" 
+msgstr "Usuario Shoko"
 
 #: settings.xml
 msgctxt "#30012"
 msgid "Calendar"
-msgstr "Calendario" 
+msgstr "Calendario"
 
 #: settings.xml
 msgctxt "#30013"
 msgid "Programming Tags (how/where it aired, awards, etc)"
-msgstr "Etiquetas de programación (cómo / dónde se emitió, premios, etc.)" 
+msgstr "Etiquetas de programación (cómo / dónde se emitió, premios, etc.)"
 
 #: settings.xml
 msgctxt "#30014"
-msgid "Enable \'Pick file\' on multi files episodes"
-msgstr "Prender \'Elegir archivo\' en episodios con múltiples archivos"
+msgid "Enable \\'Pick file\\' on multi files episodes"
+msgstr "Prender \\'Elegir archivo\\' en episodios con múltiples archivos"
 
 #: settings.xml
 msgctxt "#30015"
 msgid "Login"
-msgstr "Iniciar sesión" 
+msgstr "Iniciar sesión"
 
 #: settings.xml
 msgctxt "#30016"
 msgid "Password"
-msgstr "Contraseña" 
+msgstr "Contraseña"
 
 #: settings.xml
 msgctxt "#30017"
 msgid "Device name"
-msgstr "Nombre del dispositivo" 
+msgstr "Nombre del dispositivo"
 
 #: settings.xml
 msgctxt "#30018"
 msgid "API Key"
-msgstr "Clave API" 
+msgstr "Clave API"
 
 #: settings.xml
 msgctxt "#30019"
 msgid "Title color conditions"
-msgstr "Condiciones de color del título" 
+msgstr "Condiciones de color del título"
 
 #: settings.xml
 msgctxt "#30020"
-msgid "Enable \'Resume\'"
-msgstr "Habilitar \ 'Reanudar \'" 
+msgid "Enable \\'Resume\\'"
+msgstr "Habilitar \\ 'Reanudar \\'"
 
 #: settings.xml
 msgctxt "#30021"
 msgid "Searching"
-msgstr "buscando" 
+msgstr "buscando"
 
 #: settings.xml
 msgctxt "#30022"
 msgid "Limit search results to"
-msgstr "Limitar los resultados de la búsqueda a" 
+msgstr "Limitar los resultados de la búsqueda a"
 
 #: settings.xml
 msgctxt "#30023"
 msgid "Video settings"
-msgstr "Ajustes de video" 
+msgstr "Ajustes de video"
 
 #: settings.xml
 msgctxt "#30024"
 msgid "Percent to Play before Marking as Watched"
-msgstr "Porcentaje para jugar antes de marcar como visto" 
+msgstr "Porcentaje para jugar antes de marcar como visto"
 
 #: settings.xml
 msgctxt "#30025"
 msgid "Notification Window when Marked as Watched"
-msgstr "Ventana de notificación cuando está marcada como vista" 
+msgstr "Ventana de notificación cuando está marcada como vista"
 
 #: settings.xml
 msgctxt "#30026"
 msgid "Kodi Player Settings"
-msgstr "Configuración del reproductor Kodi" 
+msgstr "Configuración del reproductor Kodi"
 
 #: settings.xml
 msgctxt "#30027"
 msgid "Max time to wait for buffer (in ms)"
-msgstr "Tiempo máximo para esperar el búfer (en ms)" 
+msgstr "Tiempo máximo para esperar el búfer (en ms)"
 
 #: settings.xml
 msgctxt "#30028"
 msgid "Shorten Tag List"
-msgstr "Acortar lista de etiquetas" 
+msgstr "Acortar lista de etiquetas"
 
 #: settings.xml
 msgctxt "#30029"
 msgid "cache"
-msgstr "cache" 
+msgstr "cache"
 
 #: settings.xml
 msgctxt "#30030"
 msgid "Enable cache"
-msgstr "Habilitar caché" 
+msgstr "Habilitar caché"
 
 #: settings.xml
 msgctxt "#30031"
 msgid "Finished Series with all normal episodes"
-msgstr "Serie terminada con todos los episodios normales." 
+msgstr "Serie terminada con todos los episodios normales."
 
 #: settings.xml
 msgctxt "#30032"
@@ -170,814 +176,835 @@ msgstr "Pedir voto después de cada episodio"
 #: settings.xml
 msgctxt "#30033"
 msgid "Limit TAG results to"
-msgstr "Limitar los resultados de TAG a" 
+msgstr "Limitar los resultados de TAG a"
 
 #: settings.xml
 msgctxt "#30034"
 msgid "(WIP)Series Vote after completing it"
-msgstr "Serie (WIP) Vota después de completarlo" 
+msgstr "Serie (WIP) Vota después de completarlo"
 
 #: settings.xml
 msgctxt "#30035"
 msgid "(WIP)Enable voting for Trakt"
-msgstr "(WIP) Habilitar la votación para Trakt" 
+msgstr "(WIP) Habilitar la votación para Trakt"
 
 #: settings.xml
 msgctxt "#30036"
 msgid "Trakt Scrobble"
-msgstr "Trakt Scrobble" 
+msgstr "Trakt Scrobble"
 
 #: settings.xml
 msgctxt "#30037"
 msgid "Enable Trakt Scrobble Notification"
-msgstr "Habilitar la notificación de Trakt Scrobble" 
+msgstr "Habilitar la notificación de Trakt Scrobble"
 
 #: settings.xml
 msgctxt "#30038"
 msgid "Trakt support"
-msgstr "Soporte de trakt" 
+msgstr "Soporte de trakt"
 
 #: settings.xml
 msgctxt "#30039"
 msgid "Show -continue-"
-msgstr "Mostrar -continuar-" 
+msgstr "Mostrar -continuar-"
 
 #: settings.xml
 msgctxt "#30040"
 msgid "Use local file count for total episodes"
-msgstr "Utilice el recuento de archivos locales para episodios totales" 
+msgstr "Utilice el recuento de archivos locales para episodios totales"
 
 #: settings.xml
 msgctxt "#30041"
 msgid "Airing Series with all normal episodes"
-msgstr "Series de aireación con todos los episodios normales." 
+msgstr "Series de aireación con todos los episodios normales."
 
 #: settings.xml
 msgctxt "#30042"
 msgid "Spam the Log with info (only enable if told to)"
-msgstr "Spam the Log con información (solo habilitar si se indica)" 
+msgstr "Spam the Log con información (solo habilitar si se indica)"
 
 #: settings.xml
 msgctxt "#30043"
 msgid "Finished Series with missing normal episodes"
-msgstr "Serie terminada con episodios normales perdidos" 
+msgstr "Serie terminada con episodios normales perdidos"
 
 #: settings.xml
 msgctxt "#30044"
 msgid "Advanced"
-msgstr "Avanzado" 
+msgstr "Avanzado"
 
 #: settings.xml
 msgctxt "#30045"
 msgid "AniDB Helper or Otherwise Useless Tags"
-msgstr "AniDB Helper o etiquetas inútiles" 
+msgstr "AniDB Helper o etiquetas inútiles"
 
 #: settings.xml
 msgctxt "#30046"
 msgid "Tag Filter"
-msgstr "Etiqueta de filtro" 
+msgstr "Etiqueta de filtro"
 
 #: settings.xml
 msgctxt "#30047"
 msgid "Art Style Tags"
-msgstr "Etiquetas de estilo de arte" 
+msgstr "Etiquetas de estilo de arte"
 
 #: settings.xml
 msgctxt "#30048"
 msgid "Source Tags (Manga, original, etc)"
-msgstr "Etiquetas Fuente (Manga, originales, etc.)" 
+msgstr "Etiquetas Fuente (Manga, originales, etc.)"
 
 #: settings.xml
 msgctxt "#30049"
 msgid "Useful Helper Tags (mostly related to OP/ED style)"
-msgstr "Etiquetas útiles de ayuda (en su mayoría relacionadas con el estilo OP / ED)" 
+msgstr ""
+"Etiquetas útiles de ayuda (en su mayoría relacionadas con el estilo OP / ED)"
 
 #: settings.xml
 msgctxt "#30050"
 msgid "Spoiler Tags (so and so dies/wins/etc)"
-msgstr "Etiquetas de Spoiler (tal y como muere / gana / etc)" 
+msgstr "Etiquetas de Spoiler (tal y como muere / gana / etc)"
 
 #: settings.xml
 msgctxt "#30051"
 msgid "Treat Subgroups as 'Seasons'"
-msgstr "Trate a los subgrupos como 'estaciones'" 
+msgstr "Trate a los subgrupos como 'estaciones'"
 
 #: settings.xml
 msgctxt "#30052"
 msgid "Use Server Title"
-msgstr "Usar el título del servidor" 
+msgstr "Usar el título del servidor"
 
 #: nakamoriplugin.py
 msgctxt "#30053"
 msgid "*Go to First Unwatched Episode*"
-msgstr "* Ir al primer episodio no visto *" 
+msgstr "* Ir al primer episodio no visto *"
 
 #: settings.xml
 msgctxt "#30054"
 msgid "Browsing"
-msgstr "Hojeada" 
+msgstr "Hojeada"
 
 #: settings.xml
 msgctxt "#30055"
 msgid "Time to wait for refresh to move selection (adjust for sync)"
-msgstr "Tiempo de espera para actualizar para mover la selección (ajustar para sincronización)" 
+msgstr ""
+"Tiempo de espera para actualizar para mover la selección (ajustar para "
+"sincronización)"
 
 #: settings.xml
 msgctxt "#30056"
 msgid "Title Settings"
-msgstr "Configuración de título" 
+msgstr "Configuración de título"
 
 #: settings.xml
 msgctxt "#30057"
 msgid "Context Menu Settings"
-msgstr "Ajustes del menú contextual" 
+msgstr "Ajustes del menú contextual"
 
 #: settings.xml
 msgctxt "#30058"
 msgid "Date format"
-msgstr "Formato de fecha" 
+msgstr "Formato de fecha"
 
 #: settings.xml
 msgctxt "#30059"
 msgid "Airing Series with missing normal episodes"
-msgstr "Serie de aireación con episodios normales perdidos" 
+msgstr "Serie de aireación con episodios normales perdidos"
 
 #: settings.xml
 msgctxt "#30060"
 msgid "Finished Series with all episodes (including specials)"
-msgstr "Serie terminada con todos los episodios (incluyendo especiales)" 
+msgstr "Serie terminada con todos los episodios (incluyendo especiales)"
 
 #: settings.xml
 msgctxt "#30061"
 msgid "Switch Calendar to Directory based"
-msgstr "Cambiar calendario a directorio basado" 
+msgstr "Cambiar calendario a directorio basado"
 
 #: settings.xml
 msgctxt "#30062"
 msgid "Use new Mark as Watched Style"
-msgstr "Use la nueva marca como estilo visto" 
+msgstr "Use la nueva marca como estilo visto"
 
 #: settings.xml
 msgctxt "#30063"
 msgid "Enable remote debugging (web-pdb)"
-msgstr "Habilitar la depuración remota (web-pdb)" 
+msgstr "Habilitar la depuración remota (web-pdb)"
 
 #: settings.xml
 msgctxt "#30064"
 msgid "Tweaks"
-msgstr "Retoques" 
+msgstr "Retoques"
 
 #: guibuilder.py
 msgctxt "#30065"
 msgid "Play"
-msgstr "Jugar" 
+msgstr "Jugar"
 
 #: settings.xml
 msgctxt "#30066"
 msgid "Disable Kodi's Internal Cast Menu"
-msgstr "Deshabilitar el menú interno de Kodi" 
+msgstr "Deshabilitar el menú interno de Kodi"
 
 #: settings.xml
 msgctxt "#30067"
 msgid "Use the source thumbnail ratio instead of 16:9"
-msgstr "Utilice la relación de miniatura de origen en lugar de 16: 9" 
+msgstr "Utilice la relación de miniatura de origen en lugar de 16: 9"
 
 #: settings.xml
 msgctxt "#30068"
 msgid "Ignore Specials for Watched States"
-msgstr "Ignorar especiales para estados vigilados" 
+msgstr "Ignorar especiales para estados vigilados"
 
 #: settings.xml
 msgctxt "#30069"
 msgid "Cached data expiration time (s)"
-msgstr "Tiempo (s) de expiración de datos en caché" 
+msgstr "Tiempo (s) de expiración de datos en caché"
 
 #: settings.xml
 msgctxt "#30070"
 msgid "Setting tags (time/place/etc)"
-msgstr "Etiquetas de ajuste (tiempo / lugar / etc)" 
+msgstr "Etiquetas de ajuste (tiempo / lugar / etc)"
 
 #: settings.xml
 msgctxt "#30071"
 msgid "Airing Series with all episodes (including specials)"
-msgstr "Serie de transmisión con todos los episodios (incluyendo especiales)" 
+msgstr "Serie de transmisión con todos los episodios (incluyendo especiales)"
 
 #. convert this to a selection!
 #: settings.xml
 msgctxt "#30072"
 msgid "Replace -continue- with Episode counter"
-msgstr "Reemplazar -continuar- con el contador de episodios" 
+msgstr "Reemplazar -continuar- con el contador de episodios"
 
 #: settings.xml
 msgctxt "#30073"
 msgid "Enable Title colorization"
-msgstr "Habilitar coloración de título" 
+msgstr "Habilitar coloración de título"
 
 #: settings.xml
 msgctxt "#30074"
 msgid "Spoiler control"
-msgstr "Control de spoiler" 
+msgstr "Control de spoiler"
 
 #: settings.xml
 msgctxt "#30075"
 msgid "Hide episode title for unwatched"
-msgstr "Ocultar el título del episodio para no visto" 
+msgstr "Ocultar el título del episodio para no visto"
 
 #: guibuilder.py
 msgctxt "#30076"
 msgid "Episode"
-msgstr "Episodio" 
+msgstr "Episodio"
 
 #: settings.xml
 msgctxt "#30077"
 msgid "Replace images for unwatched episodes"
-msgstr "Reemplazar imágenes para episodios no vistos" 
+msgstr "Reemplazar imágenes para episodios no vistos"
 
 #: settings.xml
 msgctxt "#30078"
 msgid "Hide Episode plot for unwatched episodes"
-msgstr "Ocultar la trama del episodio para episodios no vistos" 
+msgstr "Ocultar la trama del episodio para episodios no vistos"
 
 #: guibuilder.py
 msgctxt "#30079"
 msgid "Hidden Due to User Settings"
-msgstr "Oculto debido a la configuración del usuario" 
+msgstr "Oculto debido a la configuración del usuario"
 
 #: settings.xml
 msgctxt "#30080"
 msgid "Fix Desynced Watched Status in Kodi database"
-msgstr "Arreglar el estado observado desincronizado en la base de datos Kodi" 
+msgstr "Arreglar el estado observado desincronizado en la base de datos Kodi"
 
 #: kodi_utils.py
 msgctxt "#30081"
-msgid "This function will execute a DELETE command against your Kodi Database file. This shouldn't affect you in any negative way, but you have been warned."
-msgstr "Esta función ejecutará un comando DELETE contra su archivo de base de datos Kodi. Esto no debería afectarte de ninguna manera negativa, pero has sido advertido." 
+msgid ""
+"This function will execute a DELETE command against your Kodi Database file."
+" This shouldn't affect you in any negative way, but you have been warned."
+msgstr ""
+"Esta función ejecutará un comando DELETE contra su archivo de base de datos "
+"Kodi. Esto no debería afectarte de ninguna manera negativa, pero has sido "
+"advertido."
 
 #: settings.xml
 msgctxt "#30082"
 msgid "Connection Wizard"
-msgstr "Asistente de conexión" 
+msgstr "Asistente de conexión"
 
 #: settings.xml
 msgctxt "#30083"
 msgid "Select First Unwatched Episode"
-msgstr "Seleccione el primer episodio no visto" 
+msgstr "Seleccione el primer episodio no visto"
 
 #: settings.xml
 msgctxt "#30084"
 msgid "Eigakan"
-msgstr "Eigakan" 
+msgstr "Eigakan"
 
 #: settings.xml
 msgctxt "#30085"
 msgid "Enable Eigakan"
-msgstr "Habilitar Eigakan" 
+msgstr "Habilitar Eigakan"
 
 #: settings.xml
 msgctxt "#30086"
 msgid "IP Address/Hostname"
-msgstr "Dirección IP / Nombre de host" 
+msgstr "Dirección IP / Nombre de host"
 
 #: settings.xml
 msgctxt "#30087"
 msgid "Port"
-msgstr "Puerto" 
+msgstr "Puerto"
 
 #: settings.xml
 msgctxt "#30088"
 msgid "Number Attempts Before Giving Up"
-msgstr "Número de intentos antes de renunciar" 
+msgstr "Número de intentos antes de renunciar"
 
 #: settings.xml
 msgctxt "#30089"
 msgid "Wait (s) to buffer starting"
-msgstr "Espera (s) para iniciar el búfer" 
+msgstr "Espera (s) para iniciar el búfer"
 
 #: settings.xml
 msgctxt "#30090"
 msgid "Advanced settings"
-msgstr "Ajustes avanzados" 
+msgstr "Ajustes avanzados"
 
 #: settings.xml
 msgctxt "#30091"
 msgid "Resolution (1920x1080)"
-msgstr "Resolución (1920x1080)" 
+msgstr "Resolución (1920x1080)"
 
 #: settings.xml
 msgctxt "#30092"
 msgid "x264 profile"
-msgstr "perfil x264" 
+msgstr "perfil x264"
 
 #: settings.xml
 msgctxt "#30093"
 msgid "Audio codec"
-msgstr "Codec de audio" 
+msgstr "Codec de audio"
 
 #: settings.xml
 msgctxt "#30094"
 msgid "Video bitrate"
-msgstr "Bitrate de vídeo" 
+msgstr "Bitrate de vídeo"
 
 #: settings.xml
 msgctxt "#30095"
 msgid "Audio language setting"
-msgstr "Ajuste de idioma de audio" 
+msgstr "Ajuste de idioma de audio"
 
 #: settings.xml
 msgctxt "#30096"
 msgid "Subtitles language setting"
-msgstr "Subtítulos de configuración de idioma" 
+msgstr "Subtítulos de configuración de idioma"
 
 #: settings.xml
 msgctxt "#30097"
 msgid "Maintenance"
-msgstr "Mantenimiento" 
+msgstr "Mantenimiento"
 
 #: settings.xml
 msgctxt "#30098"
 msgid "Main Menu Items"
-msgstr "Elementos del menú principal" 
+msgstr "Elementos del menú principal"
 
 #: settings.xml
 msgctxt "#30099"
 msgid "Login Wizard"
-msgstr "Asistente de inicio de sesión" 
+msgstr "Asistente de inicio de sesión"
 
 #: settings.xml
 msgctxt "#30100"
 msgid "More..."
-msgstr "Más..." 
+msgstr "Más..."
 
 #: settings.xml
 msgctxt "#30101"
 msgid "Show Search"
-msgstr "Mostrar búsqueda" 
+msgstr "Mostrar búsqueda"
 
 #: settings.xml
 msgctxt "#30102"
 msgid "Show Settings"
-msgstr "Ajustes de la presentación" 
+msgstr "Ajustes de la presentación"
 
 #: settings.xml
 msgctxt "#30103"
 msgid "Show Calendar"
-msgstr "Mostrar calendario" 
+msgstr "Mostrar calendario"
 
 #: kodi_utils.py
 msgctxt "#30104"
 msgid "Warning"
-msgstr "Advertencia" 
+msgstr "Advertencia"
 
 #: settings.xml
 msgctxt "#30105"
 msgid "Show Unsorted"
-msgstr "Mostrar sin clasificar" 
+msgstr "Mostrar sin clasificar"
 
 #: guibuilder.py
 msgctxt "#30106"
 msgid "Unsorted"
-msgstr "Sin clasificar" 
+msgstr "Sin clasificar"
 
 #: guibuilder.py
 msgctxt "#30107"
 msgid "Settings"
-msgstr "Ajustes" 
+msgstr "Ajustes"
 
 #: settings.xml
 msgctxt "#30108"
 msgid "Send anonymous data about your settings"
-msgstr "Enviar datos anónimos sobre su configuración" 
+msgstr "Enviar datos anónimos sobre su configuración"
 
 #: settings.xml
 msgctxt "#30109"
 msgid "Select custom Image/IconPack"
-msgstr "Seleccione la imagen personalizada / IconPack" 
+msgstr "Seleccione la imagen personalizada / IconPack"
 
 #: settings.xml
 msgctxt "#30110"
 msgid "Clear Search Terms"
-msgstr "Borrar términos de búsqueda" 
+msgstr "Borrar términos de búsqueda"
 
 #: settings.xml
 msgctxt "#30111"
 msgid "Hide Ratings ..."
-msgstr "Ocultar calificaciones ..." 
+msgstr "Ocultar calificaciones ..."
 
 #: kodi_utils.py
 msgctxt "#30112"
 msgid "Would you like to Proceed?"
-msgstr "¿Te gustaría proceder?" 
+msgstr "¿Te gustaría proceder?"
 
 #: settings.xml
 msgctxt "#30113"
 msgid "Hide Rating Only When..."
-msgstr "Ocultar clasificación solo cuando ..." 
+msgstr "Ocultar clasificación solo cuando ..."
 
 #: settings.xml
 msgctxt "#30114"
 msgid "Show 'Shoko'"
-msgstr "Mostrar 'Shoko'" 
+msgstr "Mostrar 'Shoko'"
 
 #: guibuilder.py
 msgctxt "#30115"
 msgid "Shoko"
-msgstr "Shoko" 
+msgstr "Shoko"
 
 #: guibuilder.py
 msgctxt "#30116"
 msgid "List import folders"
-msgstr "Lista de carpetas de importación" 
+msgstr "Lista de carpetas de importación"
 
 #: guibuilder.py
 msgctxt "#30117"
 msgid "Stats update"
-msgstr "Actualización de estadísticas" 
+msgstr "Actualización de estadísticas"
 
 #: guibuilder.py
 msgctxt "#30118"
 msgid "MediaInfo update"
-msgstr "Actualización de MediaInfo" 
+msgstr "Actualización de MediaInfo"
 
 #: kodi_utils.py
 msgctxt "#30119"
 msgid "Import Folder"
-msgstr "Importar carpeta" 
+msgstr "Importar carpeta"
 
 #: guibuilder.py
 msgctxt "#30120"
 msgid "Rescan File"
-msgstr "Volver a escanear el archivo" 
+msgstr "Volver a escanear el archivo"
 
 #: guibuilder.py
 msgctxt "#30121"
 msgid "Rehash File"
-msgstr "Rehash File" 
+msgstr "Rehash File"
 
 #: guibuilder.py
 msgctxt "#30122"
 msgid "Remove Missing Files"
-msgstr "Eliminar archivos que faltan" 
+msgstr "Eliminar archivos que faltan"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30123"
 msgid "More Info"
-msgstr "Más información" 
+msgstr "Más información"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30124"
 msgid "Vote (Series)"
-msgstr "Votar (Serie)" 
+msgstr "Votar (Serie)"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30125"
 msgid "Vote (Episode)"
-msgstr "Votar (Episodio)" 
+msgstr "Votar (Episodio)"
 
 #: guibuilder.py
 msgctxt "#30126"
 msgid "Mark Series as Watched"
-msgstr "Marcar series según lo visto" 
+msgstr "Marcar series según lo visto"
 
 #: guibuilder.py
 msgctxt "#30127"
 msgid "Mark Series as Unwatched"
-msgstr "Marcar series como no vistas" 
+msgstr "Marcar series como no vistas"
 
 #: guibuilder.py
 msgctxt "#30128"
 msgid "Mark Episode as Watched"
-msgstr "Episodio de Mark según lo visto" 
+msgstr "Episodio de Mark según lo visto"
 
 #: guibuilder.py
 msgctxt "#30129"
 msgid "Mark Episode as Unwatched"
-msgstr "Marca el episodio como no visto" 
+msgstr "Marca el episodio como no visto"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30130"
 msgid "Playlist Mode"
-msgstr "Modo de lista de reproducción" 
+msgstr "Modo de lista de reproducción"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30131"
 msgid "Refresh"
-msgstr "Refrescar" 
+msgstr "Refrescar"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30132"
 msgid "Play (No Scrobble)"
-msgstr "Jugar (No Scrobble)" 
+msgstr "Jugar (No Scrobble)"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30133"
 msgid "Inspect Files"
-msgstr "Inspeccionar archivos" 
+msgstr "Inspeccionar archivos"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30134"
 msgid "View Cast"
-msgstr "Ver Cast" 
+msgstr "Ver Cast"
 
 #: guibuilder.py
 msgctxt "#30135"
-msgid "Scan your library and remove all files that have been re/moved by hand and no longer accessible by Shoko"
-msgstr "Escanee su biblioteca y elimine todos los archivos que han sido re / movidos a mano y que Shoko ya no puede acceder a ellos" 
+msgid ""
+"Scan your library and remove all files that have been re/moved by hand and "
+"no longer accessible by Shoko"
+msgstr ""
+"Escanee su biblioteca y elimine todos los archivos que han sido re / movidos"
+" a mano y que Shoko ya no puede acceder a ellos"
 
 #: guibuilder.py
 msgctxt "#30136"
 msgid "Push status update ..."
-msgstr "Actualización de estado de inserción ..." 
+msgstr "Actualización de estado de inserción ..."
 
 #: guibuilder.py
 msgctxt "#30137"
 msgid "Generate Missing MediaInfo"
-msgstr "Generar MediaInfo faltante" 
+msgstr "Generar MediaInfo faltante"
 
 #: kodi_utils.py
 msgctxt "#30138"
 msgid "Job finished"
-msgstr "Trabajo terminado" 
+msgstr "Trabajo terminado"
 
 #: settings.xml
 msgctxt "#30139"
 msgid "Fix Desynced Images in Kodi database"
-msgstr "Corregir imágenes desincronizadas en la base de datos Kodi" 
+msgstr "Corregir imágenes desincronizadas en la base de datos Kodi"
 
 #: guibuilder.py
 msgctxt "#30140"
 msgid "Import Folders"
-msgstr "Importar carpetas" 
+msgstr "Importar carpetas"
 
 #: guibuilder.py
 msgctxt "#30141"
 msgid "Resume"
-msgstr "Currículum" 
+msgstr "Currículum"
 
 #: settings.xml
 msgctxt "#30142"
 msgid "Default sorting method for Series"
-msgstr "Método de clasificación predeterminado para la serie" 
+msgstr "Método de clasificación predeterminado para la serie"
 
 #: settings.xml
 msgctxt "#30143"
 msgid "Default sorting method for Episodes"
-msgstr "Método de clasificación predeterminado para los episodios" 
+msgstr "Método de clasificación predeterminado para los episodios"
 
 #: settings.xml
 msgctxt "#30144"
 msgid "Sorting"
-msgstr "Clasificación" 
+msgstr "Clasificación"
 
 #: settings.xml
 msgctxt "#30145"
 msgid "Experimental"
-msgstr "Experimental" 
+msgstr "Experimental"
 
 #: settings.xml
 msgctxt "#30146"
 msgid "Misc"
-msgstr "Misceláneo" 
+msgstr "Misceláneo"
 
 #: guibuilder.py
 msgctxt "#30147"
 msgid "-Below are Kodi's items-"
-msgstr "-Abajo están los artículos de Kodi-" 
+msgstr "-Abajo están los artículos de Kodi-"
 
 #: guibuilder.py
 msgctxt "#30148"
 msgid "-Don't use 'Mark as watched'-"
-msgstr "-No uses 'Marcar como visto'" 
+msgstr "-No uses 'Marcar como visto'"
 
 #: settings.xml
 msgctxt "#30149"
 msgid "External player watch fix"
-msgstr "Arreglo de reloj jugador externo" 
+msgstr "Arreglo de reloj jugador externo"
 
 #: settings.xml
 msgctxt "#30150"
 msgid "Hide What's New"
-msgstr "Ocultar lo nuevo" 
+msgstr "Ocultar lo nuevo"
 
 #: nakamoriplugin.py
 msgctxt "#30151"
 msgid "Unable to Add Query to List"
-msgstr "No se puede agregar la consulta a la lista" 
+msgstr "No se puede agregar la consulta a la lista"
 
 #: nakamoriplugin.py
 msgctxt "#30152"
 msgid "No Episodes in Series"
-msgstr "No hay episodios en serie" 
+msgstr "No hay episodios en serie"
 
 #: nakamoriplugin.py
 msgctxt "#30153"
 msgid "Unable to Add Episode"
-msgstr "No se puede agregar el episodio" 
+msgstr "No se puede agregar el episodio"
 
 #: nakamoriplugin.py
 msgctxt "#30154"
-msgid "We were unable to connect to Shoko Server.\n Please enter a valid IP or host."
-msgstr "No pudimos conectarnos con el servidor Shoko. \ N Ingresa una IP o host válido." 
+msgid ""
+"We were unable to connect to Shoko Server.\n"
+" Please enter a valid IP or host."
+msgstr ""
+"No pudimos conectarnos con el servidor Shoko. \\ N Ingresa una IP o host "
+"válido."
 
 #: nakamoriplugin.py
 msgctxt "#30155"
 msgid "Could not connect. Please check your connection settings."
-msgstr "No pudo conectar. Por favor, compruebe su configuración de conexión." 
+msgstr "No pudo conectar. Por favor, compruebe su configuración de conexión."
 
 #: nakamoriplugin.py
 msgctxt "#30156"
 msgid "Unable to Login"
-msgstr "Incapaz de iniciar sesión" 
+msgstr "Incapaz de iniciar sesión"
 
 #: nakamoriplugin.py
 msgctxt "#30157"
-msgid "We were unable to log in to Shoko Server.\n Please enter a valid Username and Password.\n The default is U: \"Default\" P: \"\" (no quotes)"
-msgstr "No pudimos iniciar sesión en Shoko Server. \n Por favor ingrese un nombre de usuario y contraseña válidos. \n El valor predeterminado es U: \"Predeterminado \" P: \"\" (sin comillas)" 
+msgid ""
+"We were unable to log in to Shoko Server.\n"
+" Please enter a valid Username and Password.\n"
+" The default is U: \"Default\" P: \"\" (no quotes)"
+msgstr ""
+"No pudimos iniciar sesión en Shoko Server. \n"
+" Por favor ingrese un nombre de usuario y contraseña válidos. \n"
+" El valor predeterminado es U: \"Predeterminado \" P: \"\" (sin comillas)"
 
 #: nakamoriplugin.py
 msgctxt "#30158"
 msgid "Could not log in. Please check your user settings."
-msgstr "No se pudo iniciar sesión. Por favor, compruebe su configuración de usuario." 
+msgstr ""
+"No se pudo iniciar sesión. Por favor, compruebe su configuración de usuario."
 
 #: nakamoriplugin.py
 msgctxt "#30159"
 msgid "Unable to Connect"
-msgstr "No puede conectarse" 
+msgstr "No puede conectarse"
 
 #: guibuilder.py, kodi_utils.py
 msgctxt "#30160"
 msgid "Please Wait"
-msgstr "Por favor espera" 
+msgstr "Por favor espera"
 
 #: guibuilder.py
 msgctxt "#30161"
 msgid "Getting from Server..."
-msgstr "Obtención del servidor ..." 
+msgstr "Obtención del servidor ..."
 
 #: guibuilder.py
 msgctxt "#30162"
 msgid "Loading Results..."
-msgstr "Cargando resultados ..." 
+msgstr "Cargando resultados ..."
 
 #: guibuilder.py
 msgctxt "#30163"
 msgid "Getting Episodes from Server..."
-msgstr "Obteniendo episodios del servidor ..." 
+msgstr "Obteniendo episodios del servidor ..."
 
 #: kodi_utils.py
 msgctxt "#30164"
 msgid "Waiting for response from Server..."
-msgstr "Esperando respuesta del servidor ..." 
+msgstr "Esperando respuesta del servidor ..."
 
 #: kodi_utils.py
 msgctxt "#30165"
 msgid "Sending request to Transcode server..."
-msgstr "Enviando solicitud al servidor Transcode ..." 
+msgstr "Enviando solicitud al servidor Transcode ..."
 
 #: kodi_utils.py
 msgctxt "#30166"
 msgid "Waiting given time (postpone)"
-msgstr "Tiempo de espera dado (posponer)" 
+msgstr "Tiempo de espera dado (posponer)"
 
-#:
 msgctxt "#30167"
 msgid "Video Library"
-msgstr "Videoteca" 
+msgstr "Videoteca"
 
 #: settings.xml
 msgctxt "#30168"
 msgid "Sync watched with Video Library"
-msgstr "Sync visto con la biblioteca de videos" 
+msgstr "Sync visto con la biblioteca de videos"
 
 #: settings.xml
 msgctxt "#30169"
 msgid "Use seiyuu picture for cast data"
-msgstr "Usa la imagen de seiyuu para los datos de lanzamiento" 
+msgstr "Usa la imagen de seiyuu para los datos de lanzamiento"
 
 #: guibuilder.py
 msgctxt "#30180"
 msgid "No Results Found"
-msgstr "No se han encontrado resultados" 
+msgstr "No se han encontrado resultados"
 
 #: guibuilder.py
 msgctxt "#30181"
 msgid "Try a Different Query"
-msgstr "Pruebe una consulta diferente" 
+msgstr "Pruebe una consulta diferente"
 
 #: kodi_utils.py
 msgctxt "#30182"
 msgid "Finished"
-msgstr "Terminado" 
+msgstr "Terminado"
 
 #: kodi_utils.py
 msgctxt "#30183"
 msgid "You already finished this."
-msgstr "Ya terminaste esto." 
+msgstr "Ya terminaste esto."
 
 #: shoko_utils.py
 msgctxt "#30189"
 msgid "Queued File for Rehash"
-msgstr "Archivo en cola para Rehash" 
+msgstr "Archivo en cola para Rehash"
 
 #: shoko_utils.py
 msgctxt "#30190"
 msgid "Queued File for Rescan"
-msgstr "Archivo en cola para volver a explorar" 
+msgstr "Archivo en cola para volver a explorar"
 
 #: shoko_utils.py
 msgctxt "#30191"
 msgid "Refreshing in 10 seconds"
-msgstr "Refrescante en 10 segundos." 
+msgstr "Refrescante en 10 segundos."
 
 #: shoko_utils.py
 msgctxt "#30193"
 msgid "It may take some time."
-msgstr "Puede tomar algún tiempo." 
+msgstr "Puede tomar algún tiempo."
 
 #: nakamori.py
 msgctxt "#30194"
 msgid "Incorrect Credentials"
-msgstr "Credenciales incorrectas" 
+msgstr "Credenciales incorrectas"
 
 #: nakamori.py
 msgctxt "#30195"
 msgid "Please change them in Settings"
-msgstr "Por favor, cambiarlos en la configuración" 
+msgstr "Por favor, cambiarlos en la configuración"
 
 #: kodi_utils.py
 msgctxt "#30196"
 msgid "Files"
-msgstr "Archivos" 
+msgstr "Archivos"
 
 #: guibuilder.py
 msgctxt "#30197"
 msgid "No connection to Shoko server"
-msgstr "No hay conexión con el servidor Shoko" 
+msgstr "No hay conexión con el servidor Shoko"
 
 #: shoko_utils.py
 msgctxt "#30198"
 msgid "Queued Run Import on Server"
-msgstr "Ejecución en cola de importación en el servidor" 
+msgstr "Ejecución en cola de importación en el servidor"
 
 #: kodi_utils.py
 msgctxt "#30199"
 msgid "Queued Import Folder Scan"
-msgstr "Exploración de carpetas en cola de importación" 
+msgstr "Exploración de carpetas en cola de importación"
 
 #: nakamoritools.py
 msgctxt "#30200"
 msgid "Watched Status Changed"
-msgstr "Estado observado cambiado" 
+msgstr "Estado observado cambiado"
 
 #: nakamoritools.py
 msgctxt "#30201"
 msgid "Marked as"
-msgstr "Marcado como" 
+msgstr "Marcado como"
 
 #: nakamoritools.py
 msgctxt "#30202"
 msgid "Watched"
-msgstr "Mirado" 
+msgstr "Mirado"
 
 #: nakamoritools.py
 msgctxt "#30203"
 msgid "Unwatched"
-msgstr "Sin vigilar" 
+msgstr "Sin vigilar"
 
 msgctxt "#30204"
 msgid "Remove"
-msgstr "retirar" 
+msgstr "retirar"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30221"
 msgid "Search"
-msgstr "Buscar" 
+msgstr "Buscar"
 
 #: guibuilder.py
 msgctxt "#30222"
 msgid "Calendar"
-msgstr "Calendario" 
+msgstr "Calendario"
 
 #: guibuilder.py
 msgctxt "#30223"
 msgid "Airing Today"
-msgstr "Transmitiendo hoy" 
+msgstr "Transmitiendo hoy"
 
 #: guibuilder.py
 msgctxt "#30224"
 msgid "New Search"
-msgstr "Nueva búsqueda" 
+msgstr "Nueva búsqueda"
 
 msgctxt "#30225"
 msgid "Quick Search"
-msgstr "Búsqueda rápida" 
+msgstr "Búsqueda rápida"
 
 #: settings.xml
 msgctxt "#30226"
 msgid "Genre Tags"
-msgstr "Etiquetas de género" 
+msgstr "Etiquetas de género"
 
 #: settings.xml
 msgctxt "#30227"
 msgid "Filter Tags to "
-msgstr "Filtrar etiquetas para" 
-
+msgstr "Filtrar etiquetas para"
