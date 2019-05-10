@@ -576,7 +576,7 @@ msgstr "Dölj endast omdöme när ..."
 #: settings.xml
 msgctxt "#30114"
 msgid "Show 'Shoko'"
-msgstr "Visa "Shoko"" 
+msgstr "Visa \"Shoko\"" 
 
 #: guibuilder.py
 msgctxt "#30115"
