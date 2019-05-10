@@ -746,7 +746,7 @@ msgstr "- فيما يلي عناصر Kodi-"
 #: guibuilder.py
 msgctxt "#30148"
 msgid "-Don't use 'Mark as watched'-"
-msgstr "- لا تستخدم "وضع علامة كمراقب"" 
+msgstr "- لا تستخدم "\وضع علامة كمراقب\"" 
 
 #: settings.xml
 msgctxt "#30149"

@@ -260,7 +260,7 @@ msgstr "Tags spoiler (Untel meurt / gagne / etc)"
 #: settings.xml
 msgctxt "#30051"
 msgid "Treat Subgroups as 'Seasons'"
-msgstr "Traiter les sous-groupes comme des "saisons"" 
+msgstr "Traiter les sous-groupes comme des \"saisons\"" 
 
 #: settings.xml
 msgctxt "#30052"

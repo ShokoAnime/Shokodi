@@ -105,7 +105,7 @@ msgstr "Заголовок цветовых условий"
 #: settings.xml
 msgctxt "#30020"
 msgid "Enable \'Resume\'"
-msgstr "Включить \ "Возобновить \"" 
+msgstr "Включить \"Возобновить \"" 
 
 #: settings.xml
 msgctxt "#30021"

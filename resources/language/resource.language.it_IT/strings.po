@@ -791,7 +791,7 @@ msgstr "Impossibile fare il log in"
 #: nakamoriplugin.py
 msgctxt "#30157"
 msgid "We were unable to log in to Shoko Server.\n Please enter a valid Username and Password.\n The default is U: \"Default\" P: \"\" (no quotes)"
-msgstr "Non è stato possibile accedere a Shoko Server. \ N Immettere un nome utente e una password validi. \ N L'impostazione predefinita è U: \ "Default \" P: \ "\" (senza virgolette)" 
+msgstr "Non è stato possibile accedere a Shoko Server. \n Immettere un nome utente e una password validi. \n L'impostazione predefinita è U: \"Default\" P: \"\" (senza virgolette)" 
 
 #: nakamoriplugin.py
 msgctxt "#30158"
