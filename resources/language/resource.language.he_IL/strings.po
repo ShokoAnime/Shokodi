@@ -791,7 +791,7 @@ msgstr "לא מצליח להתחבר"
 #: nakamoriplugin.py
 msgctxt "#30157"
 msgid "We were unable to log in to Shoko Server.\n Please enter a valid Username and Password.\n The default is U: \"Default\" P: \"\" (no quotes)"
-msgstr "לא הצלחנו להיכנס לשרת Shoko. \ N נא להזין שם משתמש וסיסמה חוקיים. \ N ברירת המחדל היא U: \ "ברירת מחדל \" P: \ "\" (ללא הצעות מחיר)" 
+msgstr "לא הצלחנו להיכנס לשרת Shoko. \n נא להזין שם משתמש וסיסמה חוקיים. \n ברירת המחדל היא U: \"ברירת מחדל \" P: \"\" (ללא הצעות מחיר)" 
 
 #: nakamoriplugin.py
 msgctxt "#30158"

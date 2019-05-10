@@ -105,7 +105,7 @@ msgstr "Conditions de couleur du titre"
 #: settings.xml
 msgctxt "#30020"
 msgid "Enable \'Resume\'"
-msgstr "Activer \ "Reprendre \"" 
+msgstr "Activer \"Reprendre \"" 
 
 #: settings.xml
 msgctxt "#30021"

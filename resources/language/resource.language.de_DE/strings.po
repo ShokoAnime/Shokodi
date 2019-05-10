@@ -746,7 +746,7 @@ msgstr "- Unten sind Kodis Gegenstände -"
 #: guibuilder.py
 msgctxt "#30148"
 msgid "-Don't use 'Mark as watched'-"
-msgstr "-Verwende nicht 'Als gesehen markieren'-" 
+msgstr "-Verwende nicht \'Als gesehen markieren\'-" 
 
 #: settings.xml
 msgctxt "#30149"

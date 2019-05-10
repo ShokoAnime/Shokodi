@@ -260,7 +260,7 @@ msgstr "المفسد الكلمات (يموت فلان / يفوز / الخ)"
 #: settings.xml
 msgctxt "#30051"
 msgid "Treat Subgroups as 'Seasons'"
-msgstr "تعامل مع المجموعات الفرعية كـ "مواسم"" 
+msgstr "" 
 
 #: settings.xml
 msgctxt "#30052"

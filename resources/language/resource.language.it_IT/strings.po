@@ -260,7 +260,7 @@ msgstr "Tag spoiler (così e così muore / vince / etc)"
 #: settings.xml
 msgctxt "#30051"
 msgid "Treat Subgroups as 'Seasons'"
-msgstr "Tratta i sottogruppi come "Stagioni"" 
+msgstr "Tratta i sottogruppi come \'Stagioni\'" 
 
 #: settings.xml
 msgctxt "#30052"

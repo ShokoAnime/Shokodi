@@ -30,7 +30,7 @@ msgstr "Query Timeout (s)"
 #: settings.xml
 msgctxt "#30005"
 msgid "Sync 'Watched status' to Shoko"
-msgstr "Synkronisera "Bevakad status" till Shoko" 
+msgstr "Synkronisera \"Bevakad status\" till Shoko" 
 
 #: settings.xml
 msgctxt "#30006"
@@ -791,7 +791,7 @@ msgstr "Kan inte logga in"
 #: nakamoriplugin.py
 msgctxt "#30157"
 msgid "We were unable to log in to Shoko Server.\n Please enter a valid Username and Password.\n The default is U: \"Default\" P: \"\" (no quotes)"
-msgstr "Vi kunde inte logga in på Shoko Server. \ N Ange ett giltigt användarnamn och lösenord. \ N Standardvärdet är U: \ "Default \" P: \ "\" (inga citat)" 
+msgstr "Vi kunde inte logga in på Shoko Server. \n Ange ett giltigt användarnamn och lösenord. \n Standardvärdet är U: \"Default \" P: \"\" (inga citat)" 
 
 #: nakamoriplugin.py
 msgctxt "#30158"

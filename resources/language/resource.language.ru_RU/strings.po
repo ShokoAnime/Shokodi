@@ -75,7 +75,7 @@ msgstr "Теги программирования (как / где оно тра
 #: settings.xml
 msgctxt "#30014"
 msgid "Enable \'Pick file\' on multi files episodes"
-msgstr "Включить \ "Выбрать файл \" в эпизодах с несколькими файлами" 
+msgstr "Включить \'Выбрать файл\' в эпизодах с несколькими файлами" 
 
 #: settings.xml
 msgctxt "#30015"
