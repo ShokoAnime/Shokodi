@@ -3,6 +3,27 @@
 # This will have all relevant news going back a long time.
 # Initially only starting at 3.0.8
 # version numbers start with !--
+!-- 3.2.0
+Everything has been rewrite ! Its like Christmas !
+Translations got updated: Arabic, Chinese, Dutch, French, German, Hebrew, Italian, Polish, Russian, Spanish, Swedish
+Move to proper plugin architecture (script, plugin, etc)
+New startup logic and Wizards
+Reorganize settings - CHECK YOUR SETTINGS! SOME ARE WIPED
+Compatibility with Leia
+More info for series and episodes in certain windows
+Include a stub image for replacing episode thumbnail
+Update Tag settings for new Shoko version
+- DO NOT USE "SHOW" IF YOU ARE NOT UPDATED TO 3.9.5 (or daily equivalent)
+New Search Menu
+Support for Pycharm debugging (useful if you're into that)
+Fix stream info
+Fix watched states on several sections
+Fix pick files dialog
+Fix Several Playback issues
+Fix some sorting bugs
+Fix voting in some cases when it broke
+(shameless copy-paste from 3.1.0)
+
 !-- 3.1.0
 Rewrite Basically Everything
 Move to proper plugin architecture (script, plugin, etc)
