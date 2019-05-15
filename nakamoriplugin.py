@@ -320,8 +320,22 @@ def show_search_menu():
         plugin_dir.append(item.get_listitem())
 
 
-@routing_plugin.route('/menu/search/<path:query>')
+@routing_plugin.route('/dialog/search/<save>')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def new_search(save):
+    query = kodi_utils.search_box()
+
+    if save:
+        import search
+        if search.check_in_database(query):
+            search.remove_search_history(query)
+        search.add_search_history(query)
+
+    if len(query) > 0:
+        show_search_result_menu(pyproxy.quote(pyproxy.quote(query)))
+
+
+@routing_plugin.route('/menu/search/<path:query>')
 def show_search_result_menu(query):
     search_url = server + '/api/search'
     search_url = model_utils.add_default_parameters(search_url, 0, 1)
@@ -344,21 +358,6 @@ def show_search_result_menu(query):
     for item in groups['series']:
         series = Series(item)
         plugin_dir.append(series.get_listitem())
-
-
-@routing_plugin.route('/dialog/search/<save>')
-@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def new_search(save):
-    query = kodi_utils.search_box()
-
-    if save:
-        import search
-        if search.check_in_database(query):
-            search.remove_search_history(query)
-        search.add_search_history(query)
-
-    if len(query) > 0:
-        show_search_result_menu(pyproxy.quote(pyproxy.quote(query)))
 
 
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
