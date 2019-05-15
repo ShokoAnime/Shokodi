@@ -285,7 +285,6 @@ def show_search_menu():
     clear_items = (plugin_localize(30110), script_utils.url_clear_search_terms())
 
     # Search
-    # script(script_utils.url_new_search(True) script(script_utils.url_new_search(False)
     item = CustomItem(plugin_localize(30224), 'new-search.png', url_for(new_search, True))
     item.is_kodi_folder = False
     item.set_context_menu_items([clear_items])
@@ -314,6 +313,11 @@ def show_search_menu():
             plugin_dir.append(item.get_listitem())
         except:
             error_handler.exception(ErrorPriority.HIGHEST, plugin_localize(30151))
+
+    # add clear all for more than 10 items, no one wants to clear them by hand
+    if len(search_history) > 10:
+        item = CustomItem(plugin_localize(30110), 'search.png', script_utils.url_clear_search_terms())
+        plugin_dir.append(item.get_listitem())
 
 
 @routing_plugin.route('/menu/search/<path:query>')
@@ -348,6 +352,7 @@ def new_search(save):
     query = kodi_utils.search_box()
 
     if save:
+        import search
         if search.check_in_database(query):
             search.remove_search_history(query)
         search.add_search_history(query)

@@ -4,7 +4,7 @@
 # Initially only starting at 3.0.8
 # version numbers start with !--
 !-- 3.2.0
-Everything has been rewrite ! Its like Christmas !
+Everything has been rewrite ! Its like Christmas but in May! !
 Translations got updated: Arabic, Chinese, Dutch, French, German, Hebrew, Italian, Polish, Russian, Spanish, Swedish
 Move to proper plugin architecture (script, plugin, etc)
 New startup logic and Wizards
