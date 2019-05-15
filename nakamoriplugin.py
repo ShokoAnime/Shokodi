@@ -247,12 +247,14 @@ def add_continue_item(series, episode_type, watched_index):
 @routing_plugin.route('/menu/airing_today')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_airing_today_menu():
+    # TODO airing today
     pass
 
 
 @routing_plugin.route('/menu/calendar_old')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_calendar_menu():
+    # TODO remove if not needed
     pass
 
 
@@ -327,7 +329,8 @@ def show_search_result_menu(query):
     if groups['size'] == 0:
         # Show message about no results
         kodi_utils.message_box(plugin_localize(30180), plugin_localize(30181))
-        fail_menu()
+        # draw search menu instead of deleting menu
+        show_search_menu()
         return
 
     plugin_dir.set_content('tvshows')
