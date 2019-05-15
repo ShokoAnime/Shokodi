@@ -285,14 +285,15 @@ def show_search_menu():
     clear_items = (plugin_localize(30110), script_utils.url_clear_search_terms())
 
     # Search
-    item = CustomItem(plugin_localize(30224), 'new-search.png', script(script_utils.url_new_search(True)))
+    # script(script_utils.url_new_search(True) script(script_utils.url_new_search(False)
+    item = CustomItem(plugin_localize(30224), 'new-search.png', url_for(new_search, True))
     item.is_kodi_folder = False
     item.set_context_menu_items([clear_items])
     plugin_dir.append(item.get_listitem())
 
     # quick search
     # TODO Setting for this, etc
-    item = CustomItem(plugin_localize(30225), 'search.png', script(script_utils.url_new_search(False)))
+    item = CustomItem(plugin_localize(30225), 'search.png', url_for(new_search, False))
     item.is_kodi_folder = False
     item.set_context_menu_items([clear_items])
     plugin_dir.append(item.get_listitem())
@@ -339,6 +340,20 @@ def show_search_result_menu(query):
     for item in groups['series']:
         series = Series(item)
         plugin_dir.append(series.get_listitem())
+
+
+@routing_plugin.route('/dialog/search/<save>')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def new_search(save):
+    query = kodi_utils.search_box()
+
+    if save:
+        if search.check_in_database(query):
+            search.remove_search_history(query)
+        search.add_search_history(query)
+
+    if len(query) > 0:
+        show_search_result_menu(pyproxy.quote(pyproxy.quote(query)))
 
 
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
