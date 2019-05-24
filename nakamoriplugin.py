@@ -104,13 +104,23 @@ def add_extra_main_menu_items(items):
         items.append(item)
 
     if plugin_addon.getSetting('show_calendar') == 'true':
-        item = CustomItem(plugin_localize(30222), 'calendar.png', script(script_utils.url_calendar()))
+        if plugin_addon.getSetting('calendar_basic') == 'true':
+            item = CustomItem(plugin_localize(30222), 'calendar.png', url_for(show_calendar_menu))
+            item.is_kodi_folder = True
+        else:
+            item = CustomItem(plugin_localize(30222), 'calendar.png', script(script_utils.url_calendar()))
+            item.is_kodi_folder = False
         item.sort_index = 2
-        item.is_kodi_folder = False
         items.append(item)
 
     if plugin_addon.getSetting('show_settings') == 'true':
         item = CustomItem(plugin_localize(30107), 'settings.png', script(script_utils.url_settings()))
+        item.sort_index = 7
+        item.is_kodi_folder = False
+        items.append(item)
+
+    if plugin_addon.getSetting('show_settings') == 'true':
+        item = CustomItem(plugin_localize(30107) + ' Script', 'settings.png', script(script_utils.url_script_settings()))
         item.sort_index = 7
         item.is_kodi_folder = False
         items.append(item)
@@ -254,8 +264,26 @@ def show_airing_today_menu():
 @routing_plugin.route('/menu/calendar_old')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_calendar_menu():
-    # TODO remove if not needed
-    pass
+    if script_addon.getSetting('custom_source') == 'true':
+        from external_calendar import return_only_few
+        body = return_only_few(when='', url=str(script_addon.getSetting('custom_url')))
+    else:
+        import datetime
+        when = datetime.datetime.now().strftime('%Y%m%d')
+        url = '%s/api/serie/soon?level=2&limit=0&offset=%s&d=%s' % (server, 0, when)
+        body = pyproxy.get_json(url, True)
+    json_body = json.loads(body)
+
+    plugin_dir.set_content('tvshows')
+    from shoko_models.v2 import Series, CustomItem
+    processed_dates = []
+    for item in json_body['series']:
+        s = Series(item)
+        if s.date not in processed_dates:
+            processed_dates.append(s.date)
+            c = CustomItem('[COLOR red]' + str(s.date) + '[/COLOR]', '', '')
+            plugin_dir.append(c.get_listitem(), False)
+        plugin_dir.append(s.get_listitem(), False)
 
 
 @routing_plugin.route('/menu/filter/unsorted')
