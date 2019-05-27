@@ -174,13 +174,13 @@ msgstr "Limit TAG results to"
 
 #: settings.xml
 msgctxt "#30034"
-msgid "(WIP)Series Vote after completing it"
-msgstr "(WIP)Series Vote after completing it"
+msgid "Series Vote after completing it"
+msgstr "Series Vote after completing it"
 
 #: settings.xml
 msgctxt "#30035"
-msgid "(WIP)Enable voting for Trakt"
-msgstr "(WIP)Enable voting for Trakt"
+msgid "Enable voting for Trakt"
+msgstr "Enable voting for Trakt"
 
 #: settings.xml
 msgctxt "#30036"
