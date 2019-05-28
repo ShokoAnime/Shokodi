@@ -384,7 +384,7 @@ def show_search_result_menu(query):
     from shoko_models.v2 import Group, Series
     Group(0).add_sort_methods(routing_plugin.handle)
     for item in groups['series']:
-        series = Series(item)
+        series = Series(item, build_full_object=True, get_children=True)
         plugin_dir.append(series.get_listitem())
 
 
