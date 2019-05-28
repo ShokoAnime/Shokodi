@@ -853,6 +853,9 @@ msgctxt "#30169"
 msgid "Use seiyuu picture for cast data"
 msgstr "Use seiyuu picture for cast data"
 
+
+
+
 #: guibuilder.py
 msgctxt "#30180"
 msgid "No Results Found"
@@ -873,6 +876,16 @@ msgctxt "#30183"
 msgid "You already finished this."
 msgstr "You already finished this."
 
+#: settings.xml
+msgctxt "#30184"
+msgid "Suggest Series rating based on ep rating"
+msgstr "Suggest Series rating based on ep rating"
+
+#: settings.xml
+msgctxt "#30185"
+msgid "Require all Episodes being rated before suggesting"
+msgstr "Require all Episodes being rated before suggesting"
+
 #: shoko_utils.py
 msgctxt "#30189"
 msgid "Queued File for Rehash"
@@ -887,6 +900,8 @@ msgstr "Queued File for Rescan"
 msgctxt "#30191"
 msgid "Refreshing in 10 seconds"
 msgstr "Refreshing in 10 seconds"
+
+
 
 #: shoko_utils.py
 msgctxt "#30193"
@@ -946,6 +961,9 @@ msgstr "Unwatched"
 msgctxt "#30204"
 msgid "Remove"
 msgstr "Remove"
+
+
+
 
 #: settings.xml, guibuilder.py
 msgctxt "#30221"

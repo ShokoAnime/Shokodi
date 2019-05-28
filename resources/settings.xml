@@ -113,6 +113,8 @@
         <setting label="30024" type="number" id="watched_mark" default="75"/>
 		<setting label="30032" type="bool" id="vote_always" default="false"/>
         <setting label="30034" type="bool" id="vote_on_series" default="false"/>
+        <setting label="30184" type="bool" id="suggest_series_vote" default="true" subsetting="true"/>
+        <setting label="30185" type="bool" id="suggest_series_vote_all_eps" default="true" enable="eq(-1,true)" subsetting="true"/>
         <setting label="30168" type="bool" id="sync_to_library" default="false"/>
         <!-- trakt support -->
         <setting label="30038" type="lsep"/>
