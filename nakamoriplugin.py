@@ -96,8 +96,12 @@ def add_extra_main_menu_items(items):
     :return:
     """
     from shoko_models.v2 import CustomItem
-    # { 'Airing Today': 0, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4, 'Unsort': 5, 'Settings': 7,
-    # 'Shoko Menu': 8, 'Search': 9 }
+    # { 'Added Recently v2': 0, 'Airing Today': 1, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4,
+    # 'Unsort': 5, 'Settings' (both): 7, 'Shoko Menu': 8, 'Search': 9, Experiment: 99}
+    item = CustomItem('Added recently (v2)', 'airing.png', url_for(show_added_recently_menu))
+    item.sort_index = 0
+    items.append(item)
+
     if plugin_addon.getSetting('show_airing_today') == 'true':
         item = CustomItem(plugin_localize(30223), 'airing.png', url_for(show_airing_today_menu))
         item.sort_index = 1
@@ -252,6 +256,26 @@ def add_continue_item(series, episode_type, watched_index):
     continue_item.infolabels['episode'] = 0
     continue_item.infolabels['season'] = 0
     plugin_dir.insert(0, continue_item.get_listitem(), continue_item.is_kodi_folder)
+
+
+@routing_plugin.route('/menu/added_recently')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def show_added_recently_menu():
+    url = '%s/api/serie/recent' % server
+    body = pyproxy.get_json(url, True)
+    json_body = json.loads(body)
+    plugin_dir.set_content('tvshows')
+    from shoko_models.v2 import Series, Episode
+    for item in json_body:
+        s = Series(item)
+        plugin_dir.append(s.get_listitem(), True)
+
+    url = '%s/api/ep/recent' % server
+    body = pyproxy.get_json(url, True)
+    json_body = json.loads(body)
+    for item in json_body:
+        e = Episode(item)
+        plugin_dir.append(e.get_listitem(), False)
 
 
 @routing_plugin.route('/menu/airing_today')
@@ -443,6 +467,8 @@ def restart_plugin():
     script_utils.arbiter(0, 'RunAddon("plugin.video.nakamori")')
 
 
+# region TVShows VideoLibrary
+
 @routing_plugin.route('/tvshows/')
 def scrape_all_tvshows():
     # List series items
@@ -556,6 +582,9 @@ def play_episode(ep_id):
     # handles playing the file
     # file_id will be automatically selected if given 0
     play_video_internal(ep_id, file_id=0)
+
+
+# endregion
 
 
 @try_function(ErrorPriority.BLOCKING)
