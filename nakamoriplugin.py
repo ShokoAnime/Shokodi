@@ -146,7 +146,7 @@ def add_extra_main_menu_items(items):
         items.append(item)
 
 
-@routing_plugin.route('/menu/filter/<filter_id>')
+@routing_plugin.route('/menu/filter/<filter_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_filter_menu(filter_id):
     from shoko_models.v2 import Filter
@@ -161,7 +161,7 @@ def show_filter_menu(filter_id):
     f.apply_default_sorting()
 
 
-@routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>')
+@routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
@@ -175,7 +175,7 @@ def show_group_menu(group_id, filter_id):
     group.apply_default_sorting()
 
 
-@routing_plugin.route('/menu/series/<series_id>')
+@routing_plugin.route('/menu/series/<series_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_series_menu(series_id):
     from shoko_models.v2 import Series
@@ -192,7 +192,7 @@ def show_series_menu(series_id):
         raise RuntimeError(plugin_localize(30152))
 
 
-@routing_plugin.route('/menu/series/<series_id>/type/<episode_type>')
+@routing_plugin.route('/menu/series/<series_id>/type/<episode_type>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_series_episode_types_menu(series_id, episode_type):
     from shoko_models.v2 import SeriesTypeList
