@@ -98,7 +98,7 @@ def add_extra_main_menu_items(items):
     from shoko_models.v2 import CustomItem
     # { 'Added Recently v2': 0, 'Airing Today': 1, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4,
     # 'Unsort': 5, 'Settings' (both): 7, 'Shoko Menu': 8, 'Search': 9, Experiment: 99}
-    item = CustomItem('Added recently (v2)', 'airing.png', url_for(show_added_recently_menu))
+    item = CustomItem('Recently Added Episodes', 'airing.png', url_for(show_added_recently_menu))
     item.sort_index = 0
     items.append(item)
 
