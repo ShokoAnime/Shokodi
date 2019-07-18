@@ -3,6 +3,12 @@
 # This will have all relevant news going back a long time.
 # Initially only starting at 3.0.8
 # version numbers start with !--
+!-- 3.3.0
+New Calendar style with Series info
+Rate suggestion for Series
+Chinese translation !
+Added Recently added episodes (because reasons)
+
 !-- 3.2.0
 Everything has been rewrite ! Its like Christmas but in May!
 Translations got updated: Arabic, Chinese, Dutch, French, German, Hebrew, Italian, Polish, Russian, Spanish, Swedish

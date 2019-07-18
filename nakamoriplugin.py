@@ -7,6 +7,7 @@ import error_handler
 import nakamori_player
 import routing
 import xbmcplugin
+import xbmc
 from error_handler import try_function, show_messages, ErrorPriority, exception
 from kodi_models import DirectoryListing, WatchedStatus, ListItem
 from nakamori_utils import kodi_utils, shoko_utils, script_utils, model_utils
@@ -98,7 +99,7 @@ def add_extra_main_menu_items(items):
     from shoko_models.v2 import CustomItem
     # { 'Added Recently v2': 0, 'Airing Today': 1, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4,
     # 'Unsort': 5, 'Settings' (both): 7, 'Shoko Menu': 8, 'Search': 9, Experiment: 99}
-    item = CustomItem('Recently Added Series/Episodes', 'airing.png', url_for(show_added_recently_menu))
+    item = CustomItem(plugin_localize(30170), 'airing.png', url_for(show_added_recently_menu))
     item.sort_index = 0
     items.append(item)
 

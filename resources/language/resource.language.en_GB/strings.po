@@ -853,6 +853,10 @@ msgctxt "#30169"
 msgid "Use seiyuu picture for cast data"
 msgstr "Use seiyuu picture for cast data"
 
+#: nakamoriplugin.py
+msgctxt "#30170"
+msgid "Recently Added Series/Episodes"
+msgstr "Recently Added Series/Episodes"
 
 
 
