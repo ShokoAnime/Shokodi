@@ -879,6 +879,11 @@ msgctxt "#30169"
 msgid "Use seiyuu picture for cast data"
 msgstr "Użyj zdjęć aktorów głosowych dla informacji o obsadzie"
 
+#: nakamoriplugin.py
+msgctxt "#30170"
+msgid "Recently Added Series/Episodes"
+msgstr "Ostatnio dodane serie/odcinki"
+
 #: guibuilder.py
 msgctxt "#30180"
 msgid "No Results Found"
