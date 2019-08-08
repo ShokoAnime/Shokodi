@@ -398,7 +398,7 @@ def show_search_result_menu(query):
     search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
     json_body = json.loads(pyproxy.get_json(search_url))
     groups = json_body['groups'][0]
-    if groups['size'] == 0:
+    if json_body['size'] == 0:
         # Show message about no results
         kodi_utils.message_box(plugin_localize(30180), plugin_localize(30181))
         # draw search menu instead of deleting menu
@@ -591,6 +591,8 @@ def play_episode(ep_id):
 @try_function(ErrorPriority.BLOCKING)
 def main():
     debug.debug_init()
+    # stage 0 - everything before connecting
+    kodi_utils.get_device_id()
     # stage 1 - check connection
     if not shoko_utils.can_connect():
         fail_menu()
