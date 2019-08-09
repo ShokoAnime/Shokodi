@@ -398,7 +398,7 @@ def show_search_result_menu(query):
     search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
     json_body = json.loads(pyproxy.get_json(search_url))
     groups = json_body['groups'][0]
-    if json_body['size'] == 0:
+    if json_body.get('size', 0) == 0:
         # Show message about no results
         kodi_utils.message_box(plugin_localize(30180), plugin_localize(30181))
         # draw search menu instead of deleting menu
@@ -408,7 +408,7 @@ def show_search_result_menu(query):
     plugin_dir.set_content('tvshows')
     from shoko_models.v2 import Group, Series
     Group(0).add_sort_methods(routing_plugin.handle)
-    for item in groups['series']:
+    for item in groups.get('series', []):
         series = Series(item, build_full_object=True, get_children=True)
         plugin_dir.append(series.get_listitem())
 
