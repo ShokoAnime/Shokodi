@@ -227,6 +227,8 @@ def add_episodes(series, episode_type):
     finish_menu()
     series.apply_default_sorting()
     if select:
+        while kodi_utils.is_dialog_is_visible():
+            xbmc.sleep(500)
         # the list is definitely not there yet, so try after 0.25s.
         xbmc.sleep(250)
         kodi_utils.move_to_index(watched_index)
