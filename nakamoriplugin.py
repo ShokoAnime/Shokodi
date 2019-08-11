@@ -416,6 +416,13 @@ def show_search_result_menu(query):
 
 
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
+    # clearing playlist before adding to it did not helped
+    # z = xbmc.PlayList(1)
+    # q = z.size()
+    # y = z.getPlayListId()
+    # xbmc.log('-------------> PLAYLIST HACK : id %s, size %s ' % (y, q), xbmc.LOGNOTICE)
+    # z.clear()
+
     # this prevents the spinning wheel
     fail_menu()
 
@@ -433,7 +440,7 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
 
     # all of real work is done here
     nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
-    kodi_utils.move_to_next()
+    # kodi_utils.move_to_next()
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/directplay')
@@ -456,11 +463,10 @@ def direct_play_video(ep_id, file_id, mark_as_watched=True, resume=False):
 
     # all of real work is done here
     nakamori_player.direct_play_video(selected_id, ep_id, mark_as_watched, resume)
-    kodi_utils.move_to_next()
+    # kodi_utils.move_to_next()
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')
-@try_function(ErrorPriority.BLOCKING)
 def play_video(ep_id, file_id):
     play_video_internal(ep_id, file_id)
 
