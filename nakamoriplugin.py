@@ -228,6 +228,7 @@ def add_episodes(series, episode_type):
     series.apply_default_sorting()
     if select:
         while kodi_utils.is_dialog_active():
+            xbmc.log('---- > add_episode is_dialog_active', xbmc.LOGNOTICE)
             xbmc.sleep(500)
         # the list is definitely not there yet, so try after 0.25s.
         xbmc.sleep(250)
@@ -440,7 +441,11 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
 
     # all of real work is done here
     nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
-    # kodi_utils.move_to_next()
+    xbmc.log(' ------> play_video_internal: over function', xbmc.LOGNOTICE)
+    while kodi_utils.is_dialog_active():
+        xbmc.sleep(500)
+        xbmc.log(' ------> play_video_internal is_dialog_active', xbmc.LOGNOTICE)
+    kodi_utils.move_to_next()
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/directplay')
