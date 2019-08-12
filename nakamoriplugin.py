@@ -425,7 +425,7 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
     # z.clear()
 
     # this prevents the spinning wheel
-    fail_menu()
+    #fail_menu()  <--- this breaks serResolvedUrl
 
     if ep_id > 0 and file_id == 0:
         from shoko_models.v2 import Episode
@@ -441,6 +441,7 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
 
     # all of real work is done here
     nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
+
     xbmc.log(' ------> play_video_internal: over function', xbmc.LOGNOTICE)
     while kodi_utils.is_dialog_active():
         xbmc.sleep(500)
@@ -452,7 +453,7 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
 @try_function(ErrorPriority.BLOCKING)
 def direct_play_video(ep_id, file_id, mark_as_watched=True, resume=False):
     # this prevents the spinning wheel
-    fail_menu()
+    # fail_menu()
 
     if ep_id > 0 and file_id == 0:
         from shoko_models.v2 import Episode
@@ -468,7 +469,12 @@ def direct_play_video(ep_id, file_id, mark_as_watched=True, resume=False):
 
     # all of real work is done here
     nakamori_player.direct_play_video(selected_id, ep_id, mark_as_watched, resume)
-    # kodi_utils.move_to_next()
+
+    xbmc.log(' ------> direct_video_internal: over function', xbmc.LOGNOTICE)
+    while kodi_utils.is_dialog_active():
+        xbmc.sleep(500)
+        xbmc.log(' ------> direct_video_internal is_dialog_active', xbmc.LOGNOTICE)
+    kodi_utils.move_to_next()
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')
