@@ -803,7 +803,7 @@ msgctxt "#30159"
 msgid "Unable to Connect"
 msgstr "Unable to Connect"
 
-#: guibuilder.py, kodi_utils.py
+#: guibuilder.py, kodi_utils.py, nakamori_player.py, nakamoriscript.py
 msgctxt "#30160"
 msgid "Please Wait"
 msgstr "Please Wait"
@@ -858,7 +858,50 @@ msgctxt "#30170"
 msgid "Recently Added Series/Episodes"
 msgstr "Recently Added Series/Episodes"
 
+#: settings.xml
+msgctxt "#30171"
+msgid "Force Burn-In subtitles"
+msgstr "Force Burn-In subtitles"
 
+#: settings.xml
+msgctxt "#30172"
+msgid "Resend profile"
+msgstr "Resend profile"
+
+#: settings.xml
+msgctxt "#30173"
+msgid "Debug"
+msgstr "Debug"
+
+#: v2
+msgctxt "#30174"
+msgid "Play (transcode)"
+msgstr "Play (transcode)"
+
+#: v2
+msgctxt "#30175"
+msgid "Play (DirectPlay)"
+msgstr "Play (DirectPlay)"
+
+#: v2
+msgctxt "#30176"
+msgid "Add to transcode queue"
+msgstr "Add to transcode queue"
+
+#: v2, nakamori_player.py, nakamoriscript.py
+msgctxt "#30177"
+msgid "Examine stream information"
+msgstr "Examine stream information"
+
+#: nakamori_player.py
+msgctxt "#30178"
+msgid "Select Audio stream"
+msgstr "Select Audio stream"
+
+#: nakamori_player.py
+msgctxt "#30179"
+msgid "Select Subtitle stream"
+msgstr "Select Subtitle stream"
 
 #: guibuilder.py
 msgctxt "#30180"
@@ -905,7 +948,10 @@ msgctxt "#30191"
 msgid "Refreshing in 10 seconds"
 msgstr "Refreshing in 10 seconds"
 
-
+#: nakamori_player.py
+msgctxt "#30192"
+msgid "Adding to transcode queue"
+msgstr "Adding to transcode queue"
 
 #: shoko_utils.py
 msgctxt "#30193"
@@ -966,6 +1012,30 @@ msgctxt "#30204"
 msgid "Remove"
 msgstr "Remove"
 
+#: nakamori_player.py
+msgctxt "#30205"
+msgid "Extracting subtitles..."
+msgstr "Extracting subtitles..."
+
+#: nakamori_player.py
+msgctxt "#30206"
+msgid "Waiting for transcode to start..."
+msgstr "Waiting for transcode to start..."
+
+#: nakamoriscript.py
+msgctxt "#30207"
+msgid "Results"
+msgstr "Results"
+
+#: settings.xml
+msgctxt "#30208"
+msgid "Please install and enable inputstream.adaptive"
+msgstr "Please install and enable inputstream.adaptive"
+
+#: nakamoriscript.py
+msgctxt "#30209"
+msgid "Would you like to enable inputstream.adaptive ?"
+msgstr "Would you like to enable inputstream.adaptive ?"
 
 
 

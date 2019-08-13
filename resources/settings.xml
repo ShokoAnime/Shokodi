@@ -66,9 +66,13 @@
         <setting label="30068" type="bool" id="ignore_specials_watched" default="false"/>
         <!-- Context Menu Settings -->
 		<setting label="30057" type="lsep"/>
+        <setting type="bool" id="eigakan_handshake" default="false" visible="false"/>
         <setting label="30065" type="bool" id="context_show_play" default="true" />
 		<setting type="bool" id="trakt_scrobble" default="false" visible="false"/>
         <setting label="30132" type="bool" id="context_show_play_no_watch" default="false" enable="eq(-1,true)"/>
+        <setting label="30174" type="bool" id="context_show_force_transcode" default="false" enable="eq(-4,true)"/>
+        <setting label="30175" type="bool" id="context_show_directplay" default="true" enable="eq(-5,true)"/>
+        <setting label="30177" type="bool" id="context_show_probe" default="true" enable="eq(-6,true)"/>
         <setting label="30133" type="bool" id="context_pick_file" default="true"/>
         <setting label="30130" type="bool" id="context_playlist" default="true"/>
         <setting label="30062" type="bool" id="context_krypton_watched" default="true"/>
@@ -130,15 +134,17 @@
         <setting type="bool" id="kodi18" default="false" visible="false"/>
         <setting label="30149" type="bool" id="external_player" default="false" visible="eq(-1,false)"/>
     </category>
-	<!-- Advance -->
+	<!-- Advanced -->
     <category label="30044">
         <setting label="30109" type="addon" id="icon_pack" default="resource.images.nakamori" addontype="kodi.resource.images"  multiselect="false"/>
-        <setting label="30042" type="bool" id="spamLog" default="false"/>
-        <setting label="30063" type="bool" id="remote_debug" default="false" enable="System.HasAddon(script.module.web-pdb)|System.HasAddon(script.module.pydevd-pycharm)"/>
-        <setting label="30086" type="text" id="remote_ip" default="localhost" visible="System.HasAddon(script.module.pydevd-pycharm)" enable="System.HasAddon(script.module.pydevd-pycharm)"/>
         <setting label="30066" type="bool" id="request_nocast" default="false"/>
 		<setting label="30169" type="bool" id="fix_seiyuu_pic" default="false"/>
 		<setting label="30169" type="bool" id="seiyuu_gif" default="false"/>
+        <!-- debug -->
+        <setting label="30173" type="lsep"/>
+        <setting label="30042" type="bool" id="spamLog" default="false"/>
+        <setting label="30063" type="bool" id="remote_debug" default="false" enable="System.HasAddon(script.module.web-pdb)|System.HasAddon(script.module.pydevd-pycharm)"/>
+        <setting label="30086" type="text" id="remote_ip" default="localhost" subsetting="true" visible="System.HasAddon(script.module.pydevd-pycharm)" enable="eq(-1,true)"/>
         <!-- calendar -->
 		<setting label="30012" type="lsep"/>
         <setting label="30058" type="select" id="calendar_format" default="%d/%m" values="%d-%m|%d-%m-%y|%d/%m|%d/%m/%y|%m-%d|%m-%d-%y|%m/%d|%m/%d/%y|"/>
@@ -151,20 +157,31 @@
         <setting label="30030" type="bool" id="enableCache" default="false" visible="eq(-2,true)"/>
         <setting label="30069" type="number" id="expireCache" default="300" enable="eq(-1,true)" subsetting="true" visible="eq(-3,true)"/>
 		<!-- eigakan -->
-        <setting label="30084" type="lsep" visible="eq(-4,true)"/>
-        <setting label="30085" type="bool" id="enableEigakan" default="false" enable="System.HasAddon(inputstream.adaptive)" visible="eq(-5,true)"/>
-        <setting label="30086" type="text" id="ipEigakan" default="127.0.0.1" visible="eq(-6,true)+eq(-1,true)"/>
-        <setting label="30087" type="number" id="portEigakan" default="8000" visible="eq(-7,true)+eq(-2,true)"/>
+        <setting type="text" id="eigakan_manual_mode" default="false" visible="false"/>
+        <setting type="text" id="eigakan_h_resolution" default="1280x720" visible="false"/>
+        <setting type="text" id="eigakan_h_bitrate" default="1000k" visible="false"/>
+        <setting type="text" id="eigakan_l_resolution" default="400x300" visible="false"/>
+        <setting type="text" id="eigakan_l_bitrate" default="256k" visible="false"/>
+        <setting type="text" id="eigakan_x264_preset" default="veryfast" visible="false"/>
+        <setting label="30084" type="lsep" visible="eq(-10,true)"/>
+        <setting label="30085" type="bool" id="enableEigakan" default="false" enable="System.HasAddon(inputstream.adaptive)" visible="eq(-11,true)"/>
+        <setting label="30086" type="text" id="ipEigakan" default="127.0.0.1" subsetting="true" visible="eq(-12,true)+eq(-1,true)"/>
+        <setting label="30087" type="number" id="portEigakan" default="8118" subsetting="true" visible="eq(-13,true)+eq(-2,true)"/>
+        <setting label="30095" type="text" id="audiolangEigakan" default="english,eng,en" subsetting="true" visible="eq(-14,true)+eq(-3,true)"/>
+        <setting label="30096" type="text" id="subEigakan" default="english,eng,en" subsetting="true" visible="eq(-15,true)+eq(-4,true)"/>
+        <setting label="30171" type="bool" id="burnEigakan" default="false" subsetting="true" visible="eq(-16,true)+eq(-5,true)"/>
+        <setting label="30172" type="action" id="action6" action="RunScript(script.module.nakamori,/eigakan/clear)" subsetting="true" enable="System.HasAddon(script.module.nakamori)" visible="eq(-17,true)+eq(-6,true)" option="close"/>
+        <setting label="30208" type="action" id="action7" action="RunScript(script.module.nakamori,/eigakan/requirement)" subsetting="false" enable="!System.HasAddon(inputstream.adaptive)" visible="!System.HasAddon(inputstream.adaptive)" option="close"/>
+
         <!-- <setting label="30088" type="number" id="tryEigakan" default="10" visible="eq(-8,true)+eq(-3,true)"/> -->
         <!-- <setting label="30089" type="number" id="postponeEigakan" default="10" visible="eq(-9,true)+eq(-4,true)"/> -->
-        <setting label="30095" type="text" id="audiolangEigakan" default="eng" visible="eq(-8,true)+eq(-3,true)"/>
-        <setting label="30096" type="text" id="subEigakan" default="eng" visible="eq(-9,true)+eq(-4,true)"/>
-        <setting label="30090" type="bool" id="advEigakan" default="false" visible="eq(-10,true)+eq(-5,true)"/>
-        <setting label="30091" type="text" id="resolutionEigakan" default="1280x720" visible="eq(-11,true)+eq(-1,true)"/>
-        <setting label="30092" type="text" id="profileEigakan" default="main" visible="eq(-12,true)+eq(-2,true)"/>
-        <setting label="30093" type="text" id="audioEigakan" default="aac" visible="eq(-13,true)+eq(-3,true)"/>
-        <setting label="30094" type="text" id="vbitrateEigakan" default="3000000" visible="eq(-14,true)+eq(-4,true)"/>
-		<!-- noname -->
+        <!--  <setting label="30090" type="bool" id="advEigakan" default="false" visible="eq(-10,true)+eq(-5,true)"/> -->
+        <!--  <setting label="30091" type="text" id="resolutionEigakan" default="1280x720" visible="eq(-11,true)+eq(-1,true)"/> -->
+        <!--  <setting label="30092" type="text" id="profileEigakan" default="main" visible="eq(-12,true)+eq(-2,true)"/> -->
+        <!--  <setting label="30093" type="text" id="audioEigakan" default="aac" visible="eq(-13,true)+eq(-3,true)"/> -->
+        <!--  <setting label="30094" type="text" id="vbitrateEigakan" default="3000000" visible="eq(-14,true)+eq(-4,true)"/> -->
+
+        <!-- noname -->
 		<setting label="30108" type="bool" id="send_data" default="true" visible="false"/>
         <!-- do not delete (again) -->
         <setting type="bool" id="onepunchmen" default="false" visible="false"/>

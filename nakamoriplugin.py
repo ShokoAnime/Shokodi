@@ -154,6 +154,7 @@ def show_filter_menu(filter_id):
     f = Filter(filter_id, build_full_object=True, get_children=True)
     plugin_dir.set_content('tvshows')
     plugin_dir.set_cached()
+    xbmcplugin.setPluginCategory(routing_plugin.handle, f.name)
     f.add_sort_methods(routing_plugin.handle)
     for item in f:
         plugin_dir.append(item.get_listitem())
@@ -168,6 +169,7 @@ def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id)
     plugin_dir.set_content('tvshows')
+    xbmcplugin.setPluginCategory(routing_plugin.handle, group.name)
     group.add_sort_methods(routing_plugin.handle)
     for item in group:
         plugin_dir.append(item.get_listitem())
@@ -181,7 +183,7 @@ def show_group_menu(group_id, filter_id):
 def show_series_menu(series_id):
     from shoko_models.v2 import Series
     series = Series(series_id, build_full_object=True, get_children=True)
-
+    xbmcplugin.setPluginCategory(routing_plugin.handle, series.name)
     if len(series.episode_types) > 1:
         plugin_dir.set_content('seasons')
         # type listing
@@ -228,7 +230,6 @@ def add_episodes(series, episode_type):
     series.apply_default_sorting()
     if select:
         while kodi_utils.is_dialog_active():
-            xbmc.log('---- > add_episode is_dialog_active', xbmc.LOGNOTICE)
             xbmc.sleep(500)
         # the list is definitely not there yet, so try after 0.25s.
         xbmc.sleep(250)
@@ -274,7 +275,7 @@ def show_added_recently_menu():
         s = Series(item)
         plugin_dir.append(s.get_listitem(), True)
 
-    url = '%s/api/ep/recent' % server
+    url = '%s/api/ep/recent?level=2' % server
     body = pyproxy.get_json(url, True)
     json_body = json.loads(body)
     for item in json_body:
@@ -337,6 +338,7 @@ def show_search_menu():
     # clear search in context_menu
     from shoko_models.v2 import CustomItem
     plugin_dir.set_content('videos')
+    xbmcplugin.setPluginCategory(routing_plugin.handle, plugin_localize(30221))
 
     clear_items = (plugin_localize(30110), script_utils.url_clear_search_terms())
 
@@ -409,21 +411,20 @@ def show_search_result_menu(query):
         return
 
     plugin_dir.set_content('tvshows')
+    xbmcplugin.setPluginCategory(routing_plugin.handle, query)
     from shoko_models.v2 import Group, Series
     Group(0).add_sort_methods(routing_plugin.handle)
     for item in groups.get('series', []):
         series = Series(item, build_full_object=True, get_children=True)
         plugin_dir.append(series.get_listitem())
 
+class PlaybackType(object):
+    NORMAL = 'Normal'
+    DIRECT = 'Direct'
+    TRANSCODE = 'Transcode'
 
-def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
-    # clearing playlist before adding to it did not helped
-    # z = xbmc.PlayList(1)
-    # q = z.size()
-    # y = z.getPlayListId()
-    # xbmc.log('-------------> PLAYLIST HACK : id %s, size %s ' % (y, q), xbmc.LOGNOTICE)
-    # z.clear()
 
+def play_video_internal(playbacktype, ep_id, file_id, mark_as_watched=True, resume=False):
     # this prevents the spinning wheel
     #fail_menu()  <--- this breaks serResolvedUrl
 
@@ -440,58 +441,45 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
         selected_id = file_id
 
     # all of real work is done here
-    nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
+    if playbacktype == PlaybackType.NORMAL:
+        nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
+    elif playbacktype == PlaybackType.DIRECT:
+        nakamori_player.direct_play_video(selected_id, ep_id, mark_as_watched, resume)
+    elif playbacktype == PlaybackType.TRANSCODE:
+        nakamori_player.PlaybackType.NORMAL(selected_id, ep_id, mark_as_watched, resume)
 
-    xbmc.log(' ------> play_video_internal: over function', xbmc.LOGNOTICE)
     while kodi_utils.is_dialog_active():
         xbmc.sleep(500)
-        xbmc.log(' ------> play_video_internal is_dialog_active', xbmc.LOGNOTICE)
     kodi_utils.move_to_next()
+
+
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/transcode')
+@try_function(ErrorPriority.BLOCKING)
+def transcode_play_video(ep_id, file_id, mark_as_watched=True, resume=False):
+    play_video_internal(PlaybackType.TRANSCODE, ep_id, file_id, mark_as_watched, resume)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/directplay')
 @try_function(ErrorPriority.BLOCKING)
 def direct_play_video(ep_id, file_id, mark_as_watched=True, resume=False):
-    # this prevents the spinning wheel
-    # fail_menu()
-
-    if ep_id > 0 and file_id == 0:
-        from shoko_models.v2 import Episode
-        ep = Episode(ep_id, build_full_object=True)
-        # follow pick_file setting
-        if plugin_addon.getSetting('pick_file') == 'true':
-            items = [(x.name, x.id) for x in ep]
-            selected_id = kodi_utils.show_file_list(items)
-        else:
-            selected_id = ep.get_file().id
-    else:
-        selected_id = file_id
-
-    # all of real work is done here
-    nakamori_player.direct_play_video(selected_id, ep_id, mark_as_watched, resume)
-
-    xbmc.log(' ------> direct_video_internal: over function', xbmc.LOGNOTICE)
-    while kodi_utils.is_dialog_active():
-        xbmc.sleep(500)
-        xbmc.log(' ------> direct_video_internal is_dialog_active', xbmc.LOGNOTICE)
-    kodi_utils.move_to_next()
+    play_video_internal(PlaybackType.DIRECT, ep_id, file_id, mark_as_watched, resume)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')
 def play_video(ep_id, file_id):
-    play_video_internal(ep_id, file_id)
+    play_video_internal(PlaybackType.NORMAL, ep_id, file_id)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play_without_marking')
 def play_video_without_marking(ep_id, file_id):
-    play_video_internal(ep_id, file_id, mark_as_watched=False)
+    play_video_internal(PlaybackType.NORMAL, ep_id, file_id, mark_as_watched=False)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/resume')
 @try_function(ErrorPriority.BLOCKING)
 def resume_video(ep_id, file_id):
     # if we are resuming, then we'll assume that scrobbling and marking are True
-    play_video_internal(ep_id, file_id, mark_as_watched=True, resume=True)
+    play_video_internal(PlaybackType.NORMAL, ep_id, file_id, mark_as_watched=True, resume=True)
 
 
 def script(script_url):
@@ -634,8 +622,10 @@ def play_episode(ep_id):
 @try_function(ErrorPriority.BLOCKING)
 def main():
     debug.debug_init()
+
     # stage 0 - everything before connecting
     kodi_utils.get_device_id()
+
     # stage 1 - check connection
     if not shoko_utils.can_connect():
         fail_menu()
