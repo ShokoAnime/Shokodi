@@ -97,11 +97,18 @@ def add_extra_main_menu_items(items):
     :return:
     """
     from shoko_models.v2 import CustomItem
-    # { 'Added Recently v2': 0, 'Airing Today': 1, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4,
+    # { 'Favorites', 'Added Recently v2': 0, 'Airing Today': 1, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4,
     # 'Unsort': 5, 'Settings' (both): 7, 'Shoko Menu': 8, 'Search': 9, Experiment: 99}
-    item = CustomItem(plugin_localize(30170), 'airing.png', url_for(show_added_recently_menu))
-    item.sort_index = 0
-    items.append(item)
+
+    if plugin_addon.getSetting('show_favorites') == 'true':
+        item = CustomItem(plugin_localize(30211), 'airing.png', url_for(show_favorites_menu))
+        item.sort_index = 0
+        items.append(item)
+
+    if plugin_addon.getSetting('show_recent2') == 'true':
+        item = CustomItem(plugin_localize(30170), 'airing.png', url_for(show_added_recently_menu))
+        item.sort_index = 0
+        items.append(item)
 
     if plugin_addon.getSetting('show_airing_today') == 'true':
         item = CustomItem(plugin_localize(30223), 'airing.png', url_for(show_airing_today_menu))
@@ -115,30 +122,30 @@ def add_extra_main_menu_items(items):
         else:
             item = CustomItem(plugin_localize(30222), 'calendar.png', script(script_utils.url_calendar()))
             item.is_kodi_folder = False
-        item.sort_index = 2
+        item.sort_index = 12
         items.append(item)
 
     if plugin_addon.getSetting('show_settings') == 'true':
         item = CustomItem(plugin_localize(30107), 'settings.png', script(script_utils.url_settings()))
-        item.sort_index = 7
+        item.sort_index = 14
         item.is_kodi_folder = False
         items.append(item)
 
     if plugin_addon.getSetting('show_settings') == 'true':
         item = CustomItem(plugin_localize(30107) + ' Script', 'settings.png', script(script_utils.url_script_settings()))
-        item.sort_index = 7
+        item.sort_index = 16
         item.is_kodi_folder = False
         items.append(item)
 
     if plugin_addon.getSetting('show_shoko') == 'true':
         item = CustomItem(plugin_localize(30115), 'settings.png', script(script_utils.url_shoko_menu()))
-        item.sort_index = 8
+        item.sort_index = 18
         item.is_kodi_folder = False
         items.append(item)
 
     if plugin_addon.getSetting('show_search') == 'true':
         item = CustomItem(plugin_localize(30221), 'search.png', url_for(show_search_menu))
-        item.sort_index = 9
+        item.sort_index = 20
         items.append(item)
 
     if plugin_addon.getSetting('onepunchmen') == 'true':
@@ -328,6 +335,24 @@ def show_unsorted_menu():
     for item in json_node:
         f = File(item)
         plugin_dir.append(f.get_listitem(), False)
+
+
+@routing_plugin.route('/menu/favorites')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def show_favorites_menu():
+    plugin_dir.set_content('tvshows')
+    xbmcplugin.setPluginCategory(routing_plugin.handle,plugin_localize(30211))
+    from shoko_models.v2 import Series
+    import favorite
+    favorite_list = favorite.get_all_favorites()
+    try:
+        for favorite_serie in favorite_list:
+            serie = Series(int(favorite_serie[0]), build_full_object=True, get_children=False)
+            serie.is_in_favorite()
+            plugin_dir.append(serie.get_listitem())
+    except Exception as ex:
+        error_handler.exception(ErrorPriority.HIGHEST, plugin_localize(30151))
+
 
 
 @routing_plugin.route('/menu/search')

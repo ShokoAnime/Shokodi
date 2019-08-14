@@ -22,11 +22,14 @@
     </category>
 	<!-- Main Menu Items -->
     <category label="30098">
-        <setting label="30101" type="bool" id="show_search" default="true"/>
-        <setting label="30102" type="bool" id="show_settings" default="true"/>
-        <setting label="30103" type="bool" id="show_calendar" default="true"/>
-        <setting label="30105" type="bool" id="show_unsort" default="true"/>
-        <setting label="30114" type="bool" id="show_shoko" default="false"/>
+        <setting label="30214" type="action" id="action9" action=""/>
+        <setting label="30221" type="bool" id="show_search" subsetting="true" default="true"/>
+        <setting label="30001" type="bool" id="show_settings" subsetting="true" default="true"/>
+        <setting label="30222" type="bool" id="show_calendar" subsetting="true" default="true"/>
+        <setting label="30106" type="bool" id="show_unsort" subsetting="true" default="true"/>
+        <setting label="30115" type="bool" id="show_shoko" subsetting="true" default="false"/>
+        <setting label="30211" type="bool" id="show_favorites" subsetting="true" default="true"/>
+        <setting label="30170" type="bool" id="show_recent2" subsetting="true" default="true"/>
         <setting label="30150" type="bool" id="skip_information" default="false"/>
 	</category>
 	<!-- browsing -->

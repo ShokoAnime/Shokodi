@@ -1042,6 +1042,26 @@ msgctxt "#30210"
 msgid "Would you like to install addon"
 msgstr "Would you like to install addon?"
 
+#: settings.xml, nakamoriplugin.py
+msgctxt "#30211"
+msgid "Favorites"
+msgstr "Favorites"
+
+#: v2.py
+msgctxt "#30212"
+msgid "Add to Favorites"
+msgstr "Add to Favorites"
+
+#: v2.py
+msgctxt "#30213"
+msgid "Remove from Favorites"
+msgstr "Remove from Favorites"
+
+#: settings.xml
+msgctxt "#30214"
+msgid "Show"
+msgstr "Show"
+
 
 
 #: settings.xml, guibuilder.py
