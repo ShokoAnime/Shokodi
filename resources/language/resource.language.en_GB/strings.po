@@ -1029,13 +1029,18 @@ msgstr "Results"
 
 #: settings.xml
 msgctxt "#30208"
-msgid "Please install and enable inputstream.adaptive"
-msgstr "Please install and enable inputstream.adaptive"
+msgid "Please install and enable addon"
+msgstr "Please install and enable addon"
 
 #: nakamoriscript.py
 msgctxt "#30209"
-msgid "Would you like to enable inputstream.adaptive ?"
-msgstr "Would you like to enable inputstream.adaptive ?"
+msgid "Would you like to enable addon?"
+msgstr "Would you like to enable addon?"
+
+#: settings.xml
+msgctxt "#30210"
+msgid "Would you like to install addon"
+msgstr "Would you like to install addon?"
 
 
 

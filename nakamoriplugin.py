@@ -8,7 +8,7 @@ import nakamori_player
 import routing
 import xbmcplugin
 import xbmc
-from error_handler import try_function, show_messages, ErrorPriority, exception
+from error_handler import try_function, show_messages, ErrorPriority, exception, log
 from kodi_models import DirectoryListing, WatchedStatus, ListItem
 from nakamori_utils import kodi_utils, shoko_utils, script_utils, model_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
@@ -446,11 +446,7 @@ def play_video_internal(playbacktype, ep_id, file_id, mark_as_watched=True, resu
     elif playbacktype == PlaybackType.DIRECT:
         nakamori_player.direct_play_video(selected_id, ep_id, mark_as_watched, resume)
     elif playbacktype == PlaybackType.TRANSCODE:
-        nakamori_player.PlaybackType.NORMAL(selected_id, ep_id, mark_as_watched, resume)
-
-    while kodi_utils.is_dialog_active():
-        xbmc.sleep(500)
-    kodi_utils.move_to_next()
+        nakamori_player.transcode_play_video(selected_id, ep_id, mark_as_watched, resume)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/transcode')
