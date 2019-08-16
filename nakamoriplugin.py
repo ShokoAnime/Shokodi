@@ -1,7 +1,7 @@
 import json
 import sys
 from distutils.version import LooseVersion
-
+import time
 import debug
 import error_handler
 import nakamori_player
@@ -14,6 +14,7 @@ from nakamori_utils import kodi_utils, shoko_utils, script_utils, model_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
 from nakamori_utils.globalvars import *
 from windows import wizard, information
+from setsuzoku import Category, Action, Event
 
 plugin_localize = plugin_addon.getLocalizedString
 routing_plugin = routing.Plugin('plugin://plugin.video.nakamori', convert_args=True)
@@ -44,6 +45,11 @@ def finish_menu():
 @routing_plugin.route('/')
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
+    last_call = (int(time.time()) - int(plugin_addon.getSetting('last_call')))
+    if last_call > 86400:
+        script_utils.log_setsuzoku(Category.PLUGIN, Action.VERSION, plugin_addon.getAddonInfo('version'))
+        plugin_addon.setSetting('last_call', '%s' % int(time.time()))
+
     version = LooseVersion(plugin_addon.getAddonInfo('version'))
     previous_version = plugin_addon.getSetting('version')
     if previous_version == '':
@@ -160,7 +166,7 @@ def show_filter_menu(filter_id):
     from shoko_models.v2 import Filter
     f = Filter(filter_id, build_full_object=True, get_children=True)
     plugin_dir.set_content('tvshows')
-    plugin_dir.set_cached()
+    # plugin_dir.set_cached()  # fix issue https://github.com/bigretromike/nakamori/issues/334
     xbmcplugin.setPluginCategory(routing_plugin.handle, f.name)
     f.add_sort_methods(routing_plugin.handle)
     for item in f:
@@ -273,6 +279,7 @@ def add_continue_item(series, episode_type, watched_index):
 @routing_plugin.route('/menu/added_recently')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_added_recently_menu():
+    script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.RECENTLY)
     url = '%s/api/serie/recent' % server
     body = pyproxy.get_json(url, True)
     json_body = json.loads(body)
@@ -325,6 +332,7 @@ def show_calendar_menu():
 @routing_plugin.route('/menu/filter/unsorted')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_unsorted_menu():
+    script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.UNSORT)
     # this is really bad practice, but the unsorted files list is too special
     from shoko_models.v2 import File
     url = server + '/api/file/unsort'
@@ -340,6 +348,7 @@ def show_unsorted_menu():
 @routing_plugin.route('/menu/favorites')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_favorites_menu():
+    script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.FAVORITE)
     plugin_dir.set_content('tvshows')
     xbmcplugin.setPluginCategory(routing_plugin.handle,plugin_localize(30211))
     from shoko_models.v2 import Series
@@ -354,15 +363,15 @@ def show_favorites_menu():
         error_handler.exception(ErrorPriority.HIGHEST, plugin_localize(30151))
 
 
-
 @routing_plugin.route('/menu/search')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_search_menu():
+def show_search_menu(select_query=None):
+    script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.SEARCH)
     # search for new
     # quick search
     # clear search in context_menu
     from shoko_models.v2 import CustomItem
-    plugin_dir.set_content('videos')
+    plugin_dir.set_content('tvshows')
     xbmcplugin.setPluginCategory(routing_plugin.handle, plugin_localize(30221))
 
     clear_items = (plugin_localize(30110), script_utils.url_clear_search_terms())
@@ -370,20 +379,28 @@ def show_search_menu():
     # Search
     item = CustomItem(plugin_localize(30224), 'new-search.png', url_for(new_search, True))
     item.is_kodi_folder = False
-    item.set_context_menu_items([clear_items])
+    # item.set_context_menu_items([clear_items])
     plugin_dir.append(item.get_listitem())
 
     # quick search
     # TODO Setting for this, etc
     item = CustomItem(plugin_localize(30225), 'search.png', url_for(new_search, False))
     item.is_kodi_folder = False
-    item.set_context_menu_items([clear_items])
+    # item.set_context_menu_items([clear_items])
     plugin_dir.append(item.get_listitem())
 
+    # a-z search (no keyboard)
+    item = CustomItem('A-Z', 'search.png', url_for(az_search))
+    item.is_kodi_folder = False
+    plugin_dir.append(item.get_listitem())
+
+    _index = 2
+    _index_selected = -1
     import search
     # This is sorted by most recent
     search_history = search.get_search_history()
     for ss in search_history:
+        _index += 1
         try:
             query = ss[0]
             if len(query) == 0:
@@ -393,7 +410,11 @@ def show_search_menu():
             remove_item = (plugin_localize(30204), script_utils.url_remove_search_term(query))
             item.set_context_menu_items([remove_item, clear_items])
 
-            plugin_dir.append(item.get_listitem())
+            list_item = item.get_listitem()
+            if select_query == query:
+                list_item.select(True)
+                _index_selected = _index
+            plugin_dir.append(list_item)
         except:
             error_handler.exception(ErrorPriority.HIGHEST, plugin_localize(30151))
 
@@ -402,20 +423,91 @@ def show_search_menu():
         item = CustomItem(plugin_localize(30110), 'search.png', script_utils.url_clear_search_terms())
         plugin_dir.append(item.get_listitem())
 
+    if _index_selected != -1:
+        script_utils.move_to_item_and_enter(_index_selected)
+
+
+@routing_plugin.route('/dialog/azsearch/')
+@routing_plugin.route('/dialog/azsearch/<character>')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def az_search(character=''):
+    from shoko_models.v2 import CustomItem, Group, Series
+    from string import ascii_lowercase
+
+    if character == '':
+        for c in ascii_lowercase:
+            item = CustomItem('%s%s' % (character, c), 'search.png', url_for(az_search, '%s%s' % (character, c)))
+            item.is_kodi_folder = False
+            plugin_dir.append(item.get_listitem())
+
+    elif character != '':
+        # az_search_character(character)
+        search_url = server + '/api/serie/startswith'
+        search_url = model_utils.add_default_parameters(search_url, 0, 1)
+        search_url = pyproxy.set_parameter(search_url, 'query', character)
+        search_url = pyproxy.set_parameter(search_url, 'tags', 2)
+        search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
+        search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
+        json_body = json.loads(pyproxy.get_json(search_url))
+
+        groups = json_body['groups'][0]
+        if json_body.get('size', 0) == 0:
+            # Show message about no results
+            kodi_utils.message_box(plugin_localize(30180), plugin_localize(30181))
+            # draw search menu instead of deleting menu
+            show_search_menu()
+            return
+
+        plugin_dir.set_content('tvshows')
+        xbmcplugin.setPluginCategory(routing_plugin.handle, character)
+
+
+        Group(0).add_sort_methods(routing_plugin.handle)
+
+        character_list = []
+        items = []
+
+        for item in groups.get('series', []):
+            series = Series(item)  # , build_full_object=True, get_children=True)
+            series.name = series.match
+            series.sort_index = 10
+            items.append(series)
+            _index = len(character)
+            if len(series.match) > _index:
+                _new_char = str(series.match[_index]).lower()
+                if not _new_char in character_list:
+                    character_list.append(_new_char)
+
+        if len(character_list) > 1:
+            for c in character_list:
+                item = CustomItem('%s%s' % (character, c), 'search.png', url_for(az_search, '%s%s' % (character, c)))
+                item.is_kodi_folder = False
+                item.sort_index = 0
+                items.append(item)
+
+        if any(x.sort_index != 0 for x in items):
+            items.sort(key=lambda a: (a.sort_index, a.name))
+        for item in items:
+            plugin_dir.append(item.get_listitem())
+
 
 @routing_plugin.route('/dialog/search/<save>')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def new_search(save):
     query = kodi_utils.search_box()
+    if query != '':
+        if save:
+            import search
+            if search.check_in_database(query):
+                search.remove_search_history(query)
+            search.add_search_history(query)
 
-    if save:
-        import search
-        if search.check_in_database(query):
-            search.remove_search_history(query)
-        search.add_search_history(query)
+        if len(query) > 0:
+            show_search_menu(query)
+            #show_search_result_menu(query)
 
-    if len(query) > 0:
-        show_search_result_menu(pyproxy.quote(pyproxy.quote(query)))
+    else:
+        show_search_menu()
 
 
 @routing_plugin.route('/menu/search/<path:query>')
@@ -442,6 +534,7 @@ def show_search_result_menu(query):
     for item in groups.get('series', []):
         series = Series(item, build_full_object=True, get_children=True)
         plugin_dir.append(series.get_listitem())
+
 
 class PlaybackType(object):
     NORMAL = 'Normal'
@@ -524,9 +617,9 @@ def restart_plugin():
 
 @routing_plugin.route('/tvshows/')
 def scrape_all_tvshows():
+    script_utils.log_setsuzoku(Category.PLUGIN, Action.LIBRARY, Event.INIT)
     # List series items
     scrape_series('tvshows')
-    # finish_menu is only needed if you need to do something after it
 
 
 # Some things put a slash on the end, ex ExtendedInfoScript

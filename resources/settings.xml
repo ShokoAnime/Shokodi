@@ -184,9 +184,9 @@
         <!--  <setting label="30093" type="text" id="audioEigakan" default="aac" visible="eq(-13,true)+eq(-3,true)"/> -->
         <!--  <setting label="30094" type="text" id="vbitrateEigakan" default="3000000" visible="eq(-14,true)+eq(-4,true)"/> -->
 
-        <!-- noname -->
-		<setting label="30108" type="bool" id="send_data" default="true" visible="false"/>
-        <!-- do not delete (again) -->
+        <!-- noname/don't delete -->
+		<setting label="30108" type="bool" id="feedback" default="true" visible="false"/>
+        <setting type="number" id="last_call" default="1543210000" visible="false"/>
         <setting type="bool" id="onepunchmen" default="false" visible="false"/>
     </category>
 </settings>
