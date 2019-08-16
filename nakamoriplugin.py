@@ -277,6 +277,7 @@ def add_continue_item(series, episode_type, watched_index):
 
 
 @routing_plugin.route('/menu/added_recently')
+@routing_plugin.route('/menu/added_recently/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_added_recently_menu():
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.RECENTLY)
@@ -298,6 +299,7 @@ def show_added_recently_menu():
 
 
 @routing_plugin.route('/menu/airing_today')
+@routing_plugin.route('/menu/airing_today/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_airing_today_menu():
     # TODO airing today
@@ -346,6 +348,7 @@ def show_unsorted_menu():
 
 
 @routing_plugin.route('/menu/favorites')
+@routing_plugin.route('/menu/favorites/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_favorites_menu():
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.FAVORITE)
@@ -511,6 +514,7 @@ def new_search(save):
 
 
 @routing_plugin.route('/menu/search/<path:query>')
+@routing_plugin.route('/menu/search/<path:query>/')
 def show_search_result_menu(query):
     search_url = server + '/api/search'
     search_url = model_utils.add_default_parameters(search_url, 0, 1)
