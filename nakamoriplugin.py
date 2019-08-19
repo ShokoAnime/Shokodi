@@ -163,10 +163,11 @@ def add_extra_main_menu_items(items):
 @routing_plugin.route('/menu/filter/<filter_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_filter_menu(filter_id):
+    plugin_dir.set_content('tvshows')
+    plugin_dir.set_cached()  # issue https://github.com/xbmc/xbmc/issues/16206
+
     from shoko_models.v2 import Filter
     f = Filter(filter_id, build_full_object=True, get_children=True)
-    plugin_dir.set_content('tvshows')
-    # plugin_dir.set_cached()  # fix issue https://github.com/bigretromike/nakamori/issues/334
     xbmcplugin.setPluginCategory(routing_plugin.handle, f.name)
     f.add_sort_methods(routing_plugin.handle)
     for item in f:

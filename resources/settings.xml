@@ -81,6 +81,7 @@
         <setting label="30062" type="bool" id="context_krypton_watched" default="true"/>
         <setting label="30125" type="bool" id="context_show_vote_Episode" default="true"/>
         <setting label="30124" type="bool" id="context_show_vote_Series" default="true"/>
+        <setting label="30123" type="bool" id="context_show_info" default="true"/>
         <setting label="30134" type="bool" id="context_view_cast" default="true"/>
         <setting label="30131" type="bool" id="context_refresh" default="true"/>
         <!-- maintenance -->
@@ -175,14 +176,6 @@
         <setting label="30171" type="bool" id="burnEigakan" default="false" subsetting="true" visible="eq(-16,true)+eq(-5,true)"/>
         <setting label="30172" type="action" id="action6" action="RunScript(script.module.nakamori,/eigakan/clear)" subsetting="true" enable="System.HasAddon(script.module.nakamori)" visible="eq(-17,true)+eq(-6,true)" option="close"/>
         <setting label="30208" type="action" id="action7" action="RunScript(script.module.nakamori,/eigakan/requirement)" subsetting="false" enable="!System.HasAddon(inputstream.adaptive)" visible="!System.HasAddon(inputstream.adaptive)" option="close"/>
-
-        <!-- <setting label="30088" type="number" id="tryEigakan" default="10" visible="eq(-8,true)+eq(-3,true)"/> -->
-        <!-- <setting label="30089" type="number" id="postponeEigakan" default="10" visible="eq(-9,true)+eq(-4,true)"/> -->
-        <!--  <setting label="30090" type="bool" id="advEigakan" default="false" visible="eq(-10,true)+eq(-5,true)"/> -->
-        <!--  <setting label="30091" type="text" id="resolutionEigakan" default="1280x720" visible="eq(-11,true)+eq(-1,true)"/> -->
-        <!--  <setting label="30092" type="text" id="profileEigakan" default="main" visible="eq(-12,true)+eq(-2,true)"/> -->
-        <!--  <setting label="30093" type="text" id="audioEigakan" default="aac" visible="eq(-13,true)+eq(-3,true)"/> -->
-        <!--  <setting label="30094" type="text" id="vbitrateEigakan" default="3000000" visible="eq(-14,true)+eq(-4,true)"/> -->
 
         <!-- noname/don't delete -->
 		<setting label="30108" type="bool" id="feedback" default="true" visible="false"/>
