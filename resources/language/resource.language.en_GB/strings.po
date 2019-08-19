@@ -1062,6 +1062,22 @@ msgctxt "#30214"
 msgid "Show"
 msgstr "Show"
 
+#: settings.xml, nakamoriplugin.py
+msgctxt "#30215"
+msgid "Bookmark"
+msgstr "Bookmark"
+
+#: v2.py
+msgctxt "#30216"
+msgid "Add Bookmark"
+msgstr "Add Bookmark"
+
+#: v2.py
+msgctxt "#30217"
+msgid "Remove Bookmark"
+msgstr "Remove Bookmark"
+
+
 
 
 #: settings.xml, guibuilder.py

@@ -111,6 +111,11 @@ def add_extra_main_menu_items(items):
         item.sort_index = 0
         items.append(item)
 
+    if plugin_addon.getSetting('show_bookmark') == 'true':
+        item = CustomItem(plugin_localize(30215), 'airing.png', url_for(show_bookmark_menu))
+        item.sort_index = 0
+        items.append(item)
+
     if plugin_addon.getSetting('show_recent2') == 'true':
         item = CustomItem(plugin_localize(30170), 'airing.png', url_for(show_added_recently_menu))
         item.sort_index = 0
@@ -144,9 +149,9 @@ def add_extra_main_menu_items(items):
         items.append(item)
 
     if plugin_addon.getSetting('show_shoko') == 'true':
-        item = CustomItem(plugin_localize(30115), 'settings.png', script(script_utils.url_shoko_menu()))
+        item = CustomItem(plugin_localize(30115), 'settings.png', url_for(show_shoko_menu)) # script(script_utils.url_shoko_menu()))
         item.sort_index = 18
-        item.is_kodi_folder = False
+        item.is_kodi_folder = True # False
         items.append(item)
 
     if plugin_addon.getSetting('show_search') == 'true':
@@ -158,6 +163,67 @@ def add_extra_main_menu_items(items):
         item = CustomItem(plugin_localize(30145), 'airing.png', url_for(scrape_all_tvshows))
         item.sort_index = 99
         items.append(item)
+
+
+@routing_plugin.route('/menu/folder/<folderid>/')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def show_folder_menu(folderid):
+    script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.BOOKMARK)
+    plugin_dir.set_content('tvshows')
+    xbmcplugin.setPluginCategory(routing_plugin.handle, str(folderid))
+    from shoko_models.v2 import Series
+    url = server + '/api/serie/byfolder?id=%s&limit=10000' % folderid
+    json_body = pyproxy.get_json(url, True)
+    json_node = json.loads(json_body)
+
+    for item in json_node:
+        s = Series(item)
+        plugin_dir.append(s.get_listitem(), True)
+
+
+@routing_plugin.route('/menu/shoko/')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def show_shoko_menu():
+    script_utils.log_setsuzoku(Category.SHOKO, Action.MENU, Event.MAIN)
+
+    from shoko_models.v2 import ImportFolders, CustomItem, QueueGeneral, QueueHasher, QueueImages
+    xbmcplugin.setPluginCategory(routing_plugin.handle, 'shoko')
+
+    queue_ = QueueHasher()
+    plugin_dir.append(queue_.get_listitem(), folder=False)
+    queue__ = QueueImages()
+    plugin_dir.append(queue__.get_listitem(), folder=False)
+    queue___ = QueueGeneral()
+    plugin_dir.append(queue___.get_listitem(), folder=False)
+
+    # TODO add folder https://github.com/ShokoAnime/ShokoServer/blob/master/Shoko.Server/API/v2/Modules/Common.cs#L73
+
+    # TODO need to tide this up, until then add as many as you can
+    # TODO Lang Fix
+    ci = CustomItem('scan_dropfolders', 'search.png', script_utils.url_shoko_scandropfolder())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+    ci = CustomItem('stats_update', 'search.png', script_utils.url_shoko_statusupdate())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+    ci = CustomItem('medainfo_update', 'search.png', script_utils.url_shoko_mediainfoupdate())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+    ci = CustomItem('rescan_unlinked', 'search.png', script_utils.url_shoko_rescanunlinked())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+    ci = CustomItem('rehash_unlinked', 'search.png', script_utils.url_shoko_rehashunlinked())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+    ci = CustomItem('rescan_manuallinks', 'search.png', script_utils.url_shoko_rescanmanuallinks())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+    ci = CustomItem('rehash_manuallinks', 'search.png', script_utils.url_shoko_rehashmanuallinks())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+    ci = CustomItem(script_addon.getLocalizedString(30049), 'search.png', script_utils.url_shoko_runimport())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+    ci = CustomItem(script_addon.getLocalizedString(30042), 'search.png', script_utils.url_shoko_removemissing())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+    ci = CustomItem('calendar_refresh', 'search.png', script_utils.url_calendar_refresh())
+    plugin_dir.append(ci.get_listitem(), folder=False)
+
+    folders = ImportFolders()
+    for folder in folders.items:
+        plugin_dir.append(folder.get_listitem())
 
 
 @routing_plugin.route('/menu/filter/<filter_id>/')
@@ -348,13 +414,30 @@ def show_unsorted_menu():
         plugin_dir.append(f.get_listitem(), False)
 
 
+@routing_plugin.route('/menu/bookmark')
+@routing_plugin.route('/menu/bookmark/')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def show_bookmark_menu():
+    script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.BOOKMARK)
+    plugin_dir.set_content('tvshows')
+    xbmcplugin.setPluginCategory(routing_plugin.handle, plugin_localize(30215))
+    from shoko_models.v2 import Series
+    url = server + '/api/serie/bookmark'
+    json_body = pyproxy.get_json(url, True)
+    json_node = json.loads(json_body)
+
+    for item in json_node.get('series', []):
+        s = Series(item)
+        plugin_dir.append(s.get_listitem(), True)
+
+
 @routing_plugin.route('/menu/favorites')
 @routing_plugin.route('/menu/favorites/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_favorites_menu():
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.FAVORITE)
     plugin_dir.set_content('tvshows')
-    xbmcplugin.setPluginCategory(routing_plugin.handle,plugin_localize(30211))
+    xbmcplugin.setPluginCategory(routing_plugin.handle, plugin_localize(30211))
     from shoko_models.v2 import Series
     import favorite
     favorite_list = favorite.get_all_favorites()
