@@ -830,7 +830,7 @@ msgctxt "#30159"
 msgid "Unable to Connect"
 msgstr "Nie można nawiązać połączenia"
 
-#: guibuilder.py, kodi_utils.py
+#: guibuilder.py, kodi_utils.py, nakamori_player.py, nakamoriscript.py
 msgctxt "#30160"
 msgid "Please Wait"
 msgstr "Czekaj"
@@ -884,6 +884,51 @@ msgctxt "#30170"
 msgid "Recently Added Series/Episodes"
 msgstr "Ostatnio dodane serie/odcinki"
 
+#: settings.xml
+msgctxt "#30171"
+msgid "Force Burn-In subtitles"
+msgstr "Wymuś 'wypalenie' napisów"
+
+#: settings.xml
+msgctxt "#30172"
+msgid "Resend profile"
+msgstr "Wyślij ponownie profil"
+
+#: settings.xml
+msgctxt "#30173"
+msgid "Debug"
+msgstr "Debugowanie"
+
+#: v2
+msgctxt "#30174"
+msgid "Play (transcode)"
+msgstr "Odtwórz (Transkodowanie)"
+
+#: v2
+msgctxt "#30175"
+msgid "Play (DirectPlay)"
+msgstr "Odtwórz (DirectPlay)"
+
+#: v2
+msgctxt "#30176"
+msgid "Add to transcode queue"
+msgstr "Dodaj do kolejki transkodowania"
+
+#: v2, nakamori_player.py, nakamoriscript.py
+msgctxt "#30177"
+msgid "Examine stream information"
+msgstr "Badanie informacji o streamie"
+
+#: nakamori_player.py
+msgctxt "#30178"
+msgid "Select Audio stream"
+msgstr "Wybierz stream Audio"
+
+#: nakamori_player.py
+msgctxt "#30179"
+msgid "Select Subtitle stream"
+msgstr "Wybierz stream z Napisami"
+
 #: guibuilder.py
 msgctxt "#30180"
 msgid "No Results Found"
@@ -928,6 +973,11 @@ msgstr "Zakolejkowano w celu przeskanowania"
 msgctxt "#30191"
 msgid "Refreshing in 10 seconds"
 msgstr "Odśwież po 10 sekundach"
+
+#: nakamori_player.py
+msgctxt "#30192"
+msgid "Adding to transcode queue"
+msgstr "Dodawanie do kolejki transkodowania"
 
 #: shoko_utils.py
 msgctxt "#30193"
@@ -988,6 +1038,86 @@ msgctxt "#30204"
 msgid "Remove"
 msgstr "Usuń"
 
+#: nakamori_player.py
+msgctxt "#30205"
+msgid "Extracting subtitles..."
+msgstr "Wydobywanie napisów..."
+
+#: nakamori_player.py
+msgctxt "#30206"
+msgid "Waiting for transcode to start..."
+msgstr "Oczekiwanie na rozpoczęcie transkodowania..."
+
+#: nakamoriscript.py
+msgctxt "#30207"
+msgid "Results"
+msgstr "Wyniki"
+
+#: settings.xml
+msgctxt "#30208"
+msgid "Please install and enable addon"
+msgstr "Proszę zainstalowania i włączyć plugin"
+
+#: nakamoriscript.py
+msgctxt "#30209"
+msgid "Would you like to enable addon?"
+msgstr "Czy chcesz włączyć plugin?"
+
+#: settings.xml
+msgctxt "#30210"
+msgid "Would you like to install addon"
+msgstr "Czy chcesz zainstalować plugin?"
+
+#: settings.xml, nakamoriplugin.py
+msgctxt "#30211"
+msgid "Favorites"
+msgstr "Ulubione"
+
+#: v2.py
+msgctxt "#30212"
+msgid "Add to Favorites"
+msgstr "Dodaj do Ulubionych"
+
+#: v2.py
+msgctxt "#30213"
+msgid "Remove from Favorites"
+msgstr "Usuń z Ulubionych"
+
+#: settings.xml
+msgctxt "#30214"
+msgid "Show"
+msgstr "Wyświetl"
+
+#: settings.xml, nakamoriplugin.py
+msgctxt "#30215"
+msgid "Bookmark"
+msgstr "Zakładki"
+
+#: v2.py
+msgctxt "#30216"
+msgid "Add Bookmark"
+msgstr "Dodaj do Zakładki"
+
+#: v2.py
+msgctxt "#30217"
+msgid "Remove Bookmark"
+msgstr "Usuń z Zakładki"
+
+#: nakamori_player.py
+msgctxt "#30218"
+msgid "It's taking longer than expected"
+msgstr "Czynność trwa dłużej niż zamierzano"
+
+#: v2.py
+msgctxt "#30219"
+msgid "Start"
+msgstr "Uruchom"
+
+#: v2.py
+msgctxt "#30220"
+msgid "Pause"
+msgstr "Wstrzymaj"
+
 #: settings.xml, guibuilder.py
 msgctxt "#30221"
 msgid "Search"
@@ -1021,3 +1151,8 @@ msgstr "Tagi gatunków filmowych"
 msgctxt "#30227"
 msgid "Filter Tags to "
 msgstr "Filtruj tagi"
+
+#: v2.py
+msgctxt "#30228"
+msgid "Clear"
+msgstr "Wyczyść"
