@@ -184,13 +184,13 @@ msgstr "Beperk de TAG-resultaten tot"
 
 #: settings.xml
 msgctxt "#30034"
-msgid "(WIP)Series Vote after completing it"
-msgstr "(OHW) Reeksstemming na het voltooien ervan"
+msgid "Series Vote after completing it"
+msgstr "Reeksstemming na het voltooien ervan "
 
 #: settings.xml
 msgctxt "#30035"
-msgid "(WIP)Enable voting for Trakt"
-msgstr "(WIP) Stemming voor Trakt inschakelen"
+msgid "Enable voting for Trakt"
+msgstr "Stemming voor Trakt inschakelen "
 
 #: settings.xml
 msgctxt "#30036"
@@ -834,7 +834,7 @@ msgctxt "#30159"
 msgid "Unable to Connect"
 msgstr "Niet in staat te verbinden"
 
-#: guibuilder.py, kodi_utils.py
+#: guibuilder.py, kodi_utils.py, nakamori_player.py, nakamoriscript.py
 msgctxt "#30160"
 msgid "Please Wait"
 msgstr "Even geduld aub"
@@ -883,6 +883,56 @@ msgctxt "#30169"
 msgid "Use seiyuu picture for cast data"
 msgstr "Gebruik seiyuu-afbeelding voor castgegevens"
 
+#: nakamoriplugin.py
+msgctxt "#30170"
+msgid "Recently Added Series/Episodes"
+msgstr "Recent toegevoegde serie / afleveringen"
+
+#: settings.xml
+msgctxt "#30171"
+msgid "Force Burn-In subtitles"
+msgstr "Ondertitels afdwingen"
+
+#: settings.xml
+msgctxt "#30172"
+msgid "Resend profile"
+msgstr "Profiel opnieuw verzenden"
+
+#: settings.xml
+msgctxt "#30173"
+msgid "Debug"
+msgstr "debug"
+
+#: v2
+msgctxt "#30174"
+msgid "Play (transcode)"
+msgstr "Spelen (transcode)"
+
+#: v2
+msgctxt "#30175"
+msgid "Play (DirectPlay)"
+msgstr "Spelen (DirectPlay)"
+
+#: v2
+msgctxt "#30176"
+msgid "Add to transcode queue"
+msgstr "Toevoegen aan transcodewachtrij"
+
+#: v2, nakamori_player.py, nakamoriscript.py
+msgctxt "#30177"
+msgid "Examine stream information"
+msgstr "Onderzoek stroominformatie"
+
+#: nakamori_player.py
+msgctxt "#30178"
+msgid "Select Audio stream"
+msgstr "Selecteer Audiostream"
+
+#: nakamori_player.py
+msgctxt "#30179"
+msgid "Select Subtitle stream"
+msgstr "Selecteer Ondertitels stream"
+
 #: guibuilder.py
 msgctxt "#30180"
 msgid "No Results Found"
@@ -903,6 +953,18 @@ msgctxt "#30183"
 msgid "You already finished this."
 msgstr "Je hebt dit al gedaan."
 
+#: settings.xml
+msgctxt "#30184"
+msgid "Suggest Series rating based on ep rating"
+msgstr "Stel een serieclassificatie voor op basis van ep-classificatie"
+
+#: settings.xml
+msgctxt "#30185"
+msgid "Require all Episodes being rated before suggesting"
+msgstr ""
+"Vereisen dat alle afleveringen worden beoordeeld voordat ze worden "
+"voorgesteld"
+
 #: shoko_utils.py
 msgctxt "#30189"
 msgid "Queued File for Rehash"
@@ -917,6 +979,11 @@ msgstr "In wachtrij geplaatst bestand voor opnieuw scannen"
 msgctxt "#30191"
 msgid "Refreshing in 10 seconds"
 msgstr "Vernieuwen in 10 seconden"
+
+#: nakamori_player.py
+msgctxt "#30192"
+msgid "Adding to transcode queue"
+msgstr "Toevoegen aan transcodewachtrij"
 
 #: shoko_utils.py
 msgctxt "#30193"
@@ -977,6 +1044,86 @@ msgctxt "#30204"
 msgid "Remove"
 msgstr "Verwijderen"
 
+#: nakamori_player.py
+msgctxt "#30205"
+msgid "Extracting subtitles..."
+msgstr "Ondertitels extraheren ..."
+
+#: nakamori_player.py
+msgctxt "#30206"
+msgid "Waiting for transcode to start..."
+msgstr "Wachten tot transcode begint ..."
+
+#: nakamoriscript.py
+msgctxt "#30207"
+msgid "Results"
+msgstr "resultaten"
+
+#: settings.xml
+msgctxt "#30208"
+msgid "Please install and enable addon"
+msgstr "Installeer en activeer add-on"
+
+#: nakamoriscript.py
+msgctxt "#30209"
+msgid "Would you like to enable addon?"
+msgstr "Wilt u add-on inschakelen?"
+
+#: settings.xml
+msgctxt "#30210"
+msgid "Would you like to install addon"
+msgstr "Wilt u add-on installeren"
+
+#: settings.xml, nakamoriplugin.py
+msgctxt "#30211"
+msgid "Favorites"
+msgstr "favorieten"
+
+#: v2.py
+msgctxt "#30212"
+msgid "Add to Favorites"
+msgstr "Toevoegen aan favorieten"
+
+#: v2.py
+msgctxt "#30213"
+msgid "Remove from Favorites"
+msgstr "Verwijder van favorieten"
+
+#: settings.xml
+msgctxt "#30214"
+msgid "Show"
+msgstr "Laten zien"
+
+#: settings.xml, nakamoriplugin.py
+msgctxt "#30215"
+msgid "Bookmark"
+msgstr "Bladwijzer"
+
+#: v2.py
+msgctxt "#30216"
+msgid "Add Bookmark"
+msgstr "Voeg bladwijzer toe"
+
+#: v2.py
+msgctxt "#30217"
+msgid "Remove Bookmark"
+msgstr "Bladwijzer verwijderen"
+
+#: nakamori_player.py
+msgctxt "#30218"
+msgid "It's taking longer than expected"
+msgstr "Het duurt langer dan verwacht"
+
+#: v2.py
+msgctxt "#30219"
+msgid "Start"
+msgstr "Begin"
+
+#: v2.py
+msgctxt "#30220"
+msgid "Pause"
+msgstr "Pauze"
+
 #: settings.xml, guibuilder.py
 msgctxt "#30221"
 msgid "Search"
@@ -1010,3 +1157,8 @@ msgstr "Genre tags"
 msgctxt "#30227"
 msgid "Filter Tags to "
 msgstr "Tags filteren naar"
+
+#: v2.py
+msgctxt "#30228"
+msgid "Clear"
+msgstr "Duidelijk"
