@@ -3,6 +3,21 @@
 # This will have all relevant news going back a long time.
 # Initially only starting at 3.0.8
 # version numbers start with !--
+!-- 3.4.0
+Favorites (local) & Bookmarks (shoko) added for different needs
+Calendar is now fixed
+External Calendar source can be used with two data styles
+Moving to next unwatched episode has been tweaked
+New Search method (PSN style aka A-Z)
+Search menu tweaked
+First installation don't fail on service
+Introduce analytic tools (without Google)
+Fix 'Unable to select item' issue
+Fix 'Empty/Cache' directory after watching video
+Added extended support for Eigakan project (not a public beta yet)
+Fix issue with playing videos while having 'Show Info' as default action
+
+
 !-- 3.3.0
 New Calendar style with Series info
 Rate suggestion for Series

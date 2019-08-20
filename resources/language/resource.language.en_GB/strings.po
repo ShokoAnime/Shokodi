@@ -1077,8 +1077,20 @@ msgctxt "#30217"
 msgid "Remove Bookmark"
 msgstr "Remove Bookmark"
 
+#: nakamori_player.py
+msgctxt "#30218"
+msgid "It's taking longer than expected"
+msgstr "It's taking longer than expected"
 
+#: v2.py
+msgctxt "#30219"
+msgid "Start"
+msgstr "Start"
 
+#: v2.py
+msgctxt "#30220"
+msgid "Pause"
+msgstr "Pause"
 
 #: settings.xml, guibuilder.py
 msgctxt "#30221"
@@ -1113,4 +1125,9 @@ msgstr "Genre Tags"
 msgctxt "#30227"
 msgid "Filter Tags to "
 msgstr "Filter Tags to "
+
+#: v2.py
+msgctxt "#30228"
+msgid "Clear"
+msgstr "Clear"
 

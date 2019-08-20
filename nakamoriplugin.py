@@ -199,7 +199,7 @@ def show_shoko_menu():
     # TODO add folder https://github.com/ShokoAnime/ShokoServer/blob/master/Shoko.Server/API/v2/Modules/Common.cs#L73
 
     # TODO need to tide this up, until then add as many as you can
-    # TODO Lang Fix
+    # TODO Lang Fix  <-- not until we know what we have and want we want
     ci = CustomItem('scan_dropfolders', 'search.png', script_utils.url_shoko_scandropfolder())
     plugin_dir.append(ci.get_listitem(), folder=False)
     ci = CustomItem('stats_update', 'search.png', script_utils.url_shoko_statusupdate())
