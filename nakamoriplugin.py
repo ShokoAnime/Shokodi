@@ -514,6 +514,27 @@ def show_search_menu(select_query=None):
         script_utils.move_to_item_and_enter(_index_selected)
 
 
+def query_search_and_return_groups(search_url, query):
+    search_url = model_utils.add_default_parameters(search_url, 0, 1)
+    search_url = pyproxy.set_parameter(search_url, 'query', query)
+    search_url = pyproxy.set_parameter(search_url, 'tags', 2)
+    search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
+    search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
+    json_body = json.loads(pyproxy.get_json(search_url))
+    groups = json_body['groups'][0]
+    if json_body.get('size', 0) == 0:
+        # Show message about no results
+        kodi_utils.message_box(plugin_localize(30180), plugin_localize(30181))
+        # draw search menu instead of deleting menu
+        show_search_menu()
+        return
+    from shoko_models.v2 import Group
+    plugin_dir.set_content('tvshows')
+    xbmcplugin.setPluginCategory(routing_plugin.handle, query)
+    Group(0).add_sort_methods(routing_plugin.handle)
+    return groups
+
+
 @routing_plugin.route('/dialog/azsearch/')
 @routing_plugin.route('/dialog/azsearch/<character>')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
@@ -530,27 +551,7 @@ def az_search(character=''):
     elif character != '':
         # az_search_character(character)
         search_url = server + '/api/serie/startswith'
-        search_url = model_utils.add_default_parameters(search_url, 0, 1)
-        search_url = pyproxy.set_parameter(search_url, 'query', character)
-        search_url = pyproxy.set_parameter(search_url, 'tags', 2)
-        search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
-        search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
-        json_body = json.loads(pyproxy.get_json(search_url))
-
-        groups = json_body['groups'][0]
-        if json_body.get('size', 0) == 0:
-            # Show message about no results
-            kodi_utils.message_box(plugin_localize(30180), plugin_localize(30181))
-            # draw search menu instead of deleting menu
-            show_search_menu()
-            return
-
-        plugin_dir.set_content('tvshows')
-        xbmcplugin.setPluginCategory(routing_plugin.handle, character)
-
-
-        Group(0).add_sort_methods(routing_plugin.handle)
-
+        groups = query_search_and_return_groups(search_url, character)
         character_list = []
         items = []
 
@@ -562,7 +563,7 @@ def az_search(character=''):
             _index = len(character)
             if len(series.match) > _index:
                 _new_char = str(series.match[_index]).lower()
-                if not _new_char in character_list:
+                if _new_char not in character_list:
                     character_list.append(_new_char)
 
         if len(character_list) > 1:
@@ -601,24 +602,8 @@ def new_search(save):
 @routing_plugin.route('/menu/search/<path:query>/')
 def show_search_result_menu(query):
     search_url = server + '/api/search'
-    search_url = model_utils.add_default_parameters(search_url, 0, 1)
-    search_url = pyproxy.set_parameter(search_url, 'query', query)
-    search_url = pyproxy.set_parameter(search_url, 'tags', 2)
-    search_url = pyproxy.set_parameter(search_url, 'limit', plugin_addon.getSetting('maxlimit'))
-    search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
-    json_body = json.loads(pyproxy.get_json(search_url))
-    groups = json_body['groups'][0]
-    if json_body.get('size', 0) == 0:
-        # Show message about no results
-        kodi_utils.message_box(plugin_localize(30180), plugin_localize(30181))
-        # draw search menu instead of deleting menu
-        show_search_menu()
-        return
-
-    plugin_dir.set_content('tvshows')
-    xbmcplugin.setPluginCategory(routing_plugin.handle, query)
+    groups = query_search_and_return_groups(search_url, query)
     from shoko_models.v2 import Group, Series
-    Group(0).add_sort_methods(routing_plugin.handle)
     for item in groups.get('series', []):
         series = Series(item, build_full_object=True, get_children=True)
         plugin_dir.append(series.get_listitem())
@@ -632,7 +617,7 @@ class PlaybackType(object):
 
 def play_video_internal(playbacktype, ep_id, file_id, mark_as_watched=True, resume=False):
     # this prevents the spinning wheel
-    #fail_menu()  <--- this breaks serResolvedUrl
+    # fail_menu()  <--- this breaks serResolvedUrl
 
     if ep_id > 0 and file_id == 0:
         from shoko_models.v2 import Episode
@@ -807,7 +792,7 @@ def scrape_episodes(episodes_label, series_id):
 @try_function(ErrorPriority.BLOCKING)
 def play_episode2(series_id, ep_id):
     # because you wanted that way :/
-    play_video_internal(ep_id, file_id=0)
+    play_video_internal(PlaybackType.NORMAL, ep_id, file_id=0)
 
 
 @routing_plugin.route('/tvshows/<ep_id>/play')
@@ -815,7 +800,7 @@ def play_episode2(series_id, ep_id):
 def play_episode(ep_id):
     # handles playing the file
     # file_id will be automatically selected if given 0
-    play_video_internal(ep_id, file_id=0)
+    play_video_internal(PlaybackType.NORMAL, ep_id, file_id=0)
 
 
 # endregion
