@@ -20,7 +20,7 @@
 		<summary lang="en_GB">Nakamori - allows to interact with your Anime collection (ShokoServer)</summary>
 		<description lang="en_GB">Nakamori gives you the ability to interact with your Anime collection (inside ShokoServer) for Kodi-enabled devices. You are able to use many of the commands available to Desktop right from inside Kodi, such as marking watched status, voting, rescanning and rehashing files, and more!</description>
 		<disclaimer lang="en_GB">This plugin to work require working ShokoServer instance. https://shokoanime.com</disclaimer>
-		<news>Version 3.4.0[CR]- Favorites (local) and Bookmarks (shoko) added for different needs[CR]- Calendar is now fixed[CR]- External Calendar source can be used with two data styles[CR]- Moving to next unwatched episode has been tweaked[CR]- New Search method (PSN style aka A-Z)[CR]- Search menu tweaked[CR]- First installation dont fail on service[CR]- Introduce analytic tools (without Google)[CR]- Fix Unable to select item issue[CR]- Fix Empty/Cache directory after watching video[CR]- Added extended support for Eigakan project (not a public beta yet)[CR]- Fix issue with playing videos while having Show Info as default action</news>
+		<news>{NEWS REPLACE ME}</news>
 		<platform>all</platform>
 		<language>ar de en es fr he it nl pl ru sv zh</language>
 		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
