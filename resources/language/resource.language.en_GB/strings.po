@@ -1047,7 +1047,7 @@ msgctxt "#30211"
 msgid "Favorites"
 msgstr "Favorites"
 
-#: v2.py
+#: v2.py, nakamoriscript.py
 msgctxt "#30212"
 msgid "Add to Favorites"
 msgstr "Add to Favorites"
@@ -1067,7 +1067,7 @@ msgctxt "#30215"
 msgid "Bookmark"
 msgstr "Bookmark"
 
-#: v2.py
+#: v2.py, nakamoriscript.py
 msgctxt "#30216"
 msgid "Add Bookmark"
 msgstr "Add Bookmark"

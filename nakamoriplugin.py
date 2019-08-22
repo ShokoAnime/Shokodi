@@ -427,7 +427,7 @@ def show_bookmark_menu():
     json_node = json.loads(json_body)
 
     for item in json_node.get('series', []):
-        s = Series(item)
+        s = Series(item, in_bookmark=True)
         plugin_dir.append(s.get_listitem(), True)
 
 
@@ -451,36 +451,37 @@ def show_favorites_menu():
 
 
 @routing_plugin.route('/menu/search')
+@routing_plugin.route('/menu/search/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_search_menu(select_query=None):
+def show_search_menu(select_query=None, quick_search=False):
+    if quick_search:
+        show_search_result_menu(select_query)
+        return
+
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.SEARCH)
-    # search for new
-    # quick search
-    # clear search in context_menu
+    log(str(xbmc.getInfoLabel('Container.FolderPath')))
+
     from shoko_models.v2 import CustomItem
     plugin_dir.set_content('tvshows')
     xbmcplugin.setPluginCategory(routing_plugin.handle, plugin_localize(30221))
 
-    clear_items = (plugin_localize(30110), script_utils.url_clear_search_terms())
-
     # Search
-    item = CustomItem(plugin_localize(30224), 'new-search.png', url_for(new_search, True))
-    item.is_kodi_folder = False
-    # item.set_context_menu_items([clear_items])
+    item = CustomItem(kodi_utils.bold(plugin_localize(30224)), 'new-search.png', url_for(new_search, True))
+    item.is_kodi_folder = True
     plugin_dir.append(item.get_listitem())
 
     # quick search
-    # TODO Setting for this, etc
-    item = CustomItem(plugin_localize(30225), 'search.png', url_for(new_search, False))
+    item = CustomItem(kodi_utils.bold(plugin_localize(30225)), 'search.png', url_for(new_search, False))
     item.is_kodi_folder = False
-    # item.set_context_menu_items([clear_items])
     plugin_dir.append(item.get_listitem())
 
     # a-z search (no keyboard)
-    item = CustomItem('A-Z', 'search.png', url_for(az_search))
+    item = CustomItem(kodi_utils.bold('A-Z'), 'search.png', url_for(az_search))
     item.is_kodi_folder = False
     plugin_dir.append(item.get_listitem())
 
+    # clear in context menu of each query
+    clear_items = (plugin_localize(30110), script_utils.url_clear_search_terms())
     _index = 2
     _index_selected = -1
     import search
@@ -537,6 +538,7 @@ def query_search_and_return_groups(search_url, query):
 
 @routing_plugin.route('/dialog/azsearch/')
 @routing_plugin.route('/dialog/azsearch/<character>')
+@routing_plugin.route('/dialog/azsearch/<character>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def az_search(character=''):
     from shoko_models.v2 import CustomItem, Group, Series
@@ -580,20 +582,29 @@ def az_search(character=''):
 
 
 @routing_plugin.route('/dialog/search/<save>')
+@routing_plugin.route('/dialog/search/<save>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def new_search(save):
-    query = kodi_utils.search_box()
-    if query != '':
-        if save:
-            import search
-            if search.check_in_database(query):
-                search.remove_search_history(query)
-            search.add_search_history(query)
+    x = str(xbmc.getInfoLabel('Container.FolderPath'))
+    try:
+        import re
+        y = re.search("(^plugin://plugin.video.nakamori/menu/search/)(.+)(/)", x).group(2)
+    except:
+        y = ''
 
-        if len(query) > 0:
-            show_search_menu(query)
-            #show_search_result_menu(query)
+    if len(y) == 0:
+        query = kodi_utils.search_box()
+        if query != '':
+            if save:
+                import search
+                if search.check_in_database(query):
+                    search.remove_search_history(query)
+                search.add_search_history(query)
 
+            if len(query) > 0:
+                show_search_menu(query, quick_search=True)
+        else:
+            show_search_menu()
     else:
         show_search_menu()
 

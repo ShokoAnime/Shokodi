@@ -6,7 +6,7 @@
 # no & or '
 !-- 3.4.0
 Favorites (local) and Bookmarks (shoko) added for different needs
-Calendar is now fixed
+Calendar is now fixed and more responsive on touch devices
 External Calendar source can be used with two data styles
 Moving to next unwatched episode has been tweaked
 New Search method (PSN style aka A-Z)
