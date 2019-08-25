@@ -17,6 +17,7 @@ Fix Unable to select item issue
 Fix Empty/Cache directory after watching video
 Added extended support for Eigakan project (not a public beta yet)
 Fix issue with playing videos while having Show Info as default action
+Remove extra Refresh from context menu
 
 
 !-- 3.3.0
