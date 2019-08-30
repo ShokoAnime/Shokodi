@@ -455,11 +455,12 @@ def show_favorites_menu():
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_search_menu(select_query=None, quick_search=False):
     if quick_search:
+        plugin_dir.set_cached()  # magic, saved tree structure for search, without it would skip to show_search_menu
         show_search_result_menu(select_query)
         return
 
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.SEARCH)
-    log(str(xbmc.getInfoLabel('Container.FolderPath')))
+    # log(str(xbmc.getInfoLabel('Container.FolderPath')))
 
     from shoko_models.v2 import CustomItem
     plugin_dir.set_content('tvshows')
@@ -564,7 +565,7 @@ def az_search(character=''):
             items.append(series)
             _index = len(character)
             if len(series.match) > _index:
-                _new_char = str(series.match[_index]).lower()
+                _new_char = series.match[_index].encode('utf-8').lower()
                 if _new_char not in character_list:
                     character_list.append(_new_char)
 
@@ -585,15 +586,25 @@ def az_search(character=''):
 @routing_plugin.route('/dialog/search/<save>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def new_search(save):
-    x = str(xbmc.getInfoLabel('Container.FolderPath'))
-    try:
-        import re
-        y = re.search("(^plugin://plugin.video.nakamori/menu/search/)(.+)(/)", x).group(2)
-    except:
-        y = ''
+    x = str(xbmc.getInfoLabel('Container.FolderPath')).lower()  # just in case, future proof
 
-    if len(y) == 0:
-        query = kodi_utils.search_box()
+    y = ''
+    query = ''
+    if 'nakamori/dialog/search/' in x:
+        y = 'search'
+    elif 'nakamori/menu/search/' in x:
+        import re
+        try:
+            y = re.search("(^plugin://plugin.video.nakamori/menu/search/)(.+)(/)", x).group(2)
+            query = y
+        except:
+            y = 'search'
+    elif 'nakamori/menu/series/' in x:  # returning, but cache should bypass this direction
+        y = 'series'
+
+    if len(y) != 0:
+        if query == '':
+            query = kodi_utils.search_box()
         if query != '':
             if save:
                 import search
@@ -602,16 +613,18 @@ def new_search(save):
                 search.add_search_history(query)
 
             if len(query) > 0:
-                show_search_menu(query, quick_search=True)
+                show_search_result_menu(query)
         else:
             show_search_menu()
     else:
+        log('new_search len(y)=0, path: %s' % x)  # log this because it should be possible
         show_search_menu()
 
 
 @routing_plugin.route('/menu/search/<path:query>')
 @routing_plugin.route('/menu/search/<path:query>/')
 def show_search_result_menu(query):
+    plugin_dir.set_cached()
     search_url = server + '/api/search'
     groups = query_search_and_return_groups(search_url, query)
     from shoko_models.v2 import Group, Series
