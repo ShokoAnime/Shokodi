@@ -4,6 +4,11 @@
 # Initially only starting at 3.0.8
 # version numbers start with !--
 # no & or '
+!-- 3.4.1
+Fix error while server init was taking to long
+Search have been yet again tweak to work like it should
+A-Z Search now support utf-8 characters (from second place)
+
 !-- 3.4.0
 Favorites (local) and Bookmarks (shoko) added for different needs
 Calendar is now fixed and more responsive on touch devices
