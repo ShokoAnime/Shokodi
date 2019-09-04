@@ -149,7 +149,7 @@ def add_extra_main_menu_items(items):
         items.append(item)
 
     if plugin_addon.getSetting('show_shoko') == 'true':
-        item = CustomItem(plugin_localize(30115), 'settings.png', url_for(show_shoko_menu)) # script(script_utils.url_shoko_menu()))
+        item = CustomItem(plugin_localize(30115), 'settings.png', url_for(show_shoko_menu))
         item.sort_index = 18
         item.is_kodi_folder = True # False
         items.append(item)
@@ -160,7 +160,10 @@ def add_extra_main_menu_items(items):
         items.append(item)
 
     if plugin_addon.getSetting('onepunchmen') == 'true':
-        item = CustomItem(plugin_localize(30145), 'airing.png', url_for(scrape_all_tvshows))
+        item = CustomItem(plugin_localize(30145) + '_tv', 'airing.png', url_for(scrape_all_tvshows))
+        item.sort_index = 99
+        items.append(item)
+        item = CustomItem(plugin_localize(30145) + '_mv', 'airing.png', url_for(scrape_all_movies))
         item.sort_index = 99
         items.append(item)
 
@@ -714,81 +717,88 @@ def restart_plugin():
 
 @routing_plugin.route('/tvshows/')
 def scrape_all_tvshows():
-    script_utils.log_setsuzoku(Category.PLUGIN, Action.LIBRARY, Event.INIT)
-    # List series items
+    script_utils.log_setsuzoku(Category.PLUGIN, Action.LIBRARY, Event.TVSHOW)
     scrape_series('tvshows')
 
 
-# Some things put a slash on the end, ex ExtendedInfoScript
-@routing_plugin.route('/tvshows/<series_id>/')
-def scrape_tvshows2(series_id):
-    scrape_tvshows(series_id)
+@routing_plugin.route('/movies/')
+def scrape_all_movies():
+    script_utils.log_setsuzoku(Category.PLUGIN, Action.LIBRARY, Event.MOVIE)
+    scrape_series('movies', tvshows=False)
 
 
-@routing_plugin.route('/tvshows/<series_id>')
-@try_function(ErrorPriority.BLOCKING)
-def scrape_tvshows(series_id):
-    # handle refresh, check, etc
-    if 'kodi-action' in routing_plugin.args:
-        if routing_plugin.args['kodi-action'] == 'check_exists':
-            # TODO actually check it
-            xbmcplugin.setResolvedUrl(routing_plugin.handle, True, ListItem())
-        if routing_plugin.args['kodi-action'] == 'refresh_info':
-            # TODO Hash the url and reuse it
-            scrape_episodes('episodes', series_id)
-        return
-
-    # List series items
-    scrape_episodes('episodes', series_id)
-    # finish_menu is only needed if you need to do something after it
-
-
-@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/')
-def scrape_tvshows_with_episode2(series_id, ep_id):
-    scrape_tvshows_with_episode(series_id, ep_id)
-
-
-@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>')
-@try_function(ErrorPriority.BLOCKING)
-def scrape_tvshows_with_episode(series_id, ep_id):
-    # this one is for refresh
-    # handle refresh, check, etc
-    if 'kodi-action' in routing_plugin.args:
-        if routing_plugin.args['kodi-action'] == 'check_exists':
-            # TODO actually check it
-            xbmcplugin.setResolvedUrl(routing_plugin.handle, True, ListItem())
-        if routing_plugin.args['kodi-action'] == 'refresh_info':
-            # TODO Hash the url and reuse it
-            scrape_episodes('episodes', series_id)
-        return
-
-    # List series items
-    scrape_episodes('episodes', series_id)
-    # finish_menu is only needed if you need to do something after it
-
-
-def scrape_series(tvshows_label):
+def scrape_series(content_type, tvshows=True):
     from shoko_models.v2 import Series
-    plugin_dir.set_content(tvshows_label)
-    # url for get all series
+    plugin_dir.set_content(content_type)
     url = server + '/api/serie'
     url = model_utils.add_default_parameters(url, 0, 0)
-    # get it
     body = pyproxy.get_json(url)
-    # parse it
     json_node = json.loads(body)
     # it's a list of series nodes
     for node in json_node:
+        is_folder = True
         series = Series(node, compute_hash=True, seiyuu_pic=True)
-        if series.is_movie:
-            continue
-        url = url_for(scrape_tvshows, series.id)
+        if tvshows:
+            if series.is_movie:
+                continue
+            url = url_for(scrape_tvshows, series.id)
+        else:
+            if not series.is_movie:
+                continue
+            series = Series(node, build_full_object=True, get_children=True, compute_hash=True, seiyuu_pic=True)
+            m_id = 0
+            for m in series.items:
+                if m.item_type == 'movie':
+                    m_id = m.id
+                    break
+            if m_id == 0:
+                continue
+            url = 'plugin://plugin.video.nakamori/movies/%s/play' % m_id
+            is_folder = False
 
-        li = series.get_listitem(url)
-        # li.setUniqueIDs({'anidb': series.anidb_id})
-        if not plugin_dir.append(li, True):
+        li = series.get_listitem(url, disable_coloring=True)
+
+        if not plugin_dir.append(li, is_folder):
             error_handler.exception(ErrorPriority.HIGHEST, 'Unable to scan series')
             break
+
+
+# @routing_plugin.route('/tvshows/<series_id>')
+@routing_plugin.route('/tvshows/<series_id>/')
+@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/')  # this one is for refresh
+@try_function(ErrorPriority.BLOCKING)
+def scrape_tvshows(series_id, ep_id=0):
+    # handle refresh, check, etc
+    if 'kodi-action' in routing_plugin.args:
+        if routing_plugin.args['kodi-action'] == 'check_exists':
+            # TODO actually check it
+            xbmcplugin.setResolvedUrl(routing_plugin.handle, True, ListItem())
+        if routing_plugin.args['kodi-action'] == 'refresh_info':
+            # TODO Hash the url and reuse it
+            scrape_episodes('episodes', series_id)
+        return
+
+    # List series items
+    scrape_episodes('episodes', series_id)
+    # finish_menu is only needed if you need to do something after it
+
+
+@routing_plugin.route('/movies/<series_id>/')
+@routing_plugin.route('/movies/<series_id>/ep/<ep_id>/')  # this one is for refresh
+@try_function(ErrorPriority.BLOCKING)
+def scrape_movies(series_id, ep_id=0):
+    # handle refresh, check, etc
+    if 'kodi-action' in routing_plugin.args:
+        if routing_plugin.args['kodi-action'] == 'check_exists':
+            # TODO actually check it
+            xbmcplugin.setResolvedUrl(routing_plugin.handle, True, ListItem())
+        if routing_plugin.args['kodi-action'] == 'refresh_info':
+            # TODO Hash the url and reuse it
+            scrape_episodes('episodes', series_id)
+        return
+
+    # List series items
+    scrape_episodes('episodes', series_id)
 
 
 def scrape_episodes(episodes_label, series_id):
@@ -800,6 +810,7 @@ def scrape_episodes(episodes_label, series_id):
         return
     # series iterates Episodes
     for i in series:
+        # filter out anything that is not important
         if i.episode_type.lower() not in ('episode', 'special', 'ova'):
             continue
         # url = url_for(play_episode, i.id)
@@ -812,19 +823,12 @@ def scrape_episodes(episodes_label, series_id):
             break
 
 
-@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/play')
-@try_function(ErrorPriority.BLOCKING)
-def play_episode2(series_id, ep_id):
-    # because you wanted that way :/
-    play_video_internal(PlaybackType.NORMAL, ep_id, file_id=0)
-
-
 @routing_plugin.route('/tvshows/<ep_id>/play')
+@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/play')
+@routing_plugin.route('/movies/<ep_id>/play')
 @try_function(ErrorPriority.BLOCKING)
-def play_episode(ep_id):
-    # handles playing the file
-    # file_id will be automatically selected if given 0
-    play_video_internal(PlaybackType.NORMAL, ep_id, file_id=0)
+def play_episode(ep_id, series_id=0):
+    play_video_internal(PlaybackType.NORMAL, ep_id, file_id=0, mark_as_watched=False)
 
 
 # endregion
