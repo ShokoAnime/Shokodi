@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 import sys
 from distutils.version import LooseVersion
@@ -346,7 +347,6 @@ def add_continue_item(series, episode_type, watched_index):
     plugin_dir.insert(0, continue_item.get_listitem(), continue_item.is_kodi_folder)
 
 
-@routing_plugin.route('/menu/added_recently')
 @routing_plugin.route('/menu/added_recently/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_added_recently_menu():
@@ -368,7 +368,6 @@ def show_added_recently_menu():
         plugin_dir.append(e.get_listitem(), False)
 
 
-@routing_plugin.route('/menu/airing_today')
 @routing_plugin.route('/menu/airing_today/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_airing_today_menu():
@@ -376,7 +375,7 @@ def show_airing_today_menu():
     pass
 
 
-@routing_plugin.route('/menu/calendar_old')
+@routing_plugin.route('/menu/calendar_old/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_calendar_menu():
     if script_addon.getSetting('custom_source') == 'true':
@@ -401,7 +400,7 @@ def show_calendar_menu():
         plugin_dir.append(s.get_listitem(), False)
 
 
-@routing_plugin.route('/menu/filter/unsorted')
+@routing_plugin.route('/menu/filter/unsorted/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_unsorted_menu():
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.UNSORT)
@@ -417,7 +416,6 @@ def show_unsorted_menu():
         plugin_dir.append(f.get_listitem(), False)
 
 
-@routing_plugin.route('/menu/bookmark')
 @routing_plugin.route('/menu/bookmark/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_bookmark_menu():
@@ -434,7 +432,6 @@ def show_bookmark_menu():
         plugin_dir.append(s.get_listitem(), True)
 
 
-@routing_plugin.route('/menu/favorites')
 @routing_plugin.route('/menu/favorites/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_favorites_menu():
@@ -453,7 +450,6 @@ def show_favorites_menu():
         error_handler.exception(ErrorPriority.HIGHEST, plugin_localize(30151))
 
 
-@routing_plugin.route('/menu/search')
 @routing_plugin.route('/menu/search/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_search_menu(select_query=None, quick_search=False):
@@ -541,7 +537,6 @@ def query_search_and_return_groups(search_url, query):
 
 
 @routing_plugin.route('/dialog/azsearch/')
-@routing_plugin.route('/dialog/azsearch/<character>')
 @routing_plugin.route('/dialog/azsearch/<character>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def az_search(character=''):
@@ -585,7 +580,6 @@ def az_search(character=''):
             plugin_dir.append(item.get_listitem())
 
 
-@routing_plugin.route('/dialog/search/<save>')
 @routing_plugin.route('/dialog/search/<save>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def new_search(save):
@@ -624,7 +618,6 @@ def new_search(save):
         show_search_menu()
 
 
-@routing_plugin.route('/menu/search/<path:query>')
 @routing_plugin.route('/menu/search/<path:query>/')
 def show_search_result_menu(query):
     plugin_dir.set_cached()
@@ -642,7 +635,7 @@ class PlaybackType(object):
     TRANSCODE = 'Transcode'
 
 
-def play_video_internal(playbacktype, ep_id, file_id, mark_as_watched=True, resume=False):
+def play_video_internal(playbacktype, ep_id, file_id, mark_as_watched=True, resume=False, party_mode=False):
     # this prevents the spinning wheel
     # fail_menu()  <--- this breaks serResolvedUrl
 
@@ -660,36 +653,41 @@ def play_video_internal(playbacktype, ep_id, file_id, mark_as_watched=True, resu
 
     # all of real work is done here
     if playbacktype == PlaybackType.NORMAL:
-        nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
+        nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume, party_mode=party_mode)
     elif playbacktype == PlaybackType.DIRECT:
         nakamori_player.direct_play_video(selected_id, ep_id, mark_as_watched, resume)
     elif playbacktype == PlaybackType.TRANSCODE:
         nakamori_player.transcode_play_video(selected_id, ep_id, mark_as_watched, resume)
 
 
-@routing_plugin.route('/episode/<ep_id>/file/<file_id>/transcode')
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/transcode/')
 @try_function(ErrorPriority.BLOCKING)
 def transcode_play_video(ep_id, file_id, mark_as_watched=True, resume=False):
     play_video_internal(PlaybackType.TRANSCODE, ep_id, file_id, mark_as_watched, resume)
 
 
-@routing_plugin.route('/episode/<ep_id>/file/<file_id>/directplay')
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/directplay/')
 @try_function(ErrorPriority.BLOCKING)
-def direct_play_video(ep_id, file_id, mark_as_watched=True, resume=False):
+def direct_play_video(ep_id, file_id=0, mark_as_watched=True, resume=False):
     play_video_internal(PlaybackType.DIRECT, ep_id, file_id, mark_as_watched, resume)
 
 
-@routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/play/')
 def play_video(ep_id, file_id):
     play_video_internal(PlaybackType.NORMAL, ep_id, file_id)
 
 
-@routing_plugin.route('/episode/<ep_id>/file/<file_id>/play_without_marking')
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/play/party/')
+def play_video_in_partymode(ep_id, file_id):
+    play_video_internal(PlaybackType.NORMAL, ep_id, file_id, party_mode=True)
+
+
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/play_without_marking/')
 def play_video_without_marking(ep_id, file_id):
     play_video_internal(PlaybackType.NORMAL, ep_id, file_id, mark_as_watched=False)
 
 
-@routing_plugin.route('/episode/<ep_id>/file/<file_id>/resume')
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/resume/')
 @try_function(ErrorPriority.BLOCKING)
 def resume_video(ep_id, file_id):
     # if we are resuming, then we'll assume that scrobbling and marking are True
@@ -753,7 +751,7 @@ def scrape_series(content_type, tvshows=True):
                     break
             if m_id == 0:
                 continue
-            url = 'plugin://plugin.video.nakamori/movies/%s/play' % m_id
+            url = 'plugin://plugin.video.nakamori/movies/%s/play/' % m_id
             is_folder = False
 
         li = series.get_listitem(url, disable_coloring=True)
@@ -763,7 +761,6 @@ def scrape_series(content_type, tvshows=True):
             break
 
 
-# @routing_plugin.route('/tvshows/<series_id>')
 @routing_plugin.route('/tvshows/<series_id>/')
 @routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/')  # this one is for refresh
 @try_function(ErrorPriority.BLOCKING)
@@ -814,7 +811,7 @@ def scrape_episodes(episodes_label, series_id):
         if i.episode_type.lower() not in ('episode', 'special', 'ova'):
             continue
         # url = url_for(play_episode, i.id)
-        url = 'plugin://plugin.video.nakamori/tvshows/%s/ep/%s/play' % (series.id, i.id)
+        url = 'plugin://plugin.video.nakamori/tvshows/%s/ep/%s/play/' % (series.id, i.id)
 
         li = i.get_listitem(url)
         li.setProperty('IsPlayable', 'true')
@@ -823,9 +820,9 @@ def scrape_episodes(episodes_label, series_id):
             break
 
 
-@routing_plugin.route('/tvshows/<ep_id>/play')
-@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/play')
-@routing_plugin.route('/movies/<ep_id>/play')
+@routing_plugin.route('/tvshows/<ep_id>/play/')
+@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/play/')
+@routing_plugin.route('/movies/<ep_id>/play/')
 @try_function(ErrorPriority.BLOCKING)
 def play_episode(ep_id, series_id=0):
     play_video_internal(PlaybackType.NORMAL, ep_id, file_id=0, mark_as_watched=False)
