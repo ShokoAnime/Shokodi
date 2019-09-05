@@ -266,11 +266,10 @@ def show_group_menu(group_id, filter_id):
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_series_menu(series_id):
     from shoko_models.v2 import Series
-    series = Series(series_id, build_full_object=True, get_children=True)
+    series = Series(series_id, build_full_object=True, get_children=True, force_cache=True, cache_time=10)
     xbmcplugin.setPluginCategory(routing_plugin.handle, series.name)
     if len(series.episode_types) > 1:
         plugin_dir.set_content('seasons')
-        # type listing
         for item in series.episode_types:
             plugin_dir.append(item.get_listitem())
     elif len(series.episode_types) == 1:
@@ -283,7 +282,7 @@ def show_series_menu(series_id):
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_series_episode_types_menu(series_id, episode_type):
     from shoko_models.v2 import SeriesTypeList
-    types = SeriesTypeList(series_id, episode_type, get_children=True)
+    types = SeriesTypeList(series_id, episode_type, get_children=True, force_cache=True, cache_time=10)
     add_episodes(types, episode_type)
 
 
