@@ -551,7 +551,7 @@ msgctxt "#30106"
 msgid "Unsorted"
 msgstr "Nieposortowane"
 
-#: guibuilder.py
+#: settings.xml
 msgctxt "#30107"
 msgid "Settings"
 msgstr "Ustawienia"
@@ -1073,7 +1073,7 @@ msgctxt "#30211"
 msgid "Favorites"
 msgstr "Ulubione"
 
-#: v2.py
+#: v2.py, nakamoriscript.py
 msgctxt "#30212"
 msgid "Add to Favorites"
 msgstr "Dodaj do Ulubionych"
@@ -1083,7 +1083,6 @@ msgctxt "#30213"
 msgid "Remove from Favorites"
 msgstr "Usuń z Ulubionych"
 
-#: settings.xml
 msgctxt "#30214"
 msgid "Show"
 msgstr "Wyświetl"
@@ -1093,7 +1092,7 @@ msgctxt "#30215"
 msgid "Bookmark"
 msgstr "Zakładki"
 
-#: v2.py
+#: v2.py, nakamoriscript.py
 msgctxt "#30216"
 msgid "Add Bookmark"
 msgstr "Dodaj do Zakładki"
@@ -1156,3 +1155,23 @@ msgstr "Filtruj tagi"
 msgctxt "#30228"
 msgid "Clear"
 msgstr "Wyczyść"
+
+#: settings.xml
+msgctxt "#30229"
+msgid "Color"
+msgstr "Kolor"
+
+#: settings.xml
+msgctxt "#30230"
+msgid "Customize"
+msgstr "Dostosuj"
+
+#: settings.xml
+msgctxt "#30231"
+msgid "Make Filters bold"
+msgstr "Pogrub Filtry"
+
+#: settings.xml
+msgctxt "#30232"
+msgid "Bold"
+msgstr "Pogrubienie"
