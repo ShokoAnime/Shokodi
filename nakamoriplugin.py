@@ -67,7 +67,10 @@ def show_main_menu():
     plugin_dir.set_content('tvshows')
     items = []
 
+    bold = True if plugin_addon.getSetting('bold_filters') == 'true' else False
     for item in f:
+        if bold:
+            item.bold()
         items.append(item)
     # apply settings for main menu
     items[:] = [x for x in items if not is_main_menu_item_enabled(x)]
@@ -81,6 +84,7 @@ def show_main_menu():
             items.sort(key=lambda a: (a.sort_index, a.name))
     except:
         error_handler.exception(ErrorPriority.HIGH)
+
     for item in items:
         plugin_dir.append(item.get_listitem(), item.is_kodi_folder)
 
@@ -107,56 +111,84 @@ def add_extra_main_menu_items(items):
     # { 'Favorites', 'Added Recently v2': 0, 'Airing Today': 1, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4,
     # 'Unsort': 5, 'Settings' (both): 7, 'Shoko Menu': 8, 'Search': 9, Experiment: 99}
 
+    customize_menu = True if plugin_addon.getSetting('customize_main_menu') == 'true' else False
+
     if plugin_addon.getSetting('show_favorites') == 'true':
-        item = CustomItem(plugin_localize(30211), 'airing.png', url_for(show_favorites_menu))
+        name = kodi_utils.color(plugin_localize(30211), plugin_addon.getSetting('color_favorites'), customize_menu)
+        if plugin_addon.getSetting('bold_favorites') == 'true' and customize_menu:
+            name = kodi_utils.bold(name)
+        item = CustomItem(name, 'airing.png', url_for(show_favorites_menu))
         item.sort_index = 0
         items.append(item)
 
     if plugin_addon.getSetting('show_bookmark') == 'true':
-        item = CustomItem(plugin_localize(30215), 'airing.png', url_for(show_bookmark_menu))
+        name = kodi_utils.color(plugin_localize(30215), plugin_addon.getSetting('color_bookmark'), customize_menu)
+        if plugin_addon.getSetting('bold_bookmark') == 'true' and customize_menu:
+            name = kodi_utils.bold(name)
+        item = CustomItem(name, 'airing.png', url_for(show_bookmark_menu))
         item.sort_index = 0
         items.append(item)
 
     if plugin_addon.getSetting('show_recent2') == 'true':
-        item = CustomItem(plugin_localize(30170), 'airing.png', url_for(show_added_recently_menu))
+        name = kodi_utils.color(plugin_localize(30170), plugin_addon.getSetting('color_recent2'), customize_menu)
+        if plugin_addon.getSetting('bold_recent2') == 'true' and customize_menu:
+            name = kodi_utils.bold(name)
+        item = CustomItem(name, 'airing.png', url_for(show_added_recently_menu))
         item.sort_index = 0
         items.append(item)
 
-    if plugin_addon.getSetting('show_airing_today') == 'true':
-        item = CustomItem(plugin_localize(30223), 'airing.png', url_for(show_airing_today_menu))
-        item.sort_index = 1
-        items.append(item)
+    # TODO airing today
+    #if plugin_addon.getSetting('show_airing_today') == 'true':
+    #    name = kodi_utils.color(plugin_localize(30211), plugin_addon.getSetting('color_favorites'), color)
+    #    item = CustomItem(plugin_localize(30223), 'airing.png', url_for(show_airing_today_menu))
+    #    item.sort_index = 1
+    #    items.append(item)
 
     if plugin_addon.getSetting('show_calendar') == 'true':
+        name = kodi_utils.color(plugin_localize(30222), plugin_addon.getSetting('color_calendar'), customize_menu)
+        if plugin_addon.getSetting('bold_calendar') == 'true' and customize_menu:
+            name = kodi_utils.bold(name)
         if plugin_addon.getSetting('calendar_basic') == 'true':
-            item = CustomItem(plugin_localize(30222), 'calendar.png', url_for(show_calendar_menu))
+            item = CustomItem(name, 'calendar.png', url_for(show_calendar_menu))
             item.is_kodi_folder = True
         else:
-            item = CustomItem(plugin_localize(30222), 'calendar.png', script(script_utils.url_calendar()))
+            item = CustomItem(name, 'calendar.png', script(script_utils.url_calendar()))
             item.is_kodi_folder = False
         item.sort_index = 12
         items.append(item)
 
     if plugin_addon.getSetting('show_settings') == 'true':
-        item = CustomItem(plugin_localize(30107), 'settings.png', script(script_utils.url_settings()))
+        name = kodi_utils.color(plugin_localize(30107), plugin_addon.getSetting('color_settings'), customize_menu)
+        if plugin_addon.getSetting('bold_settings') == 'true' and customize_menu:
+            name = kodi_utils.bold(name)
+        item = CustomItem(name, 'settings.png', script(script_utils.url_settings()))
         item.sort_index = 14
         item.is_kodi_folder = False
         items.append(item)
 
     if plugin_addon.getSetting('show_settings') == 'true':
-        item = CustomItem(plugin_localize(30107) + ' Script', 'settings.png', script(script_utils.url_script_settings()))
+        name = kodi_utils.color(plugin_localize(30107) + ' Script', plugin_addon.getSetting('color_settings'), customize_menu)
+        if plugin_addon.getSetting('bold_settings') == 'true' and customize_menu:
+            name = kodi_utils.bold(name)
+        item = CustomItem(name, 'settings.png', script(script_utils.url_script_settings()))
         item.sort_index = 16
         item.is_kodi_folder = False
         items.append(item)
 
     if plugin_addon.getSetting('show_shoko') == 'true':
-        item = CustomItem(plugin_localize(30115), 'settings.png', url_for(show_shoko_menu))
+        name = kodi_utils.color(plugin_localize(30115), plugin_addon.getSetting('color_shoko'), customize_menu)
+        if plugin_addon.getSetting('bold_shoko') == 'true' and customize_menu:
+            name = kodi_utils.bold(name)
+        item = CustomItem(name, 'settings.png', url_for(show_shoko_menu))
         item.sort_index = 18
-        item.is_kodi_folder = True # False
+        item.is_kodi_folder = True
         items.append(item)
 
     if plugin_addon.getSetting('show_search') == 'true':
-        item = CustomItem(plugin_localize(30221), 'search.png', url_for(show_search_menu))
+        name = kodi_utils.color(plugin_localize(30221), plugin_addon.getSetting('color_search'), customize_menu)
+        if plugin_addon.getSetting('bold_search') == 'true' and customize_menu:
+            name = kodi_utils.bold(name)
+        item = CustomItem(name, 'search.png', url_for(show_search_menu))
         item.sort_index = 20
         items.append(item)
 
@@ -367,11 +399,12 @@ def show_added_recently_menu():
         plugin_dir.append(e.get_listitem(), False)
 
 
-@routing_plugin.route('/menu/airing_today/')
-@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_airing_today_menu():
-    # TODO airing today
-    pass
+# TODO airing today
+#@routing_plugin.route('/menu/airing_today/')
+#@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+#def show_airing_today_menu():
+#    # TODO airing today
+#    pass
 
 
 @routing_plugin.route('/menu/calendar_old/')

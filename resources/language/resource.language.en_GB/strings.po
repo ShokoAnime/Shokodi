@@ -538,7 +538,7 @@ msgctxt "#30106"
 msgid "Unsorted"
 msgstr "Unsorted"
 
-#: guibuilder.py
+#: settings.xml
 msgctxt "#30107"
 msgid "Settings"
 msgstr "Settings"
@@ -1057,7 +1057,7 @@ msgctxt "#30213"
 msgid "Remove from Favorites"
 msgstr "Remove from Favorites"
 
-#: settings.xml
+#:
 msgctxt "#30214"
 msgid "Show"
 msgstr "Show"
@@ -1131,3 +1131,22 @@ msgctxt "#30228"
 msgid "Clear"
 msgstr "Clear"
 
+#: settings.xml
+msgctxt "#30229"
+msgid "Color"
+msgstr "Color"
+
+#: settings.xml
+msgctxt "#30230"
+msgid "Customize"
+msgstr "Customize"
+
+#: settings.xml
+msgctxt "#30231"
+msgid "Make Filters bold"
+msgstr "Make Filters bold"
+
+#: settings.xml
+msgctxt "#30232"
+msgid "Bold"
+msgstr "Bold"
