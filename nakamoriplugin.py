@@ -266,8 +266,9 @@ def show_shoko_menu():
 
 
 @routing_plugin.route('/filter-<filter_id>/')
+@routing_plugin.route('/filter-<parent_id>/filter-<filter_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_filter_menu(filter_id=0):
+def show_filter_menu(filter_id=0, parent_id=0):
     plugin_dir.set_content('tvshows')
     plugin_dir.set_cached()  # issue https://github.com/xbmc/xbmc/issues/16206
 
@@ -282,9 +283,10 @@ def show_filter_menu(filter_id=0):
     f.apply_default_sorting()
 
 
+@routing_plugin.route('/filter-<parent_id>/filter-<filter_id>/group-<group_id>/')
 @routing_plugin.route('/filter-<filter_id>/group-<group_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_group_menu(group_id, filter_id):
+def show_group_menu(group_id, filter_id, parent_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id, parent_menu=parent_url)
     plugin_dir.set_content('tvshows')
@@ -298,12 +300,13 @@ def show_group_menu(group_id, filter_id):
     group.apply_default_sorting()
 
 
+@routing_plugin.route('/filter-<parent_id>/filter-<filter_id>/group-<group_id>/series-<series_id>/')
 @routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>/')
-@routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>/type/')
 @routing_plugin.route('/menu-<menu_name>/series-<series_id>/')
-@routing_plugin.route('/menu-<menu_name>/series-<series_id>/type/')
+@routing_plugin.route('/menu-search/<query>/series-<series_id>/')
+@routing_plugin.route('/menu-azsearch/<query>/series-<series_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_series_menu(series_id, filter_id=0, group_id=0, menu_name=''):
+def show_series_menu(series_id, filter_id=0, group_id=0, menu_name='', query='', parent_id=0):
     from shoko_models.v2 import Series
     series = Series(series_id, build_full_object=True, get_children=True, force_cache=True, cache_time=10, parent_menu=parent_url)
     xbmcplugin.setPluginCategory(routing_plugin.handle, series.name)
@@ -319,8 +322,10 @@ def show_series_menu(series_id, filter_id=0, group_id=0, menu_name=''):
 
 @routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>/type-<episode_type>/')
 @routing_plugin.route('/menu-<menu_name>/series-<series_id>/type-<episode_type>/')
+@routing_plugin.route('/menu-search/<query>/series-<series_id>/type-<episode_type>/')
+@routing_plugin.route('/menu-azsearch/<query>/series-<series_id>/type-<episode_type>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_series_episode_types_menu(series_id, episode_type, filter_id=0, group_id=0, menu_name=''):
+def show_series_episode_types_menu(series_id, episode_type, filter_id=0, group_id=0, menu_name='', query=''):
     from shoko_models.v2 import SeriesTypeList
     types = SeriesTypeList(series_id, episode_type, get_children=True, force_cache=True, cache_time=10, parent_menu=parent_url)
     add_episodes(types, episode_type)
@@ -432,7 +437,7 @@ def show_calendar_menu():
         plugin_dir.append(s.get_listitem(), False)
 
 
-@routing_plugin.route('/menu-filter/unsorted/')
+@routing_plugin.route('/menu-filter-unsorted/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_unsorted_menu():
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.UNSORT)
@@ -579,8 +584,8 @@ def query_search_and_return_groups(search_url, query):
     return groups
 
 
-@routing_plugin.route('/dialog/azsearch/')
-@routing_plugin.route('/dialog/azsearch/<character>/')
+@routing_plugin.route('/menu-azsearch/')
+@routing_plugin.route('/menu-azsearch/<character>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def az_search(character=''):
     from shoko_models.v2 import CustomItem, Group, Series
@@ -600,7 +605,7 @@ def az_search(character=''):
         items = []
 
         for item in groups.get('series', []):
-            series = Series(item)  # , build_full_object=True, get_children=True)
+            series = Series(item, parent_menu=parent_url)
             series.name = series.match
             series.sort_index = 10
             items.append(series)
