@@ -21,6 +21,8 @@ plugin_localize = plugin_addon.getLocalizedString
 routing_plugin = routing.Plugin('plugin://plugin.video.nakamori', convert_args=True)
 routing_plugin.handle = int(sys.argv[1])
 url_for = routing_plugin.url_for
+parent_url = sys.argv[0]
+xbmc.log(' =========== > ' + str(sys.argv[0]), xbmc.LOGNOTICE)
 
 # I had to read up on this. Functions have read access to this if they don't declare a plugin_dir
 # if you want to do something like del plugin_dir, then you need to do this:
@@ -44,6 +46,7 @@ def finish_menu():
 # Order matters on these. In this, it goes try -> route -> show_main_menu
 # Python is retarded, as you'd expect the opposite
 @routing_plugin.route('/')
+@routing_plugin.route('/filter/')
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
     last_call = (int(time.time()) - int(plugin_addon.getSetting('last_call')))
@@ -63,7 +66,7 @@ def show_main_menu():
         return
 
     from shoko_models.v2 import Filter
-    f = Filter(0, build_full_object=True)
+    f = Filter(0, build_full_object=True, parent_menu=parent_url)
     plugin_dir.set_content('tvshows')
     items = []
 
@@ -201,7 +204,7 @@ def add_extra_main_menu_items(items):
         items.append(item)
 
 
-@routing_plugin.route('/menu/folder/<folderid>/')
+@routing_plugin.route('/menu-folder/<folderid>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_folder_menu(folderid):
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.BOOKMARK)
@@ -217,7 +220,7 @@ def show_folder_menu(folderid):
         plugin_dir.append(s.get_listitem(), True)
 
 
-@routing_plugin.route('/menu/shoko/')
+@routing_plugin.route('/menu-shoko/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_shoko_menu():
     script_utils.log_setsuzoku(Category.SHOKO, Action.MENU, Event.MAIN)
@@ -262,14 +265,14 @@ def show_shoko_menu():
         plugin_dir.append(folder.get_listitem())
 
 
-@routing_plugin.route('/menu/filter/<filter_id>/')
+@routing_plugin.route('/filter-<filter_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_filter_menu(filter_id):
+def show_filter_menu(filter_id=0):
     plugin_dir.set_content('tvshows')
     plugin_dir.set_cached()  # issue https://github.com/xbmc/xbmc/issues/16206
 
     from shoko_models.v2 import Filter
-    f = Filter(filter_id, build_full_object=True, get_children=True)
+    f = Filter(filter_id, build_full_object=True, get_children=True, parent_menu=parent_url)
     xbmcplugin.setPluginCategory(routing_plugin.handle, f.name)
     f.add_sort_methods(routing_plugin.handle)
     for item in f:
@@ -279,26 +282,30 @@ def show_filter_menu(filter_id):
     f.apply_default_sorting()
 
 
-@routing_plugin.route('/menu/group/<group_id>/filterby/<filter_id>/')
+@routing_plugin.route('/filter-<filter_id>/group-<group_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_group_menu(group_id, filter_id):
     from shoko_models.v2 import Group
-    group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id)
+    group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id, parent_menu=parent_url)
     plugin_dir.set_content('tvshows')
     xbmcplugin.setPluginCategory(routing_plugin.handle, group.name)
     group.add_sort_methods(routing_plugin.handle)
     for item in group:
         plugin_dir.append(item.get_listitem())
+        xbmc.log('X======???: %s' % item.get_plugin_url(), xbmc.LOGNOTICE)
 
     finish_menu()
     group.apply_default_sorting()
 
 
-@routing_plugin.route('/menu/series/<series_id>/')
+@routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>/')
+@routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>/type/')
+@routing_plugin.route('/menu-<menu_name>/series-<series_id>/')
+@routing_plugin.route('/menu-<menu_name>/series-<series_id>/type/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_series_menu(series_id):
+def show_series_menu(series_id, filter_id=0, group_id=0, menu_name=''):
     from shoko_models.v2 import Series
-    series = Series(series_id, build_full_object=True, get_children=True, force_cache=True, cache_time=10)
+    series = Series(series_id, build_full_object=True, get_children=True, force_cache=True, cache_time=10, parent_menu=parent_url)
     xbmcplugin.setPluginCategory(routing_plugin.handle, series.name)
     if len(series.episode_types) > 1:
         plugin_dir.set_content('seasons')
@@ -310,11 +317,12 @@ def show_series_menu(series_id):
         raise RuntimeError(plugin_localize(30152))
 
 
-@routing_plugin.route('/menu/series/<series_id>/type/<episode_type>/')
+@routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>/type-<episode_type>/')
+@routing_plugin.route('/menu-<menu_name>/series-<series_id>/type-<episode_type>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_series_episode_types_menu(series_id, episode_type):
+def show_series_episode_types_menu(series_id, episode_type, filter_id=0, group_id=0, menu_name=''):
     from shoko_models.v2 import SeriesTypeList
-    types = SeriesTypeList(series_id, episode_type, get_children=True, force_cache=True, cache_time=10)
+    types = SeriesTypeList(series_id, episode_type, get_children=True, force_cache=True, cache_time=10, parent_menu=parent_url)
     add_episodes(types, episode_type)
 
 
@@ -378,7 +386,7 @@ def add_continue_item(series, episode_type, watched_index):
     plugin_dir.insert(0, continue_item.get_listitem(), continue_item.is_kodi_folder)
 
 
-@routing_plugin.route('/menu/added_recently/')
+@routing_plugin.route('/menu-added_recently/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_added_recently_menu():
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.RECENTLY)
@@ -388,7 +396,7 @@ def show_added_recently_menu():
     plugin_dir.set_content('tvshows')
     from shoko_models.v2 import Series, Episode
     for item in json_body:
-        s = Series(item)
+        s = Series(item, parent_menu=parent_url)
         plugin_dir.append(s.get_listitem(), True)
 
     url = '%s/api/ep/recent?level=2' % server
@@ -399,15 +407,7 @@ def show_added_recently_menu():
         plugin_dir.append(e.get_listitem(), False)
 
 
-# TODO airing today
-#@routing_plugin.route('/menu/airing_today/')
-#@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-#def show_airing_today_menu():
-#    # TODO airing today
-#    pass
-
-
-@routing_plugin.route('/menu/calendar_old/')
+@routing_plugin.route('/menu-calendar_old/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_calendar_menu():
     if script_addon.getSetting('custom_source') == 'true':
@@ -432,7 +432,7 @@ def show_calendar_menu():
         plugin_dir.append(s.get_listitem(), False)
 
 
-@routing_plugin.route('/menu/filter/unsorted/')
+@routing_plugin.route('/menu-filter/unsorted/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_unsorted_menu():
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.UNSORT)
@@ -448,7 +448,7 @@ def show_unsorted_menu():
         plugin_dir.append(f.get_listitem(), False)
 
 
-@routing_plugin.route('/menu/bookmark/')
+@routing_plugin.route('/menu-bookmark/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_bookmark_menu():
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.BOOKMARK)
@@ -460,11 +460,11 @@ def show_bookmark_menu():
     json_node = json.loads(json_body)
 
     for item in json_node.get('series', []):
-        s = Series(item, in_bookmark=True)
+        s = Series(item, in_bookmark=True, parent_menu=parent_url)
         plugin_dir.append(s.get_listitem(), True)
 
 
-@routing_plugin.route('/menu/favorites/')
+@routing_plugin.route('/menu-favorites/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_favorites_menu():
     script_utils.log_setsuzoku(Category.PLUGIN, Action.MENU, Event.FAVORITE)
@@ -475,14 +475,14 @@ def show_favorites_menu():
     favorite_list = favorite.get_all_favorites()
     try:
         for favorite_serie in favorite_list:
-            serie = Series(int(favorite_serie[0]), build_full_object=True, get_children=False)
+            serie = Series(int(favorite_serie[0]), build_full_object=True, get_children=False, parent_menu=parent_url)
             serie.is_in_favorite()
             plugin_dir.append(serie.get_listitem())
     except Exception as ex:
         error_handler.exception(ErrorPriority.HIGHEST, plugin_localize(30151))
 
 
-@routing_plugin.route('/menu/search/')
+@routing_plugin.route('/menu-search/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_search_menu(select_query=None, quick_search=False):
     if quick_search:
@@ -545,6 +545,17 @@ def show_search_menu(select_query=None, quick_search=False):
 
     if _index_selected != -1:
         script_utils.move_to_item_and_enter(_index_selected)
+
+
+@routing_plugin.route('/menu-search/<path:query>/')
+def show_search_result_menu(query):
+    plugin_dir.set_cached()
+    search_url = server + '/api/search'
+    groups = query_search_and_return_groups(search_url, query)
+    from shoko_models.v2 import Group, Series
+    for item in groups.get('series', []):
+        series = Series(item, build_full_object=True, get_children=True, parent_menu=parent_url)
+        plugin_dir.append(series.get_listitem())
 
 
 def query_search_and_return_groups(search_url, query):
@@ -650,16 +661,7 @@ def new_search(save):
         show_search_menu()
 
 
-@routing_plugin.route('/menu/search/<path:query>/')
-def show_search_result_menu(query):
-    plugin_dir.set_cached()
-    search_url = server + '/api/search'
-    groups = query_search_and_return_groups(search_url, query)
-    from shoko_models.v2 import Group, Series
-    for item in groups.get('series', []):
-        series = Series(item, build_full_object=True, get_children=True)
-        plugin_dir.append(series.get_listitem())
-
+# region Play files
 
 class PlaybackType(object):
     NORMAL = 'Normal'
@@ -724,6 +726,9 @@ def play_video_without_marking(ep_id, file_id):
 def resume_video(ep_id, file_id):
     # if we are resuming, then we'll assume that scrobbling and marking are True
     play_video_internal(PlaybackType.NORMAL, ep_id, file_id, mark_as_watched=True, resume=True)
+
+
+# endregion
 
 
 def script(script_url):
