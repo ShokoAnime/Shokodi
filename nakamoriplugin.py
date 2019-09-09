@@ -22,7 +22,6 @@ routing_plugin = routing.Plugin('plugin://plugin.video.nakamori', convert_args=T
 routing_plugin.handle = int(sys.argv[1])
 url_for = routing_plugin.url_for
 parent_url = sys.argv[0]
-xbmc.log(' =========== > ' + str(sys.argv[0]), xbmc.LOGNOTICE)
 
 # I had to read up on this. Functions have read access to this if they don't declare a plugin_dir
 # if you want to do something like del plugin_dir, then you need to do this:
@@ -46,7 +45,6 @@ def finish_menu():
 # Order matters on these. In this, it goes try -> route -> show_main_menu
 # Python is retarded, as you'd expect the opposite
 @routing_plugin.route('/')
-@routing_plugin.route('/filter/')
 @try_function(ErrorPriority.BLOCKING)
 def show_main_menu():
     last_call = (int(time.time()) - int(plugin_addon.getSetting('last_call')))
