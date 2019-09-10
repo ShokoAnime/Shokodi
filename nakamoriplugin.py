@@ -88,6 +88,7 @@ def show_main_menu():
 
     for item in items:
         plugin_dir.append(item.get_listitem(), item.is_kodi_folder)
+    finish_menu()
 
 
 def is_main_menu_item_enabled(item):
@@ -216,6 +217,7 @@ def show_folder_menu(folderid):
     for item in json_node:
         s = Series(item)
         plugin_dir.append(s.get_listitem(), True)
+    finish_menu()
 
 
 @routing_plugin.route('/menu-shoko/')
@@ -261,6 +263,7 @@ def show_shoko_menu():
     folders = ImportFolders()
     for folder in folders.items:
         plugin_dir.append(folder.get_listitem())
+    finish_menu()
 
 
 @routing_plugin.route('/filter-<filter_id>/')
@@ -312,6 +315,7 @@ def show_series_menu(series_id, filter_id=0, group_id=0, menu_name='', query='',
         plugin_dir.set_content('seasons')
         for item in series.episode_types:
             plugin_dir.append(item.get_listitem())
+        finish_menu()
     elif len(series.episode_types) == 1:
         add_episodes(series, series.episode_types[0].episode_type)
     else:
@@ -409,6 +413,8 @@ def show_added_recently_menu():
         e = Episode(item)
         plugin_dir.append(e.get_listitem(), False)
 
+    finish_menu()
+
 
 @routing_plugin.route('/menu-calendar_old/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
@@ -433,6 +439,7 @@ def show_calendar_menu():
             c = CustomItem('[COLOR red]' + str(s.date) + '[/COLOR]', '', '')
             plugin_dir.append(c.get_listitem(), False)
         plugin_dir.append(s.get_listitem(), False)
+    finish_menu()
 
 
 @routing_plugin.route('/menu-filter-unsorted/')
@@ -449,6 +456,7 @@ def show_unsorted_menu():
     for item in json_node:
         f = File(item)
         plugin_dir.append(f.get_listitem(), False)
+    finish_menu()
 
 
 @routing_plugin.route('/menu-bookmark/')
@@ -465,6 +473,7 @@ def show_bookmark_menu():
     for item in json_node.get('series', []):
         s = Series(item, in_bookmark=True, parent_menu=parent_url)
         plugin_dir.append(s.get_listitem(), True)
+    finish_menu()
 
 
 @routing_plugin.route('/menu-favorites/')
@@ -481,6 +490,7 @@ def show_favorites_menu():
             serie = Series(int(favorite_serie[0]), build_full_object=True, get_children=False, parent_menu=parent_url)
             serie.is_in_favorite()
             plugin_dir.append(serie.get_listitem())
+        finish_menu()
     except Exception as ex:
         error_handler.exception(ErrorPriority.HIGHEST, plugin_localize(30151))
 
@@ -546,6 +556,8 @@ def show_search_menu(select_query=None, quick_search=False):
         item = CustomItem(plugin_localize(30110), 'search.png', script_utils.url_clear_search_terms())
         plugin_dir.append(item.get_listitem())
 
+    finish_menu()
+
     if _index_selected != -1:
         script_utils.move_to_item_and_enter(_index_selected)
 
@@ -559,6 +571,7 @@ def show_search_result_menu(query):
     for item in groups.get('series', []):
         series = Series(item, build_full_object=True, get_children=True, parent_menu=parent_url)
         plugin_dir.append(series.get_listitem())
+    finish_menu()
 
 
 def query_search_and_return_groups(search_url, query):
@@ -624,6 +637,8 @@ def az_search(character=''):
             items.sort(key=lambda a: (a.sort_index, a.name))
         for item in items:
             plugin_dir.append(item.get_listitem())
+
+        finish_menu()
 
 
 @routing_plugin.route('/dialog/search/<save>/')
