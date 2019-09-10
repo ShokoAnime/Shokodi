@@ -622,7 +622,7 @@ def az_search(character=''):
             items.append(series)
             _index = len(character)
             if len(series.match) > _index:
-                _new_char = series.match[_index].encode('utf-8').lower()
+                _new_char = pyproxy.decode(series.match[_index].encode('utf-8').lower())
                 if _new_char not in character_list:
                     character_list.append(_new_char)
 
@@ -638,7 +638,7 @@ def az_search(character=''):
         for item in items:
             plugin_dir.append(item.get_listitem())
 
-        finish_menu()
+    finish_menu()
 
 
 @routing_plugin.route('/dialog/search/<save>/')
@@ -650,10 +650,10 @@ def new_search(save):
     query = ''
     if 'nakamori/dialog/search/' in x:
         y = 'search'
-    elif 'nakamori/menu/search/' in x:
+    elif 'nakamori/menu-search/' in x:
         import re
         try:
-            y = re.search("(^plugin://plugin.video.nakamori/menu/search/)(.+)(/)", x).group(2)
+            y = re.search("(^plugin://plugin.video.nakamori/menu-search/)(.+)(/)", x).group(2)
             query = y
         except:
             y = 'search'
@@ -675,7 +675,7 @@ def new_search(save):
         else:
             show_search_menu()
     else:
-        log('new_search len(y)=0, path: %s' % x)  # log this because it should be possible
+        xbmc.log('new_search len(y)=0, path: %s' % x, xbmc.LOGNOTICE)  # log this because it should be possible
         show_search_menu()
 
 
