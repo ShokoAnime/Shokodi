@@ -163,18 +163,9 @@ def add_extra_main_menu_items(items):
         name = kodi_utils.color(plugin_localize(30107), plugin_addon.getSetting('color_settings'), customize_menu)
         if plugin_addon.getSetting('bold_settings') == 'true' and customize_menu:
             name = kodi_utils.bold(name)
-        item = CustomItem(name, 'settings.png', script(script_utils.url_settings()))
+        item = CustomItem(name, 'settings.png', url_for(show_setting_menu))
         item.sort_index = 14
-        item.is_kodi_folder = False
-        items.append(item)
-
-    if plugin_addon.getSetting('show_settings') == 'true':
-        name = kodi_utils.color(plugin_localize(30107) + ' Script', plugin_addon.getSetting('color_settings'), customize_menu)
-        if plugin_addon.getSetting('bold_settings') == 'true' and customize_menu:
-            name = kodi_utils.bold(name)
-        item = CustomItem(name, 'settings.png', script(script_utils.url_script_settings()))
-        item.sort_index = 16
-        item.is_kodi_folder = False
+        item.is_kodi_folder = True
         items.append(item)
 
     if plugin_addon.getSetting('show_shoko') == 'true':
@@ -217,6 +208,35 @@ def show_folder_menu(folderid):
     for item in json_node:
         s = Series(item)
         plugin_dir.append(s.get_listitem(), True)
+    finish_menu()
+
+
+@routing_plugin.route('/menu-settings/')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def show_setting_menu():
+    script_utils.log_setsuzoku(Category.SHOKO, Action.MENU, Event.SETTINGS)
+
+    from shoko_models.v2 import CustomItem
+    xbmcplugin.setPluginCategory(routing_plugin.handle, 'settings')
+
+    name = plugin_localize(30107)
+    item = CustomItem(name, 'settings.png', script(script_utils.url_settings()))
+    item.sort_index = 14
+    item.is_kodi_folder = False
+    plugin_dir.append(item.get_listitem(), item.is_kodi_folder)
+
+    name = plugin_localize(30107) + ' Script'
+    item = CustomItem(name, 'settings.png', script(script_utils.url_script_settings()))
+    item.sort_index = 15
+    item.is_kodi_folder = False
+    plugin_dir.append(item.get_listitem(), item.is_kodi_folder)
+
+    name = plugin_localize(30107) + ' Service'
+    item = CustomItem(name, 'settings.png', script(script_utils.url_service_settings()))
+    item.sort_index = 16
+    item.is_kodi_folder = False
+    plugin_dir.append(item.get_listitem(), item.is_kodi_folder)
+
     finish_menu()
 
 
