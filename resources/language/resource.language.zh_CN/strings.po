@@ -547,7 +547,7 @@ msgctxt "#30106"
 msgid "Unsorted"
 msgstr "未分类"
 
-#: guibuilder.py
+#: settings.xml
 msgctxt "#30107"
 msgid "Settings"
 msgstr "设置"
@@ -1067,7 +1067,7 @@ msgctxt "#30211"
 msgid "Favorites"
 msgstr "收藏"
 
-#: v2.py
+#: v2.py, nakamoriscript.py
 msgctxt "#30212"
 msgid "Add to Favorites"
 msgstr "添加到收藏"
@@ -1077,7 +1077,6 @@ msgctxt "#30213"
 msgid "Remove from Favorites"
 msgstr "移除收藏"
 
-#: settings.xml
 msgctxt "#30214"
 msgid "Show"
 msgstr "显示"
@@ -1087,7 +1086,7 @@ msgctxt "#30215"
 msgid "Bookmark"
 msgstr "书签"
 
-#: v2.py
+#: v2.py, nakamoriscript.py
 msgctxt "#30216"
 msgid "Add Bookmark"
 msgstr "添加至书签"
@@ -1151,3 +1150,22 @@ msgctxt "#30228"
 msgid "Clear"
 msgstr "清除"
 
+#: settings.xml
+msgctxt "#30229"
+msgid "Color"
+msgstr "颜色"
+
+#: settings.xml
+msgctxt "#30230"
+msgid "Customize"
+msgstr "自定义"
+
+#: settings.xml
+msgctxt "#30231"
+msgid "Make Filters bold"
+msgstr "加粗过滤器字体"
+
+#: settings.xml
+msgctxt "#30232"
+msgid "Bold"
+msgstr "加粗"
