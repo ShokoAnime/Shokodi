@@ -4,6 +4,15 @@
 # Initially only starting at 3.0.8
 # version numbers start with !--
 # no & or '
+!-- 3.5.0
+Nakamori as video library source (beta)
+Clean up lib
+Party mode is back (playlist)
+Loading multi-episode-type series is now faster (because we cache result for few seconds)
+Customization of menu items
+Python3 compatible added
+Kore/Webui compatibile added
+
 !-- 3.4.1
 Fix error while server init was taking to long
 Search have been yet again tweak to work like it should
