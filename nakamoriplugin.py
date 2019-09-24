@@ -315,7 +315,7 @@ def show_filter_menu(filter_id=0, parent_id=0):
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_group_menu(group_id, filter_id, parent_id):
     from shoko_models.v2 import Group
-    group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id, parent_menu=parent_url)
+    group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id, parent_menu=parent_id)
     plugin_dir.set_content('tvshows')
     xbmcplugin.setPluginCategory(routing_plugin.handle, group.name)
     group.add_sort_methods(routing_plugin.handle)
