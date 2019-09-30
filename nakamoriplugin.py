@@ -9,7 +9,7 @@ import nakamori_player
 import routing
 import xbmcplugin
 import xbmc
-from error_handler import try_function, show_messages, ErrorPriority, exception, log
+from error_handler import try_function, show_messages, ErrorPriority, exception
 from kodi_models import DirectoryListing, WatchedStatus, ListItem
 from nakamori_utils import kodi_utils, shoko_utils, script_utils, model_utils
 from proxy.python_version_proxy import python_proxy as pyproxy
@@ -310,7 +310,7 @@ def show_filter_menu(filter_id=0, parent_id=0):
     f.apply_default_sorting()
 
 
-@routing_plugin.route('/filter-<parent_id>/group-<group_id>/filterby/<filter_id>/')
+@routing_plugin.route('/filter-<parent_id>/filter-<filter_id>/group-<group_id>/')
 def show_group_menu_filtered(group_id, filter_id, parent_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id, parent_menu=parent_id)
@@ -331,11 +331,11 @@ def show_group_menu(group_id, filter_id):
     show_group_menu_filtered(group_id, filter_id, '')
 
 
-@routing_plugin.route('/filter-<parent_id>/filter-<filter_id>/group-<group_id>/series-<series_id>')
-@routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>')
-@routing_plugin.route('/menu-<menu_name>/series-<series_id>')
-@routing_plugin.route('/menu-search/<query>/series-<series_id>')
-@routing_plugin.route('/menu-azsearch/<query>/series-<series_id>')
+@routing_plugin.route('/filter-<parent_id>/filter-<filter_id>/group-<group_id>/series-<series_id>/')
+@routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>/')
+@routing_plugin.route('/menu-<menu_name>/series-<series_id>/')
+@routing_plugin.route('/menu-search/<query>/series-<series_id>/')
+@routing_plugin.route('/menu-azsearch/<query>/series-<series_id>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_series_menu(series_id, filter_id=0, group_id=0, menu_name='', query='', parent_id=0):
     from shoko_models.v2 import Series
@@ -597,7 +597,7 @@ def show_search_result_menu(query):
     plugin_dir.set_cached()
     search_url = server + '/api/search'
     groups = query_search_and_return_groups(search_url, query)
-    from shoko_models.v2 import Group, Series
+    from shoko_models.v2 import Series
     for item in groups.get('series', []):
         series = Series(item, build_full_object=True, get_children=True, parent_menu=parent_url)
         plugin_dir.append(series.get_listitem())
@@ -629,7 +629,7 @@ def query_search_and_return_groups(search_url, query):
 @routing_plugin.route('/menu-azsearch/<character>/')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def az_search(character=''):
-    from shoko_models.v2 import CustomItem, Group, Series
+    from shoko_models.v2 import CustomItem, Series
     from string import ascii_lowercase
 
     if character == '':
