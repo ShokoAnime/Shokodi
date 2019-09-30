@@ -310,10 +310,8 @@ def show_filter_menu(filter_id=0, parent_id=0):
     f.apply_default_sorting()
 
 
-@routing_plugin.route('/filter-<parent_id>/filter-<filter_id>/group-<group_id>/')
-@routing_plugin.route('/filter-<filter_id>/group-<group_id>/')
-@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_group_menu(group_id, filter_id, parent_id):
+@routing_plugin.route('/filter-<parent_id>/group-<group_id>/filterby/<filter_id>/')
+def show_group_menu_filtered(group_id, filter_id, parent_id):
     from shoko_models.v2 import Group
     group = Group(group_id, build_full_object=True, get_children=True, filter_id=filter_id, parent_menu=parent_id)
     plugin_dir.set_content('tvshows')
@@ -327,11 +325,17 @@ def show_group_menu(group_id, filter_id, parent_id):
     group.apply_default_sorting()
 
 
-@routing_plugin.route('/filter-<parent_id>/filter-<filter_id>/group-<group_id>/series-<series_id>/')
-@routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>/')
-@routing_plugin.route('/menu-<menu_name>/series-<series_id>/')
-@routing_plugin.route('/menu-search/<query>/series-<series_id>/')
-@routing_plugin.route('/menu-azsearch/<query>/series-<series_id>/')
+@routing_plugin.route('/filter-<filter_id>/group-<group_id>/')
+@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
+def show_group_menu(group_id, filter_id):
+    show_group_menu_filtered(group_id, filter_id, '')
+
+
+@routing_plugin.route('/filter-<parent_id>/filter-<filter_id>/group-<group_id>/series-<series_id>')
+@routing_plugin.route('/filter-<filter_id>/group-<group_id>/series-<series_id>')
+@routing_plugin.route('/menu-<menu_name>/series-<series_id>')
+@routing_plugin.route('/menu-search/<query>/series-<series_id>')
+@routing_plugin.route('/menu-azsearch/<query>/series-<series_id>')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_series_menu(series_id, filter_id=0, group_id=0, menu_name='', query='', parent_id=0):
     from shoko_models.v2 import Series
