@@ -180,13 +180,13 @@ msgstr "הגבל תוצאות TAG ל"
 
 #: settings.xml
 msgctxt "#30034"
-msgid "(WIP)Series Vote after completing it"
-msgstr "(WIP) סדרה הצבעה לאחר השלמתה"
+msgid "Series Vote after completing it"
+msgstr " סדרה הצבעה לאחר השלמתה "
 
 #: settings.xml
 msgctxt "#30035"
-msgid "(WIP)Enable voting for Trakt"
-msgstr "(WIP) אפשר הצבעה עבור Trakt"
+msgid "Enable voting for Trakt"
+msgstr "אפשר הצבעה עבור Trakt "
 
 #: settings.xml
 msgctxt "#30036"
@@ -893,6 +893,16 @@ msgstr "סיים"
 msgctxt "#30183"
 msgid "You already finished this."
 msgstr "כבר סיימת את זה."
+
+#: settings.xml
+msgctxt "#30184"
+msgid "Suggest Series rating based on ep rating"
+msgstr "הצע דירוג סדרה על סמך דירוג ep"
+
+#: settings.xml
+msgctxt "#30185"
+msgid "Require all Episodes being rated before suggesting"
+msgstr "דרש את כל הפרקים שידורגו לפני שתציע"
 
 #: shoko_utils.py
 msgctxt "#30189"
