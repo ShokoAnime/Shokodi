@@ -180,13 +180,13 @@ msgstr "Begränsa TAG resultat till"
 
 #: settings.xml
 msgctxt "#30034"
-msgid "(WIP)Series Vote after completing it"
-msgstr "(WIP) Serie Rösta efter att ha slutfört den"
+msgid "Series Vote after completing it"
+msgstr "Serie Rösta efter att ha slutfört den "
 
 #: settings.xml
 msgctxt "#30035"
-msgid "(WIP)Enable voting for Trakt"
-msgstr "(WIP) Aktivera röstning för Trakt"
+msgid "Enable voting for Trakt"
+msgstr "Aktivera röstning för Trakt "
 
 #: settings.xml
 msgctxt "#30036"
@@ -898,6 +898,16 @@ msgstr "Färdiga"
 msgctxt "#30183"
 msgid "You already finished this."
 msgstr "Du har redan gjort det här."
+
+#: settings.xml
+msgctxt "#30184"
+msgid "Suggest Series rating based on ep rating"
+msgstr "Föreslå seriens betyg baserat på ep-betyg"
+
+#: settings.xml
+msgctxt "#30185"
+msgid "Require all Episodes being rated before suggesting"
+msgstr "Kräv att alla avsnitt ska betygsättas innan du föreslår"
 
 #: shoko_utils.py
 msgctxt "#30189"
