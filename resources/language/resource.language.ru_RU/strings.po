@@ -181,13 +181,13 @@ msgstr "Ограничить результаты TAG"
 
 #: settings.xml
 msgctxt "#30034"
-msgid "Series Vote after completing it"
-msgstr "Серия Голосование после его завершения "
+msgid "(WIP)Series Vote after completing it"
+msgstr "(WIP) Серия Голосование после его завершения"
 
 #: settings.xml
 msgctxt "#30035"
-msgid "Enable voting for Trakt"
-msgstr "Включить голосование за Тракт "
+msgid "(WIP)Enable voting for Trakt"
+msgstr "(WIP) Включить голосование за Тракт"
 
 #: settings.xml
 msgctxt "#30036"
@@ -832,7 +832,7 @@ msgctxt "#30159"
 msgid "Unable to Connect"
 msgstr "Невозможно подключиться"
 
-#: guibuilder.py, kodi_utils.py, nakamori_player.py, nakamoriscript.py
+#: guibuilder.py, kodi_utils.py
 msgctxt "#30160"
 msgid "Please Wait"
 msgstr "Подождите пожалуйста"
@@ -881,56 +881,6 @@ msgctxt "#30169"
 msgid "Use seiyuu picture for cast data"
 msgstr "Используйте картинку сэйю для каста данных"
 
-#: nakamoriplugin.py
-msgctxt "#30170"
-msgid "Recently Added Series/Episodes"
-msgstr "Недавно Добавленные Сериалы / Эпизоды"
-
-#: settings.xml
-msgctxt "#30171"
-msgid "Force Burn-In subtitles"
-msgstr "Force Burn-In субтитры"
-
-#: settings.xml
-msgctxt "#30172"
-msgid "Resend profile"
-msgstr "Переслать профиль"
-
-#: settings.xml
-msgctxt "#30173"
-msgid "Debug"
-msgstr "отлаживать"
-
-#: v2
-msgctxt "#30174"
-msgid "Play (transcode)"
-msgstr "Воспроизвести (перекодировать)"
-
-#: v2
-msgctxt "#30175"
-msgid "Play (DirectPlay)"
-msgstr "Play (DirectPlay)"
-
-#: v2
-msgctxt "#30176"
-msgid "Add to transcode queue"
-msgstr "Добавить в очередь перекодировки"
-
-#: v2, nakamori_player.py, nakamoriscript.py
-msgctxt "#30177"
-msgid "Examine stream information"
-msgstr "Изучите информацию о потоке"
-
-#: nakamori_player.py
-msgctxt "#30178"
-msgid "Select Audio stream"
-msgstr "Выберите аудио поток"
-
-#: nakamori_player.py
-msgctxt "#30179"
-msgid "Select Subtitle stream"
-msgstr "Выберите поток субтитров"
-
 #: guibuilder.py
 msgctxt "#30180"
 msgid "No Results Found"
@@ -951,16 +901,6 @@ msgctxt "#30183"
 msgid "You already finished this."
 msgstr "Вы уже закончили это."
 
-#: settings.xml
-msgctxt "#30184"
-msgid "Suggest Series rating based on ep rating"
-msgstr "Предложить рейтинг серии на основе рейтинга EP"
-
-#: settings.xml
-msgctxt "#30185"
-msgid "Require all Episodes being rated before suggesting"
-msgstr "Требовать оценки всех эпизодов, прежде чем предлагать"
-
 #: shoko_utils.py
 msgctxt "#30189"
 msgid "Queued File for Rehash"
@@ -975,11 +915,6 @@ msgstr "Файл в очереди для повторного сканиров�
 msgctxt "#30191"
 msgid "Refreshing in 10 seconds"
 msgstr "Обновление за 10 секунд"
-
-#: nakamori_player.py
-msgctxt "#30192"
-msgid "Adding to transcode queue"
-msgstr "Добавление в очередь перекодирования"
 
 #: shoko_utils.py
 msgctxt "#30193"
@@ -1040,86 +975,6 @@ msgctxt "#30204"
 msgid "Remove"
 msgstr "Удалить"
 
-#: nakamori_player.py
-msgctxt "#30205"
-msgid "Extracting subtitles..."
-msgstr "Извлечение субтитров ..."
-
-#: nakamori_player.py
-msgctxt "#30206"
-msgid "Waiting for transcode to start..."
-msgstr "Ожидание начала транскодирования ..."
-
-#: nakamoriscript.py
-msgctxt "#30207"
-msgid "Results"
-msgstr "Результаты"
-
-#: settings.xml
-msgctxt "#30208"
-msgid "Please install and enable addon"
-msgstr "Пожалуйста, установите и включите аддон"
-
-#: nakamoriscript.py
-msgctxt "#30209"
-msgid "Would you like to enable addon?"
-msgstr "Вы хотите включить аддон?"
-
-#: settings.xml
-msgctxt "#30210"
-msgid "Would you like to install addon"
-msgstr "Хотите установить аддон"
-
-#: settings.xml, nakamoriplugin.py
-msgctxt "#30211"
-msgid "Favorites"
-msgstr "Избранные"
-
-#: v2.py
-msgctxt "#30212"
-msgid "Add to Favorites"
-msgstr "Добавить в избранное"
-
-#: v2.py
-msgctxt "#30213"
-msgid "Remove from Favorites"
-msgstr "Удалить из Избранного"
-
-#: settings.xml
-msgctxt "#30214"
-msgid "Show"
-msgstr "Шоу"
-
-#: settings.xml, nakamoriplugin.py
-msgctxt "#30215"
-msgid "Bookmark"
-msgstr "закладка"
-
-#: v2.py
-msgctxt "#30216"
-msgid "Add Bookmark"
-msgstr "Добавить закладку"
-
-#: v2.py
-msgctxt "#30217"
-msgid "Remove Bookmark"
-msgstr "Удалить закладку"
-
-#: nakamori_player.py
-msgctxt "#30218"
-msgid "It's taking longer than expected"
-msgstr "Это займет больше времени, чем ожидалось"
-
-#: v2.py
-msgctxt "#30219"
-msgid "Start"
-msgstr "Начните"
-
-#: v2.py
-msgctxt "#30220"
-msgid "Pause"
-msgstr "Пауза"
-
 #: settings.xml, guibuilder.py
 msgctxt "#30221"
 msgid "Search"
@@ -1153,8 +1008,3 @@ msgstr "Жанровые теги"
 msgctxt "#30227"
 msgid "Filter Tags to "
 msgstr "Фильтровать теги в"
-
-#: v2.py
-msgctxt "#30228"
-msgid "Clear"
-msgstr "Очистить"

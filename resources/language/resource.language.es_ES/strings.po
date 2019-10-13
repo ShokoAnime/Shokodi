@@ -180,13 +180,13 @@ msgstr "Limitar los resultados de TAG a"
 
 #: settings.xml
 msgctxt "#30034"
-msgid "Series Vote after completing it"
-msgstr "Serie Vota después de completarlo "
+msgid "(WIP)Series Vote after completing it"
+msgstr "Serie (WIP) Vota después de completarlo"
 
 #: settings.xml
 msgctxt "#30035"
-msgid "Enable voting for Trakt"
-msgstr "Habilitar la votación para Trakt "
+msgid "(WIP)Enable voting for Trakt"
+msgstr "(WIP) Habilitar la votación para Trakt"
 
 #: settings.xml
 msgctxt "#30036"
@@ -832,7 +832,7 @@ msgctxt "#30159"
 msgid "Unable to Connect"
 msgstr "No puede conectarse"
 
-#: guibuilder.py, kodi_utils.py, nakamori_player.py, nakamoriscript.py
+#: guibuilder.py, kodi_utils.py
 msgctxt "#30160"
 msgid "Please Wait"
 msgstr "Por favor espera"
@@ -881,56 +881,6 @@ msgctxt "#30169"
 msgid "Use seiyuu picture for cast data"
 msgstr "Usa la imagen de seiyuu para los datos de lanzamiento"
 
-#: nakamoriplugin.py
-msgctxt "#30170"
-msgid "Recently Added Series/Episodes"
-msgstr "Series / episodios recientemente agregados"
-
-#: settings.xml
-msgctxt "#30171"
-msgid "Force Burn-In subtitles"
-msgstr "Forzar subtítulos de grabación"
-
-#: settings.xml
-msgctxt "#30172"
-msgid "Resend profile"
-msgstr "Reenviar perfil"
-
-#: settings.xml
-msgctxt "#30173"
-msgid "Debug"
-msgstr "Depurar"
-
-#: v2
-msgctxt "#30174"
-msgid "Play (transcode)"
-msgstr "Reproducir (transcodificar)"
-
-#: v2
-msgctxt "#30175"
-msgid "Play (DirectPlay)"
-msgstr "Jugar (DirectPlay)"
-
-#: v2
-msgctxt "#30176"
-msgid "Add to transcode queue"
-msgstr "Agregar a la cola de transcodificación"
-
-#: v2, nakamori_player.py, nakamoriscript.py
-msgctxt "#30177"
-msgid "Examine stream information"
-msgstr "Examinar la información del flujo"
-
-#: nakamori_player.py
-msgctxt "#30178"
-msgid "Select Audio stream"
-msgstr "Seleccionar transmisión de audio"
-
-#: nakamori_player.py
-msgctxt "#30179"
-msgid "Select Subtitle stream"
-msgstr "Seleccionar secuencia de subtítulos"
-
 #: guibuilder.py
 msgctxt "#30180"
 msgid "No Results Found"
@@ -951,16 +901,6 @@ msgctxt "#30183"
 msgid "You already finished this."
 msgstr "Ya terminaste esto."
 
-#: settings.xml
-msgctxt "#30184"
-msgid "Suggest Series rating based on ep rating"
-msgstr "Sugerir calificación de la serie basada en la calificación ep"
-
-#: settings.xml
-msgctxt "#30185"
-msgid "Require all Episodes being rated before suggesting"
-msgstr "Requerir que todos los episodios sean calificados antes de sugerir"
-
 #: shoko_utils.py
 msgctxt "#30189"
 msgid "Queued File for Rehash"
@@ -975,11 +915,6 @@ msgstr "Archivo en cola para volver a explorar"
 msgctxt "#30191"
 msgid "Refreshing in 10 seconds"
 msgstr "Refrescante en 10 segundos."
-
-#: nakamori_player.py
-msgctxt "#30192"
-msgid "Adding to transcode queue"
-msgstr "Agregar a la cola de transcodificación"
 
 #: shoko_utils.py
 msgctxt "#30193"
@@ -1040,86 +975,6 @@ msgctxt "#30204"
 msgid "Remove"
 msgstr "retirar"
 
-#: nakamori_player.py
-msgctxt "#30205"
-msgid "Extracting subtitles..."
-msgstr "Extrayendo subtítulos ..."
-
-#: nakamori_player.py
-msgctxt "#30206"
-msgid "Waiting for transcode to start..."
-msgstr "Esperando a que comience la transcodificación ..."
-
-#: nakamoriscript.py
-msgctxt "#30207"
-msgid "Results"
-msgstr "Resultados"
-
-#: settings.xml
-msgctxt "#30208"
-msgid "Please install and enable addon"
-msgstr "Instala y habilita el complemento"
-
-#: nakamoriscript.py
-msgctxt "#30209"
-msgid "Would you like to enable addon?"
-msgstr "¿Desea habilitar el complemento?"
-
-#: settings.xml
-msgctxt "#30210"
-msgid "Would you like to install addon"
-msgstr "¿Desea instalar el complemento?"
-
-#: settings.xml, nakamoriplugin.py
-msgctxt "#30211"
-msgid "Favorites"
-msgstr "Favoritos"
-
-#: v2.py
-msgctxt "#30212"
-msgid "Add to Favorites"
-msgstr "Agregar a los favoritos"
-
-#: v2.py
-msgctxt "#30213"
-msgid "Remove from Favorites"
-msgstr "Remover de favoritos"
-
-#: settings.xml
-msgctxt "#30214"
-msgid "Show"
-msgstr "mostrar"
-
-#: settings.xml, nakamoriplugin.py
-msgctxt "#30215"
-msgid "Bookmark"
-msgstr "Marcador"
-
-#: v2.py
-msgctxt "#30216"
-msgid "Add Bookmark"
-msgstr "Añadir marcador"
-
-#: v2.py
-msgctxt "#30217"
-msgid "Remove Bookmark"
-msgstr "Eliminar marcador"
-
-#: nakamori_player.py
-msgctxt "#30218"
-msgid "It's taking longer than expected"
-msgstr "Está tardando más de lo esperado"
-
-#: v2.py
-msgctxt "#30219"
-msgid "Start"
-msgstr "comienzo"
-
-#: v2.py
-msgctxt "#30220"
-msgid "Pause"
-msgstr "Pausa"
-
 #: settings.xml, guibuilder.py
 msgctxt "#30221"
 msgid "Search"
@@ -1153,8 +1008,3 @@ msgstr "Etiquetas de género"
 msgctxt "#30227"
 msgid "Filter Tags to "
 msgstr "Filtrar etiquetas para"
-
-#: v2.py
-msgctxt "#30228"
-msgid "Clear"
-msgstr "Claro"

@@ -3,43 +3,6 @@
 # This will have all relevant news going back a long time.
 # Initially only starting at 3.0.8
 # version numbers start with !--
-# no & or '
-!-- 3.5.0
-Nakamori as video library source (beta)
-Clean up lib
-Party mode is back (playlist)
-Loading multi-episode-type series is now faster (because we cache result for few seconds)
-Customization of menu items
-Python3 compatible added
-Kore/Webui compatibile added
-
-!-- 3.4.1
-Fix error while server init was taking to long
-Search have been yet again tweak to work like it should
-A-Z Search now support utf-8 characters (from second place)
-
-!-- 3.4.0
-Favorites (local) and Bookmarks (shoko) added for different needs
-Calendar is now fixed and more responsive on touch devices
-External Calendar source can be used with two data styles
-Moving to next unwatched episode has been tweaked
-New Search method (PSN style aka A-Z)
-Search menu tweaked
-First installation dont fail on service
-Introduce analytic tools (without Google)
-Fix Unable to select item issue
-Fix Empty/Cache directory after watching video
-Added extended support for Eigakan project (not a public beta yet)
-Fix issue with playing videos while having Show Info as default action
-Remove extra Refresh from context menu
-
-
-!-- 3.3.0
-New Calendar style with Series info
-Rate suggestion for Series
-Chinese translation !
-Added Recently added episodes (because reasons)
-
 !-- 3.2.0
 Everything has been rewrite ! Its like Christmas but in May!
 Translations got updated: Arabic, Chinese, Dutch, French, German, Hebrew, Italian, Polish, Russian, Spanish, Swedish
