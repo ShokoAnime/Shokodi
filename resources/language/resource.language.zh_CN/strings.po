@@ -1,10 +1,11 @@
 # Translators:
 # BigRetroMike, 2019
+# Jim Jiang <jim@lotlab.org>, 2019
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Nakamori\n"
-"Last-Translator: BigRetroMike, 2019\n"
+"Last-Translator: Jim Jiang <jim@lotlab.org>, 2019\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/nakamori/teams/97622/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -180,13 +181,13 @@ msgstr "限制标签结果至"
 
 #: settings.xml
 msgctxt "#30034"
-msgid "(WIP)Series Vote after completing it"
-msgstr "（未完成）系列播放完毕后显示投票"
+msgid "Series Vote after completing it"
+msgstr "系列播放完毕后显示投票"
 
 #: settings.xml
 msgctxt "#30035"
-msgid "(WIP)Enable voting for Trakt"
-msgstr "（未完成）为 Trakt 启用投票"
+msgid "Enable voting for Trakt"
+msgstr "为 Trakt 启用投票"
 
 #: settings.xml
 msgctxt "#30036"
@@ -891,6 +892,16 @@ msgstr "完成"
 msgctxt "#30183"
 msgid "You already finished this."
 msgstr "此项目已完成"
+
+#: settings.xml
+msgctxt "#30184"
+msgid "Suggest Series rating based on ep rating"
+msgstr "根据分集分数推荐剧集的分数"
+
+#: settings.xml
+msgctxt "#30185"
+msgid "Require all Episodes being rated before suggesting"
+msgstr "在推荐前需要为所有分集打分"
 
 #: shoko_utils.py
 msgctxt "#30189"
