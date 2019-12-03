@@ -3,6 +3,11 @@
 # This will have all relevant news going back a long time.
 # Initially only starting at 3.0.8
 # version numbers start with !--
+!-- 3.5.4
+More Localization
+New Calendar Style with Series Info
+Better Eigakan Transcoding Support
+
 !-- 3.2.0
 Everything has been rewrite ! Its like Christmas but in May!
 Translations got updated: Arabic, Chinese, Dutch, French, German, Hebrew, Italian, Polish, Russian, Spanish, Swedish

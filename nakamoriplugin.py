@@ -7,6 +7,7 @@ import error_handler
 import nakamori_player
 import routing
 import xbmcplugin
+import xbmc
 from error_handler import try_function, show_messages, ErrorPriority, exception
 from kodi_models import DirectoryListing, WatchedStatus, ListItem
 from nakamori_utils import kodi_utils, shoko_utils, script_utils, model_utils
@@ -98,7 +99,7 @@ def add_extra_main_menu_items(items):
     from shoko_models.v2 import CustomItem
     # { 'Added Recently v2': 0, 'Airing Today': 1, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4,
     # 'Unsort': 5, 'Settings' (both): 7, 'Shoko Menu': 8, 'Search': 9, Experiment: 99}
-    item = CustomItem('Recently Added Series/Episodes', 'airing.png', url_for(show_added_recently_menu))
+    item = CustomItem(plugin_localize(30170), 'airing.png', url_for(show_added_recently_menu))
     item.sort_index = 0
     items.append(item)
 
@@ -226,6 +227,8 @@ def add_episodes(series, episode_type):
     finish_menu()
     series.apply_default_sorting()
     if select:
+        while kodi_utils.is_dialog_active():
+            xbmc.sleep(500)
         # the list is definitely not there yet, so try after 0.25s.
         xbmc.sleep(250)
         kodi_utils.move_to_index(watched_index)
@@ -397,7 +400,7 @@ def show_search_result_menu(query):
     search_url = pyproxy.set_parameter(search_url, 'limit_tag', plugin_addon.getSetting('maxlimit_tag'))
     json_body = json.loads(pyproxy.get_json(search_url))
     groups = json_body['groups'][0]
-    if groups['size'] == 0:
+    if json_body.get('size', 0) == 0:
         # Show message about no results
         kodi_utils.message_box(plugin_localize(30180), plugin_localize(30181))
         # draw search menu instead of deleting menu
@@ -407,12 +410,19 @@ def show_search_result_menu(query):
     plugin_dir.set_content('tvshows')
     from shoko_models.v2 import Group, Series
     Group(0).add_sort_methods(routing_plugin.handle)
-    for item in groups['series']:
+    for item in groups.get('series', []):
         series = Series(item, build_full_object=True, get_children=True)
         plugin_dir.append(series.get_listitem())
 
 
 def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
+    # clearing playlist before adding to it did not helped
+    # z = xbmc.PlayList(1)
+    # q = z.size()
+    # y = z.getPlayListId()
+    # xbmc.log('-------------> PLAYLIST HACK : id %s, size %s ' % (y, q), xbmc.LOGNOTICE)
+    # z.clear()
+
     # this prevents the spinning wheel
     fail_menu()
 
@@ -430,10 +440,37 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
 
     # all of real work is done here
     nakamori_player.play_video(selected_id, ep_id, mark_as_watched, resume)
+    xbmc.log(' ------> play_video_internal: over function', xbmc.LOGNOTICE)
+    while kodi_utils.is_dialog_active():
+        xbmc.sleep(500)
+        xbmc.log(' ------> play_video_internal is_dialog_active', xbmc.LOGNOTICE)
+    kodi_utils.move_to_next()
+
+
+@routing_plugin.route('/episode/<ep_id>/file/<file_id>/directplay')
+@try_function(ErrorPriority.BLOCKING)
+def direct_play_video(ep_id, file_id, mark_as_watched=True, resume=False):
+    # this prevents the spinning wheel
+    fail_menu()
+
+    if ep_id > 0 and file_id == 0:
+        from shoko_models.v2 import Episode
+        ep = Episode(ep_id, build_full_object=True)
+        # follow pick_file setting
+        if plugin_addon.getSetting('pick_file') == 'true':
+            items = [(x.name, x.id) for x in ep]
+            selected_id = kodi_utils.show_file_list(items)
+        else:
+            selected_id = ep.get_file().id
+    else:
+        selected_id = file_id
+
+    # all of real work is done here
+    nakamori_player.direct_play_video(selected_id, ep_id, mark_as_watched, resume)
+    # kodi_utils.move_to_next()
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')
-@try_function(ErrorPriority.BLOCKING)
 def play_video(ep_id, file_id):
     play_video_internal(ep_id, file_id)
 
@@ -590,6 +627,8 @@ def play_episode(ep_id):
 @try_function(ErrorPriority.BLOCKING)
 def main():
     debug.debug_init()
+    # stage 0 - everything before connecting
+    kodi_utils.get_device_id()
     # stage 1 - check connection
     if not shoko_utils.can_connect():
         fail_menu()
