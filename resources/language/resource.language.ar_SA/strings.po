@@ -180,13 +180,13 @@ msgstr "قصر نتائج TAG على"
 
 #: settings.xml
 msgctxt "#30034"
-msgid "(WIP)Series Vote after completing it"
-msgstr "(WIP) سلسلة التصويت بعد الانتهاء منه"
+msgid "Series Vote after completing it"
+msgstr "سلسلة التصويت بعد الانتهاء منه"
 
 #: settings.xml
 msgctxt "#30035"
-msgid "(WIP)Enable voting for Trakt"
-msgstr "(WIP) تمكين التصويت لـ Trakt"
+msgid "Enable voting for Trakt"
+msgstr "تمكين التصويت ل Trakt"
 
 #: settings.xml
 msgctxt "#30036"
@@ -893,6 +893,16 @@ msgstr "تم الانتهاء من"
 msgctxt "#30183"
 msgid "You already finished this."
 msgstr "لقد انتهيت بالفعل من هذا."
+
+#: settings.xml
+msgctxt "#30184"
+msgid "Suggest Series rating based on ep rating"
+msgstr "تشير تصنيف السلسلة على أساس تصنيف ep"
+
+#: settings.xml
+msgctxt "#30185"
+msgid "Require all Episodes being rated before suggesting"
+msgstr "تتطلب جميع الحلقات يجري تصنيفها قبل اقتراح"
 
 #: shoko_utils.py
 msgctxt "#30189"
