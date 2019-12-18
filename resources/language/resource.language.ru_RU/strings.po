@@ -181,13 +181,13 @@ msgstr "Ограничить результаты TAG"
 
 #: settings.xml
 msgctxt "#30034"
-msgid "(WIP)Series Vote after completing it"
-msgstr "(WIP) Серия Голосование после его завершения"
+msgid "Series Vote after completing it"
+msgstr "Серия Голосование после его завершения "
 
 #: settings.xml
 msgctxt "#30035"
-msgid "(WIP)Enable voting for Trakt"
-msgstr "(WIP) Включить голосование за Тракт"
+msgid "Enable voting for Trakt"
+msgstr "Включить голосование за Тракт "
 
 #: settings.xml
 msgctxt "#30036"
@@ -900,6 +900,16 @@ msgstr "Законченный"
 msgctxt "#30183"
 msgid "You already finished this."
 msgstr "Вы уже закончили это."
+
+#: settings.xml
+msgctxt "#30184"
+msgid "Suggest Series rating based on ep rating"
+msgstr "Предложить рейтинг серии на основе рейтинга EP"
+
+#: settings.xml
+msgctxt "#30185"
+msgid "Require all Episodes being rated before suggesting"
+msgstr "Требовать оценки всех эпизодов, прежде чем предлагать"
 
 #: shoko_utils.py
 msgctxt "#30189"
