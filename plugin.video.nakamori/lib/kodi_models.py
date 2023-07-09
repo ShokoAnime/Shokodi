@@ -43,21 +43,53 @@ class WatchedStatus(object):
 
 class ListItem:
     def __init__(self, label='', label2='', icon_image='', thumbnail_image='', path='', offscreen=False):
-        try:
+        if float(kodi_version) > 18:
             self.list_item = xbmcgui.ListItem(label=label, label2=label2, path=path, offscreen=offscreen)
             if icon_image is not None and icon_image != '':
                 self.set_icon(icon_image)
             if thumbnail_image is not None and thumbnail_image != '':
                 self.set_thumb(thumbnail_image)
-        except:
+            self.videoTag = self.list_item.getVideoInfoTag()
+        else:
             self.list_item = xbmcgui.ListItem(label, label2, icon_image, thumbnail_image, path)
 
     def set_info(self, type, infoLabels):
-        try:
+        if float(kodi_version) > 19:
             if type == 'video':
-                video = self.list_item.getVideoInfoTag()
-                video.setInfo(infoLabels)
-        except:
+                self.videoTag.setTitle(self.list_item.getLabel())
+                if 'aired' in infoLabels:
+                    self.videoTag.setFirstAired(infoLabels['aired'])
+                if 'mediatype' in infoLabels:
+                    self.videoTag.setMediaType(infoLabels['mediatype'])
+                if 'path' in infoLabels:
+                    self.videoTag.setPath(infoLabels['path'])
+                if 'sorttitle' in infoLabels:
+                    self.videoTag.setSortTitle(infoLabels['sorttitle'])
+                if 'originaltitle' in infoLabels:
+                    self.videoTag.setOriginalTitle(infoLabels['originaltitle'])
+                if 'plot' in infoLabels:
+                    self.videoTag.setPlot(infoLabels['plot'])
+                if 'plotoutline' in infoLabels:
+                    self.videoTag.setPlotOutline(infoLabels['plotoutline'])
+                if 'dateadded' in infoLabels:
+                    self.videoTag.setDateAdded(infoLabels['dateadded'])
+                if 'year' in infoLabels and infoLabels['year'] is not None and infoLabels['year'] != '':
+                    self.videoTag.setYear(int(infoLabels['year']))
+                if 'mpaa' in infoLabels:
+                    self.videoTag.setMpaa(infoLabels['mpaa'])
+                if 'duration' in infoLabels:
+                    self.videoTag.setDuration(infoLabels['duration'])
+                if 'genre' in infoLabels:
+                    self.videoTag.setGenres(infoLabels['genre'])
+                if 'tag' in infoLabels:
+                    self.videoTag.setTags(infoLabels['tag'])
+                if 'trailer' in infoLabels:
+                    self.videoTag.setTrailer(infoLabels['trailer'])
+                if 'tagline' in infoLabels:
+                    self.videoTag.setTagLine(infoLabels['tagline'])
+                if 'studio' in infoLabels:
+                    self.videoTag.setStudios(infoLabels['studio'])
+        else:
             self.list_item.setInfo(type=type, infoLabels=infoLabels)
 
     def set_path(self, path):
@@ -70,8 +102,8 @@ class ListItem:
         self.list_item.setProperty(property, value)
 
     def add_stream_info(self, type, info):
-        try:
-            video = self.list_item.getVideoInfoTag()
+        if float(kodi_version) > 18:
+            video = self.videoTag
             if type == 'video':
                 stream = xbmc.VideoStreamDetail(width=int(info['width']), height=int(info['height']),
                                                 codec=info['codec'], aspect=float(info['aspect']))
@@ -83,28 +115,28 @@ class ListItem:
             if type == 'subtitle':
                 stream = xbmc.SubtitleStreamDetail(language=info['language'])
                 video.addSubtitleStream(stream)
-        except:
+        else:
             self.list_item.addStreamInfo(type, info)
 
     def set_cast(self, cast):
-        try:
+        if float(kodi_version) > 18:
             actors = []
             for c in cast:
                 actors.append(xbmc.Actor(name=c['name'], role=c['role'], thumbnail=c['thumbnail']))
-            self.list_item.getVideoInfoTag().setCast(actors)
-        except:
+            self.videoTag.setCast(actors)
+        else:
             self.list_item.setCast(cast)
 
     def set_rating(self, type, rating, votes=0, default=True):
-        try:
-            self.list_item.getVideoInfoTag().setRating(type=type, rating=float(rating), votes=votes, isdefault=default)
-        except:
+        if float(kodi_version) > 18:
+            self.videoTag.setRating(type=type, rating=float(rating), votes=votes, isdefault=default)
+        else:
             self.list_item.setRating(type=type, rating=rating, votes=votes, defaultt=default)
 
     def set_unique_ids(self, unique_ids):
-        try:
-            self.list_item.getVideoInfoTag().setUniqueIDs(unique_ids.get_dict())
-        except:
+        if float(kodi_version) > 18:
+            self.videoTag.setUniqueIDs(unique_ids.get_dict())
+        else:
             self.list_item.setUniqueIDs(unique_ids.get_dict())
 
     def add_context_menu_items(self, items):
@@ -161,25 +193,25 @@ class ListItem:
         :return:
         """
         if flag == WatchedStatus.UNWATCHED:
-            try:
-                self.list_item.getVideoInfoTag().setPlaycount(0)
-            except:
+            if float(kodi_version) > 18:
+                self.videoTag.setPlaycount(0)
+            else:
                 infolabels['playcount'] = 0
                 infolabels['overlay'] = 4
                 if total_time > 0:
                     self.list_item.setProperty('TotalTime', str(total_time))
         elif flag == WatchedStatus.WATCHED:
-            try:
-                self.list_item.getVideoInfoTag().setPlaycount(1)
-            except:
+            if float(kodi_version) > 18:
+                self.videoTag.setPlaycount(1)
+            else:
                 infolabels['playcount'] = 1
                 infolabels['overlay'] = 5
                 if total_time > 0:
                     self.list_item.setProperty('TotalTime', str(total_time))
         elif flag == WatchedStatus.PARTIAL and plugin_addon.getSetting('file_resume') == 'true':
-            try:
-                self.list_item.getVideoInfoTag().setResumePoint(float(resume_time), float(total_time))
-            except:
+            if float(kodi_version) > 18:
+                self.videoTag.setResumePoint(float(resume_time), float(total_time))
+            else:
                 eh.exception(ErrorPriority.NORMAL)
                 self.list_item.setProperty('ResumeTime', str(resume_time))
                 if total_time > 0:

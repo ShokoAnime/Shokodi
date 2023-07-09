@@ -12,6 +12,11 @@ try:
 except (ImportError, NameError, AttributeError):
     translatePath = xbmc.translatePath
 
+try:
+    unicode('abc')
+except:
+    unicode = str
+
 from lib.nakamori_utils.globalvars import *
 from lib import error_handler as eh
 from lib.error_handler import ErrorPriority

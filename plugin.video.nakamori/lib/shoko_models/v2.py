@@ -195,7 +195,8 @@ class Directory(object):
         li.set_art(self)
         context = self.get_context_menu_items()
         if context is not None and len(context) > 0:
-            li.replace_context_menu_items(context)
+            if not li.replace_context_menu_items(context):
+                li.add_context_menu_items(context)
         return li.list_item
 
     def get_infolabels(self):
@@ -590,7 +591,9 @@ class Group(Directory):
         li.set_property('TotalEpisodes', str(self.get_total_episodes()))
         li.set_property('WatchedEpisodes', str(self.get_watched_episodes()))
         li.set_property('UnWatchedEpisodes', str(self.get_total_episodes() - self.get_watched_episodes()))
-        li.replace_context_menu_items(self.get_context_menu_items())
+        context = self.get_context_menu_items()
+        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+            li.add_context_menu_items(context)
         li.set_art(self)
         return li.list_item
 
@@ -759,7 +762,9 @@ class Series(Directory):
         li.set_property('UnWatchedEpisodes', str(self.get_total_episodes() - self.get_watched_episodes()))
         if self.hash is not None:
             li.set_property('hash', self.hash)
-        li.replace_context_menu_items(self.get_context_menu_items())
+        context = self.get_context_menu_items()
+        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+            li.add_context_menu_items(context)
         li.set_art(self)
         return li.list_item
 
@@ -997,7 +1002,9 @@ class SeriesTypeList(Series):
         li.set_property('TotalEpisodes', str(self.get_total_episodes()))
         li.set_property('WatchedEpisodes', str(self.get_watched_episodes()))
         li.set_property('UnWatchedEpisodes', str(self.get_total_episodes() - self.get_watched_episodes()))
-        li.replace_context_menu_items(self.get_context_menu_items())
+        context = self.get_context_menu_items()
+        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+            li.add_context_menu_items(context)
         li.set_art(self)
         return li.list_item
 
@@ -1252,7 +1259,9 @@ class Episode(Directory):
         f = self.get_file()
         if f is not None:
             model_utils.set_stream_info(li, f)
-        li.replace_context_menu_items(self.get_context_menu_items())
+        context = self.get_context_menu_items()
+        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+            li.add_context_menu_items(context)
 
         return li.list_item
 
@@ -1587,7 +1596,9 @@ class File(Directory):
 
         model_utils.set_stream_info(li, self)
         li.set_art(self)
-        li.replace_context_menu_items(self.get_context_menu_items())
+        context = self.get_context_menu_items()
+        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+            li.add_context_menu_items(context)
         return li.list_item
 
     def get_infolabels(self):
