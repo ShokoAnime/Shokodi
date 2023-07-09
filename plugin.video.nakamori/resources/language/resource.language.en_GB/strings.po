@@ -183,6 +183,11 @@ msgid "Show -continue-"
 msgstr "Show -continue-"
 
 #: settings.xml
+msgctxt "#30040"
+msgid "Use local file count for total episodes"
+msgstr "Use local file count for total episodes"
+
+#: settings.xml
 msgctxt "#30042"
 msgid "Spam the Log with info (only enable if told to)"
 msgstr "Spam the Log with info (only enable if told to)"
@@ -281,6 +286,11 @@ msgstr "Disable Kodi's Internal Cast Menu"
 msgctxt "#30067"
 msgid "Use the source thumbnail ratio instead of 16:9"
 msgstr "Use the source thumbnail ratio instead of 16:9"
+
+#: settings.xml
+msgctxt "#30068"
+msgid "Ignore Specials for Watched States"
+msgstr "Ignore Specials for Watched States"
 
 #: settings.xml
 msgctxt "#30070"

@@ -149,6 +149,7 @@ def show_series_menu(series_id):
         # type listing
         for item in series.episode_types:
             plugin_dir.append(item.get_listitem())
+        finish_menu()
     elif len(series.episode_types) == 1:
         add_episodes(series, series.episode_types[0].episode_type)
     else:
@@ -242,6 +243,8 @@ def show_added_recently_menu():
     for item in json_body:
         e = Episode(item)
         plugin_dir.append(e.get_listitem(), False)
+
+    finish_menu()
 
 
 @routing_plugin.route('/menu/airing_today')

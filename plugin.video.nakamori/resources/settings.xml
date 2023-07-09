@@ -26,7 +26,6 @@
 	<!-- browsing -->
     <category label="30054">
 		<!-- title settings -->
-        <setting label="30056" type="lsep"/>
         <setting label="30052" type="bool" id="use_server_title" default="false"/>
         <setting label="30009" type="select" id="displaylang" default="x-jat" values="en|x-jat|ja|ar|bd|bg|ca|cs|cz|da|dk|de|el|es|et|fi|fr|gl|gr|he|hu|il|it|ko|lt|mn|ms|my|nl|no|pl|pt|pt-br|ro|ru|sk|sl|sr|sv|se|th|tr|uk|ua|vi|zh|zh-hans|zh-hant" enable="eq(-1,false)" visible="eq(-1,false)"/>
         <setting label="30010" type="labelenum" id="title_type" default="Main" values="Official|Main|Synonym|Short" enable="eq(-2,false)" visible="eq(-2,false)"/>
@@ -47,6 +46,8 @@
         <setting label="30039" type="bool" id="show_continue" default="false"/>
         <setting label="30072" type="bool" id="replace_continue" enable="eq(-1,true)" default="false"/>
 		<setting label="30083" type="bool" id="select_unwatched" default="true"/>
+        <setting label="30040" type="bool" id="local_total" default="true"/>
+        <setting label="30068" type="bool" id="ignore_specials_watched" default="false"/>
         <!-- Context Menu Settings -->
 		<setting label="30057" type="lsep"/>
         <setting label="30065" type="bool" id="context_show_play" default="true" />

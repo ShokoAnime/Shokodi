@@ -120,7 +120,7 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=Non
 
     if file_url is not None:
         player = Player()
-        player.feed(file_id, ep_id, f.duration, file_url, mark_as_watched)
+        player.feed(file_id, ep_id, f.duration, mark_as_watched)
 
         try:
             player.play(item=file_url, listitem=item)
@@ -157,17 +157,13 @@ class Player(xbmc.Player):
         spam('Player Initialized')
         xbmc.Player.__init__(self)
         self._s = None  # shoko thread
-        self._u = None  # update thread
         self._details = None
-        self.PlaybackStatus = 'Stopped'
-        self.LoopStatus = 'None'
-        self.Shuffle = False
+        self.PlaybackStatus = PlaybackStatus.STOPPED
         self.file_id = 0
         self.ep_id = 0
         # we will store duration and time in kodi format here, so that calls to the player will match
         self.duration = 0
         self.time = 0
-        self.path = ''
         self.scrobble = True
         self.is_external = False
 
@@ -177,34 +173,26 @@ class Player(xbmc.Player):
         spam('Player reset')
         self.__init__()
 
-    def feed(self, file_id, ep_id, duration, path, scrobble):
-        spam('Player feed - file_id=%s ep_id=%s duration=%s path=%s scrobble=%s' %
-             (file_id, ep_id, duration, path, scrobble))
+    def feed(self, file_id, ep_id, duration, scrobble):
+        spam('Player feed - file_id=%s ep_id=%s duration=%s scrobble=%s' %
+             (file_id, ep_id, duration, scrobble))
         self.file_id = file_id
         self.ep_id = ep_id
         self.duration = kodi_proxy.duration_to_kodi(duration)
-        self.path = path
         self.scrobble = scrobble
 
     def start_loops(self):
-        self.stop_loops()
-
-        self._s = Thread(target=self.tick_loop_shoko, args=())
-        self._s.daemon = True
-        self._s.start()
-
-        self._u = Thread(target=self.tick_loop_update_time, args=())
-        self._u.daemon = True
-        self._u.start()
+        if self._s is None or not self._s.is_alive():
+            self._s = Thread(target=self.tick_loop_shoko, args=())
+            self._s.daemon = True
+            self._s.start()
 
     def stop_loops(self):
-        if self._s is not None and self._s.is_alive():
-            self._s.stop()
-            self._s = None
+        self.PlaybackStatus = PlaybackStatus.STOPPED
+        while self._s is not None and self._s.is_alive():
+            xbmc.sleep(100)
 
-        if self._u is not None and self._u.is_alive():
-            self._u.stop()
-            self._u = None
+        self._s = None
 
     def onAVStarted(self):
         # Will be called when Kodi has a video or audiostream.
@@ -231,13 +219,12 @@ class Player(xbmc.Player):
             self.set_duration()
 
             self.PlaybackStatus = PlaybackStatus.PLAYING
+            self.start_loops()
             # we are making the player global, so if a stop is issued, then Playing will change
             while not self.isPlaying() and self.PlaybackStatus == PlaybackStatus.PLAYING:
                 xbmc.sleep(100)
             if self.PlaybackStatus != PlaybackStatus.PLAYING:
                 return
-
-            self.start_loops()
         except:
             eh.exception(ErrorPriority.HIGHEST)
 
@@ -288,55 +275,60 @@ class Player(xbmc.Player):
         if not self.scrobble:
             return
         try:
-            if plugin_addon.getSetting('file_resume') == 'true' and self.time > 10:
+            if self.time > 10:
                 from lib.shoko_models.v2 import File
                 f = File(self.file_id)
                 f.set_resume_time(kodi_proxy.duration_from_kodi(self.time))
         except:
             eh.exception(ErrorPriority.HIGH)
 
+    def wait_for_playback(self):
+        if self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING:
+            return True
+
+        # try for 10s to start playing
+        count = 0
+        while count < 20 and not (self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING):
+            count += 1
+            xbmc.sleep(500)
+
+        return self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING
+
     def tick_loop_shoko(self):
         try:
-            if self.scrobble and not self.isPlayingVideo() and self.PlaybackStatus != PlaybackStatus.PLAYING:
-                count = 0
-                while self.scrobble and count < 10 and not self.isPlayingVideo() and self.PlaybackStatus != PlaybackStatus.PLAYING:
-                    count += 1
-                    xbmc.sleep(500)
-
-            while self.scrobble and self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING:
-                try:
-                    if plugin_addon.getSetting('file_resume') == 'true' and self.time > 10:
-                        from lib.shoko_models.v2 import File
-                        f = File(self.file_id)
-                        f.set_resume_time(kodi_proxy.duration_from_kodi(self.time))
-                        xbmc.sleep(2500)
-                except:
-                    pass  # while buffering
-            else:
-                log('sync_thread: not playing anything')
+            if not self.scrobble:
+                log('Scrobble Thread Exiting: Scrobbling not enabled')
                 return
-        except:
-            eh.exception(ErrorPriority.NORMAL)
 
-    def tick_loop_update_time(self):
-        try:
+            if plugin_addon.getSetting('file_resume').lower() == 'false':
+                log('Scrobble Thread Exiting: Resume not enabled')
+                return
+
+            if self.is_external:
+                log('Scrobble Thread Exiting: Not supported in external players')
+                return
+
+            if not self.wait_for_playback():
+                log('Scrobble Thread Exiting: Player did not start playing in an acceptable time')
+                return
+
             while self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING:
                 try:
-                    # Leia seems to have a bug where calling self.getTotalTime() fails at times
-                    # Try until it succeeds
                     self.set_duration()
+                    self.time = self.getTime()
 
-                    if not self.is_external:
-                        self.time = self.getTime()
-                    else:
-                        self.time += 0.5
-                        # log('--------------> time is %s ' % self.getTime())
+                    if self.time <= 10:
+                        xbmc.sleep(2500)
+                        continue
 
-                    xbmc.sleep(500)
+                    self.scrobble_time()
+                    xbmc.sleep(2500)
                 except:
                     pass  # while buffering
+
+            log('Scrobble Thread Exiting: Stopped Playing')
         except:
-            eh.exception(ErrorPriority.HIGHEST)
+            eh.exception(ErrorPriority.NORMAL)
 
     def handle_finished_episode(self):
         finished_episode(self.ep_id, self.file_id, self.time, self.duration)
