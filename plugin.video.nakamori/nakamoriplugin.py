@@ -176,7 +176,6 @@ def add_episodes(series, episode_type):
             if item.get_file() is None:
                 continue
             listitem = item.get_listitem()
-            assert isinstance(listitem, ListItem)
             if watched_index == i and item.is_watched() == WatchedStatus.WATCHED:
                 watched_index += 1
             plugin_dir.append(listitem, False)

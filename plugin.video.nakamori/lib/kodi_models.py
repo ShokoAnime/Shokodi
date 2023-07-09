@@ -49,46 +49,55 @@ class ListItem:
                 self.set_icon(icon_image)
             if thumbnail_image is not None and thumbnail_image != '':
                 self.set_thumb(thumbnail_image)
-            self.videoTag = self.list_item.getVideoInfoTag()
+            self.videoTag: xbmc.InfoTagVideo = self.list_item.getVideoInfoTag()
         else:
             self.list_item = xbmcgui.ListItem(label, label2, icon_image, thumbnail_image, path)
 
     def set_info(self, type, infoLabels):
         if float(kodi_version) > 19:
             if type == 'video':
-                self.videoTag.setTitle(self.list_item.getLabel())
-                if 'aired' in infoLabels:
-                    self.videoTag.setFirstAired(infoLabels['aired'])
-                if 'mediatype' in infoLabels:
-                    self.videoTag.setMediaType(infoLabels['mediatype'])
-                if 'path' in infoLabels:
-                    self.videoTag.setPath(infoLabels['path'])
-                if 'sorttitle' in infoLabels:
-                    self.videoTag.setSortTitle(infoLabels['sorttitle'])
-                if 'originaltitle' in infoLabels:
-                    self.videoTag.setOriginalTitle(infoLabels['originaltitle'])
-                if 'plot' in infoLabels:
-                    self.videoTag.setPlot(infoLabels['plot'])
-                if 'plotoutline' in infoLabels:
-                    self.videoTag.setPlotOutline(infoLabels['plotoutline'])
-                if 'dateadded' in infoLabels:
-                    self.videoTag.setDateAdded(infoLabels['dateadded'])
-                if 'year' in infoLabels and infoLabels['year'] is not None and infoLabels['year'] != '':
-                    self.videoTag.setYear(int(infoLabels['year']))
-                if 'mpaa' in infoLabels:
-                    self.videoTag.setMpaa(infoLabels['mpaa'])
-                if 'duration' in infoLabels:
-                    self.videoTag.setDuration(infoLabels['duration'])
-                if 'genre' in infoLabels:
-                    self.videoTag.setGenres(infoLabels['genre'])
-                if 'tag' in infoLabels:
-                    self.videoTag.setTags(infoLabels['tag'])
-                if 'trailer' in infoLabels:
-                    self.videoTag.setTrailer(infoLabels['trailer'])
-                if 'tagline' in infoLabels:
-                    self.videoTag.setTagLine(infoLabels['tagline'])
-                if 'studio' in infoLabels:
-                    self.videoTag.setStudios(infoLabels['studio'])
+                try:
+                    self.videoTag.setTitle(self.list_item.getLabel())
+                    if 'aired' in infoLabels:
+                        self.videoTag.setFirstAired(infoLabels['aired'])
+                    if 'mediatype' in infoLabels:
+                        self.videoTag.setMediaType(infoLabels['mediatype'])
+                    if 'path' in infoLabels:
+                        self.videoTag.setPath(infoLabels['path'])
+                    if 'sorttitle' in infoLabels:
+                        self.videoTag.setSortTitle(infoLabels['sorttitle'])
+                    if 'originaltitle' in infoLabels:
+                        self.videoTag.setOriginalTitle(infoLabels['originaltitle'])
+                    if 'plot' in infoLabels:
+                        self.videoTag.setPlot(infoLabels['plot'])
+                    if 'plotoutline' in infoLabels:
+                        self.videoTag.setPlotOutline(infoLabels['plotoutline'])
+                    if 'dateadded' in infoLabels:
+                        self.videoTag.setDateAdded(infoLabels['dateadded'])
+                    if 'year' in infoLabels and infoLabels['year'] is not None and infoLabels['year'] != '':
+                        self.videoTag.setYear(int(infoLabels['year']))
+                    if 'mpaa' in infoLabels:
+                        self.videoTag.setMpaa(infoLabels['mpaa'])
+                    if 'duration' in infoLabels:
+                        self.videoTag.setDuration(int(infoLabels['duration']))
+                    if 'genre' in infoLabels and infoLabels['genre'] is not None and infoLabels['genre'] != '':
+                        self.videoTag.setGenres(infoLabels['genre'])
+                    if 'tag' in infoLabels:
+                        self.videoTag.setTags(infoLabels['tag'])
+                    if 'trailer' in infoLabels:
+                        self.videoTag.setTrailer(infoLabels['trailer'])
+                    if 'tagline' in infoLabels:
+                        self.videoTag.setTagLine(infoLabels['tagline'])
+                    if 'studio' in infoLabels:
+                        self.videoTag.setStudios(infoLabels['studio'])
+                    if 'season' in infoLabels:
+                        self.videoTag.setSeason(infoLabels['season'])
+                    if 'episode' in infoLabels:
+                        self.videoTag.setEpisode(infoLabels['episode'])
+                    if 'userrating' in infoLabels:
+                        self.videoTag.setUserRating(int(infoLabels['userrating']))
+                except:
+                    eh.exception(ErrorPriority.HIGHEST)
         else:
             self.list_item.setInfo(type=type, infoLabels=infoLabels)
 

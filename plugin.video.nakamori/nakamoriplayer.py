@@ -24,7 +24,7 @@ def finished_episode(ep_id, file_id, current_time, total_time):
     _finished = False
     spam('finished_episode > ep_id = %s, file_id = %s, current_time = %s, total_time = %s' % (ep_id, file_id,
                                                                                               current_time, total_time))
-    mark = float(plugin_addon.getSetting('watched_mark'))
+    mark = float(plugin_addon.getSetting('watched_mark') or 75)
     if plugin_addon.getSetting('external_player').lower() == 'false':
         pass
     else:
@@ -127,6 +127,28 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=Non
         except:
             eh.exception(ErrorPriority.BLOCKING)
 
+        player_loop(player)
+
+
+def player_loop(player):
+    try:
+        monitor = xbmc.Monitor()
+
+        while not player.isPlayingVideo():
+            xbmc.sleep(100)
+
+        spam('Player Loop: Started Playing - PlaybackState is: ', player.PlaybackStatus)
+
+        while player.PlaybackStatus != PlaybackStatus.STOPPED and player.PlaybackStatus != PlaybackStatus.ENDED:
+            xbmc.sleep(500)
+
+        if player.PlaybackStatus == PlaybackStatus.STOPPED or player.PlaybackStatus == PlaybackStatus.ENDED:
+            log('Playback Ended - Shutting Down: ', monitor.abortRequested())
+        else:
+            log('Playback Ended - Playback status was not "Stopped" or "Ended". It was ', player.PlaybackStatus)
+    except:
+        eh.exception(ErrorPriority.NORMAL)
+
 
 # noinspection PyUnusedFunction
 import xbmc
@@ -163,6 +185,26 @@ class Player(xbmc.Player):
         self.duration = kodi_proxy.duration_to_kodi(duration)
         self.path = path
         self.scrobble = scrobble
+
+    def start_loops(self):
+        self.stop_loops()
+
+        self._s = Thread(target=self.tick_loop_shoko, args=())
+        self._s.daemon = True
+        self._s.start()
+
+        self._u = Thread(target=self.tick_loop_update_time, args=())
+        self._u.daemon = True
+        self._u.start()
+
+    def stop_loops(self):
+        if self._s is not None and self._s.is_alive():
+            self._s.stop()
+            self._s = None
+
+        if self._u is not None and self._u.is_alive():
+            self._u.stop()
+            self._u = None
 
     def onAVStarted(self):
         # Will be called when Kodi has a video or audiostream.
@@ -206,32 +248,6 @@ class Player(xbmc.Player):
             self.start_loops()
         except:
             eh.exception(ErrorPriority.HIGH)
-
-    def start_loops(self):
-        try:
-            self._s.stop()
-        except:
-            pass
-        self._s = Thread(target=self.tick_loop_shoko, args=())
-        self._s.daemon = True
-        self._s.start()
-
-        try:
-            self._u.stop()
-        except:
-            pass
-        self._u = Thread(target=self.tick_loop_update_time, args=())
-        self._u.daemon = True
-        self._u.start()
-
-    def stop_loops(self):
-        if self._s is not None and self._s.is_alive():
-            self._s.stop()
-            self._s = None
-
-        if self._u is not None and self._u.is_alive():
-            self._u.stop()
-            self._u = None
 
     def onPlayBackStopped(self):
         spam('Playback Stopped')

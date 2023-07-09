@@ -181,11 +181,11 @@ class BasePythonProxy:
         data_out = None
         try:
             response = urlopen(req, timeout=custom_timeout)
-            data_out = response.read()
+            data_out = self.decode(response.read())
             response.close()
             eh.spam('Response Body:', data_out)
             eh.spam('Checking Response for a text error.\n')
-            if data_out is not None and data_out != '':
+            if data_out is not None and data_out != '' and data_out.trim().starts_with('{'):
                 self.parse_possible_error(req, data_out)
         except timeout:
             # if using very short time out to not wait for response it will throw time out err,
@@ -194,7 +194,7 @@ class BasePythonProxy:
             if custom_timeout == int(plugin_addon.getSetting('timeout')):
                 eh.exception(ErrorPriority.HIGH)
         except:
-            eh.exception(ErrorPriority.HIGH)
+            eh.exception(ErrorPriority.HIGH, data_out)
         return data_out
 
     def parse_parameters(self, input_string):
