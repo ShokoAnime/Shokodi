@@ -88,8 +88,8 @@ class ListItem:
                         self.videoTag.setTrailer(infoLabels['trailer'])
                     if 'tagline' in infoLabels:
                         self.videoTag.setTagLine(infoLabels['tagline'])
-                    if 'studio' in infoLabels:
-                        self.videoTag.setStudios(infoLabels['studio'])
+                    if 'studio' in infoLabels and infoLabels['studio'] != '':
+                        self.videoTag.setStudios([infoLabels['studio']])
                     if 'season' in infoLabels:
                         self.videoTag.setSeason(infoLabels['season'])
                     if 'episode' in infoLabels:

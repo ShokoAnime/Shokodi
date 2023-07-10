@@ -86,16 +86,8 @@ def add_extra_main_menu_items(items):
     :return:
     """
     from lib.shoko_models.v2 import CustomItem
-    # { 'Added Recently v2': 0, 'Airing Today': 1, 'Calendar': 1, 'Seasons': 2, 'Years': 3, 'Tags': 4,
+    # { 'Seasons': 2, 'Years': 3, 'Tags': 4,
     # 'Unsort': 5, 'Settings' (both): 7, 'Shoko Menu': 8, 'Search': 9, Experiment: 99}
-    item = CustomItem(plugin_localize(30170), 'airing.png', url_for(show_added_recently_menu))
-    item.sort_index = 0
-    items.append(item)
-
-    if plugin_addon.getSetting('show_airing_today') == 'true':
-        item = CustomItem(plugin_localize(30223), 'airing.png', url_for(show_airing_today_menu))
-        item.sort_index = 1
-        items.append(item)
 
     if plugin_addon.getSetting('show_shoko') == 'true':
         item = CustomItem(plugin_localize(30115), 'settings.png', script(script_utils.url_shoko_menu()))
@@ -222,36 +214,6 @@ def add_continue_item(series, episode_type, watched_index):
     continue_item.infolabels['season'] = 0
     plugin_dir.insert(0, continue_item.get_listitem(), continue_item.is_kodi_folder)
 
-
-@routing_plugin.route('/menu/added_recently')
-@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_added_recently_menu():
-    url = '%s/api/serie/recent' % server
-    url = model_utils.add_default_parameters(url, 0, 2)
-    body = pyproxy.get_json(url)
-    json_body = json.loads(body)
-    plugin_dir.set_content('tvshows')
-    from lib.shoko_models.v2 import Series, Episode
-    for item in json_body:
-        s = Series(item)
-        plugin_dir.append(s.get_listitem(), True)
-
-    url = '%s/api/ep/recent' % server
-    url = model_utils.add_default_parameters(url, 0, 2)
-    body = pyproxy.get_json(url)
-    json_body = json.loads(body)
-    for item in json_body:
-        e = Episode(item)
-        plugin_dir.append(e.get_listitem(), False)
-
-    finish_menu()
-
-
-@routing_plugin.route('/menu/airing_today')
-@try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
-def show_airing_today_menu():
-    # TODO airing today
-    pass
 
 
 @routing_plugin.route('/menu/filter/unsorted')
@@ -414,126 +376,6 @@ def run_script(script_url):
 
 def restart_plugin():
     script_utils.arbiter(0, 'RunAddon("plugin.video.nakamori")')
-
-
-# region TVShows VideoLibrary
-
-@routing_plugin.route('/tvshows/')
-def scrape_all_tvshows():
-    # List series items
-    scrape_series('tvshows')
-    # finish_menu is only needed if you need to do something after it
-
-
-# Some things put a slash on the end, ex ExtendedInfoScript
-@routing_plugin.route('/tvshows/<series_id>/')
-def scrape_tvshows2(series_id):
-    scrape_tvshows(series_id)
-
-
-@routing_plugin.route('/tvshows/<series_id>')
-@try_function(ErrorPriority.BLOCKING)
-def scrape_tvshows(series_id):
-    # handle refresh, check, etc
-    if 'kodi-action' in routing_plugin.args:
-        if routing_plugin.args['kodi-action'] == 'check_exists':
-            # TODO actually check it
-            xbmcplugin.setResolvedUrl(routing_plugin.handle, True, ListItem())
-        if routing_plugin.args['kodi-action'] == 'refresh_info':
-            # TODO Hash the url and reuse it
-            scrape_episodes('episodes', series_id)
-        return
-
-    # List series items
-    scrape_episodes('episodes', series_id)
-    # finish_menu is only needed if you need to do something after it
-
-
-@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/')
-def scrape_tvshows_with_episode2(series_id, ep_id):
-    scrape_tvshows_with_episode(series_id, ep_id)
-
-
-@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>')
-@try_function(ErrorPriority.BLOCKING)
-def scrape_tvshows_with_episode(series_id, ep_id):
-    # this one is for refresh
-    # handle refresh, check, etc
-    if 'kodi-action' in routing_plugin.args:
-        if routing_plugin.args['kodi-action'] == 'check_exists':
-            # TODO actually check it
-            xbmcplugin.setResolvedUrl(routing_plugin.handle, True, ListItem())
-        if routing_plugin.args['kodi-action'] == 'refresh_info':
-            # TODO Hash the url and reuse it
-            scrape_episodes('episodes', series_id)
-        return
-
-    # List series items
-    scrape_episodes('episodes', series_id)
-    # finish_menu is only needed if you need to do something after it
-
-
-def scrape_series(tvshows_label):
-    from lib.shoko_models.v2 import Series
-    plugin_dir.set_content(tvshows_label)
-    # url for get all series
-    url = server + '/api/serie'
-    url = model_utils.add_default_parameters(url, 0, 0)
-    # get it
-    body = pyproxy.get_json(url)
-    # parse it
-    json_node = json.loads(body)
-    # it's a list of series nodes
-    for node in json_node:
-        series = Series(node, compute_hash=True, seiyuu_pic=True)
-        if series.is_movie:
-            continue
-        url = url_for(scrape_tvshows, series.id)
-
-        li = series.get_listitem(url)
-        # li.setUniqueIDs({'anidb': series.anidb_id})
-        if not plugin_dir.append(li, True):
-            error_handler.exception(ErrorPriority.HIGHEST, 'Unable to scan series')
-            break
-
-
-def scrape_episodes(episodes_label, series_id):
-    from lib.shoko_models.v2 import Series
-    plugin_dir.set_content(episodes_label)
-    # get series info
-    series = Series(series_id, build_full_object=True, get_children=True, compute_hash=True, seiyuu_pic=True)
-    if series.is_movie:
-        return
-    # series iterates Episodes
-    for i in series:
-        if i.episode_type.lower() not in ('episode', 'special', 'ova'):
-            continue
-        # url = url_for(play_episode, i.id)
-        url = 'plugin://plugin.video.nakamori/tvshows/%s/ep/%s/play' % (series.id, i.id)
-
-        li = i.get_listitem(url)
-        li.setProperty('IsPlayable', 'true')
-        if not plugin_dir.append(li, folder=False, total_items=len(series.items)):
-            error_handler.exception(ErrorPriority.HIGHEST, 'Unable to scan episode')
-            break
-
-
-@routing_plugin.route('/tvshows/<series_id>/ep/<ep_id>/play')
-@try_function(ErrorPriority.BLOCKING)
-def play_episode2(series_id, ep_id):
-    # because you wanted that way :/
-    play_video_internal(ep_id, file_id=0)
-
-
-@routing_plugin.route('/tvshows/<ep_id>/play')
-@try_function(ErrorPriority.BLOCKING)
-def play_episode(ep_id):
-    # handles playing the file
-    # file_id will be automatically selected if given 0
-    play_video_internal(ep_id, file_id=0)
-
-
-# endregion
 
 
 @try_function(ErrorPriority.BLOCKING)

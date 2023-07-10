@@ -4,6 +4,7 @@ import zipfile
 from collections import defaultdict
 from distutils.version import LooseVersion
 from shutil import copy2
+import xml.etree.ElementTree as ET
 from zipfile import ZipFile
 import os
 
@@ -12,8 +13,8 @@ def add_file(list_of_processed_files, full_path, filename):
     if full_path not in list_of_processed_files:
         # excluded from adding to list
         excluded_files = ['build.py', '.idea', '.git', 'xbmc.py', 'xbmcaddon.py',
-                          'xbmcgui.py', 'xbmcplugin.py', 'xbmcvfs.py', 'sh.exe.stackdump', 'addon.xml.leia',
-                          'addon.xml.matrix']
+                          'xbmcgui.py', 'xbmcplugin.py', 'xbmcvfs.py', 'sh.exe.stackdump', 'addon_leia.xml',
+                          'addon_matrix.xml']
 
         if os.path.basename(filename) not in excluded_files:
             list_of_processed_files.append(full_path)
@@ -49,8 +50,8 @@ def get_all_file_paths(directory):
 
 
 nakamori_directory = ['plugin.video.nakamori']
-addon_xml_leia = 'addon.xml.leia'
-addon_xml_matrix = 'addon.xml.matrix'
+addon_xml_leia = 'addon_leia.xml'
+addon_xml_matrix = 'addon_matrix.xml'
 
 
 def get_news(path):
@@ -142,7 +143,9 @@ def main():
                 os.mkdir(out)
 
             # Writing files to a zipfile for Leia
-            out_leia = os.path.join(out, 'plugin.video.nakamori_leia.zip')
+            addon_path = os.path.join(root_path, directory, addon_xml_leia)
+            version = get_addon_version(addon_path)
+            out_leia = os.path.join(out, 'plugin.video.nakamori-'+version+'.zip')
             if os.path.exists(out_leia):
                 os.remove(out_leia)
             with ZipFile(out_leia, 'w') as zip_file:
@@ -151,7 +154,6 @@ def main():
                     rel_path = os.path.relpath(file_path, root_path)
                     zip_file.write(file_path, rel_path, zipfile.ZIP_DEFLATED)
 
-                addon_path = os.path.join(root_path, 'addon.xml.leia')
                 zip_file.write(addon_path, os.path.join(directory, 'addon.xml'), zipfile.ZIP_DEFLATED)
 
             print('Zipped ' + directory + ' for Leia successfully!')
@@ -160,7 +162,9 @@ def main():
             restore_backup(os.path.join(root_path, directory, addon_xml_leia))
 
             # Writing files to a zipfile for Matrix
-            out_matrix = os.path.join(out, 'plugin.video.nakamori_matrix.zip')
+            addon_path = os.path.join(root_path, directory, addon_xml_matrix)
+            version = get_addon_version(addon_path)
+            out_matrix = os.path.join(out, 'plugin.video.nakamori-' + version + '.zip')
             if os.path.exists(out_matrix):
                 os.remove(out_matrix)
             with ZipFile(out_matrix, 'w') as zip_file:
@@ -169,7 +173,6 @@ def main():
                     rel_path = os.path.relpath(file_path, root_path)
                     zip_file.write(file_path, rel_path, zipfile.ZIP_DEFLATED)
 
-                addon_path = os.path.join(root_path, 'addon.xml.matrix')
                 zip_file.write(addon_path, os.path.join(directory, 'addon.xml'), zipfile.ZIP_DEFLATED)
 
             print('Zipped ' + directory + ' for Matrix successfully!')
@@ -180,6 +183,17 @@ def main():
                 print(str(exc_type) + " at line " + str(exc_tb.tb_lineno) + " in file " + str(
                     os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]))
                 traceback.print_exc()
+
+
+def get_addon_version(xml_file):
+    tree = ET.parse(xml_file)
+    root = tree.getroot()
+    if root.tag == 'addon':
+        addon_element = root
+    else:
+        addon_element = root.find('addon')
+    version = addon_element.get('version')
+    return version
 
 
 if __name__ == '__main__':

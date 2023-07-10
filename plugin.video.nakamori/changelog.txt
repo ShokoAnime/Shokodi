@@ -1,5 +1,5 @@
 # Comments start with #
-# This file is a proper, parsable changelog with proper formatting. The news section in addon.xml.leia will have only the latest news.
+# This file is a proper, parsable changelog with proper formatting. The news section in addon.xml will have only the latest news.
 # This will have all relevant news going back a long time.
 # Initially only starting at 3.0.8
 # version numbers start with !--
