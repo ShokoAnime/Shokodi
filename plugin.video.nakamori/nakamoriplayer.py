@@ -182,17 +182,15 @@ class Player(xbmc.Player):
         self.scrobble = scrobble
 
     def start_loops(self):
-        if self._s is None or not self._s.is_alive():
-            self._s = Thread(target=self.tick_loop_shoko, args=())
-            self._s.daemon = True
-            self._s.start()
+        spam('Scrobble Thread Starting')
+        self._s = Thread(target=self.tick_loop_shoko, args=())
+        self._s.daemon = True
+        self._s.start()
 
-    def stop_loops(self):
-        self.PlaybackStatus = PlaybackStatus.STOPPED
-        while self._s is not None and self._s.is_alive():
-            xbmc.sleep(100)
-
+    def stop_loops(self, t):
         self._s = None
+        while t is not None and t.is_alive():
+            xbmc.sleep(100)
 
     def onAVStarted(self):
         # Will be called when Kodi has a video or audiostream.
@@ -213,7 +211,7 @@ class Player(xbmc.Player):
         pass
 
     def onPlayBackStarted(self):
-        spam('Playback Started')
+        spam('Player Started Playing')
         try:
             # wait until the player is init'd and playing
             self.set_duration()
@@ -229,7 +227,7 @@ class Player(xbmc.Player):
             eh.exception(ErrorPriority.HIGHEST)
 
     def onPlayBackResumed(self):
-        spam('Playback Resumed')
+        spam('Player Resumed')
         self.PlaybackStatus = PlaybackStatus.PLAYING
         try:
             self.start_loops()
@@ -237,32 +235,37 @@ class Player(xbmc.Player):
             eh.exception(ErrorPriority.HIGH)
 
     def onPlayBackStopped(self):
-        spam('Playback Stopped')
+        spam('Player Stopped')
+        self.PlaybackStatus = PlaybackStatus.STOPPED
         try:
-            self.stop_loops()
+            self.stop_loops(self._s)
             self.handle_finished_episode()
         except:
             eh.exception(ErrorPriority.HIGH)
-        self.PlaybackStatus = PlaybackStatus.STOPPED
 
     def onPlayBackEnded(self):
-        spam('Playback Ended')
+        spam('Player Ended')
+        self.PlaybackStatus = PlaybackStatus.ENDED
         try:
-            self.stop_loops()
+            self.stop_loops(self._s)
             self.handle_finished_episode()
         except:
             eh.exception(ErrorPriority.HIGH)
-        self.PlaybackStatus = PlaybackStatus.ENDED
 
     def onPlayBackPaused(self):
-        spam('Playback Paused')
+        spam('Player Paused')
         self.PlaybackStatus = PlaybackStatus.PAUSED
         self.scrobble_time()
-        self.stop_loops()
+        self.stop_loops(self._s)
 
     def onPlayBackSeek(self, time_to_seek, seek_offset):
-        log('Playback Paused - time_to_seek=%s seek_offset=%s' % (time_to_seek, seek_offset))
+        log('Player Seeked - time_to_seek=%s seek_offset=%s' % (time_to_seek, seek_offset))
         self.time = self.getTime()
+        self.scrobble_time()
+
+    def onPlayBackSeekChapter(self, chapter):
+        self.time = self.getTime()
+        log('Player Seeked Chapter - chapter=%s time=%s' % (chapter, self.time))
         self.scrobble_time()
 
     def set_duration(self):
@@ -297,19 +300,19 @@ class Player(xbmc.Player):
     def tick_loop_shoko(self):
         try:
             if not self.scrobble:
-                log('Scrobble Thread Exiting: Scrobbling not enabled')
+                spam('Scrobble Thread Exiting: Scrobbling not enabled')
                 return
 
             if plugin_addon.getSetting('file_resume').lower() == 'false':
-                log('Scrobble Thread Exiting: Resume not enabled')
+                spam('Scrobble Thread Exiting: Resume not enabled')
                 return
 
             if self.is_external:
-                log('Scrobble Thread Exiting: Not supported in external players')
+                spam('Scrobble Thread Exiting: Not supported in external players')
                 return
 
             if not self.wait_for_playback():
-                log('Scrobble Thread Exiting: Player did not start playing in an acceptable time')
+                spam('Scrobble Thread Exiting: Player did not start playing in an acceptable time')
                 return
 
             while self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING:
@@ -326,7 +329,7 @@ class Player(xbmc.Player):
                 except:
                     pass  # while buffering
 
-            log('Scrobble Thread Exiting: Stopped Playing')
+            spam('Scrobble Thread Exiting: Stopped Playing')
         except:
             eh.exception(ErrorPriority.NORMAL)
 
