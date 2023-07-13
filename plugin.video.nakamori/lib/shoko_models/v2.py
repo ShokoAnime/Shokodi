@@ -195,8 +195,7 @@ class Directory(object):
         li.set_art(self)
         context = self.get_context_menu_items()
         if context is not None and len(context) > 0:
-            if not li.replace_context_menu_items(context):
-                li.add_context_menu_items(context)
+            li.add_context_menu_items(context)
         return li.list_item
 
     def get_infolabels(self):
@@ -204,8 +203,6 @@ class Directory(object):
 
     def get_context_menu_items(self):
         context_menu = []
-        if plugin_addon.getSetting('show_refresh') == 'true':
-            context_menu += [(plugin_addon.getLocalizedString(30131), script_utils.url_refresh())]
         context_menu += [('  ', 'empty'), (plugin_addon.getLocalizedString(30147), 'empty'),
                          (plugin_addon.getLocalizedString(30148), 'empty')]
         return context_menu
@@ -592,7 +589,7 @@ class Group(Directory):
         li.set_property('WatchedEpisodes', str(self.get_watched_episodes()))
         li.set_property('UnWatchedEpisodes', str(self.get_total_episodes() - self.get_watched_episodes()))
         context = self.get_context_menu_items()
-        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+        if context is not None and len(context) > 0:
             li.add_context_menu_items(context)
         li.set_art(self)
         return li.list_item
@@ -651,7 +648,7 @@ class Series(Directory):
     """
     A series object, contains a unified method of representing a series, with convenient converters
     """
-    def __init__(self, json_node, build_full_object=False, get_children=False, compute_hash=False, seiyuu_pic=False, use_aid=False):
+    def __init__(self, json_node, build_full_object=False, get_children=False, seiyuu_pic=False, use_aid=False):
         """
         Create a series object from a json node, containing everything that is relevant to a ListItem
         :param json_node: the json response from things like api/serie
@@ -699,15 +696,6 @@ class Series(Directory):
         self.hash = None
 
         self.process_children(json_node)
-
-        if compute_hash:
-            m = md5()
-            if len(self.items) > 0:
-                for episode in self.items:
-                    # TODO need a date of update of file, but how to handle serie info update?
-                    # for now we pick first date_added date from first file
-                    m.update(episode.hash_content)
-                self.hash = m.hexdigest().upper()
 
         eh.spam(self)
 
@@ -763,7 +751,7 @@ class Series(Directory):
         if self.hash is not None:
             li.set_property('hash', self.hash)
         context = self.get_context_menu_items()
-        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+        if context is not None and len(context) > 0:
             li.add_context_menu_items(context)
         li.set_art(self)
         return li.list_item
@@ -1003,7 +991,7 @@ class SeriesTypeList(Series):
         li.set_property('WatchedEpisodes', str(self.get_watched_episodes()))
         li.set_property('UnWatchedEpisodes', str(self.get_total_episodes() - self.get_watched_episodes()))
         context = self.get_context_menu_items()
-        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+        if context is not None and len(context) > 0:
             li.add_context_menu_items(context)
         li.set_art(self)
         return li.list_item
@@ -1260,7 +1248,7 @@ class Episode(Directory):
         if f is not None:
             model_utils.set_stream_info(li, f)
         context = self.get_context_menu_items()
-        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+        if context is not None and len(context) > 0:
             li.add_context_menu_items(context)
 
         return li.list_item
@@ -1411,34 +1399,6 @@ class Episode(Directory):
         # Vote Series
         if plugin_addon.getSetting('context_show_vote_Series') == 'true' and self.series_id != 0:
             context_menu.append((localize(30124), script_utils.url_vote_for_series(self.series_id)))
-
-        # Metadata
-        if plugin_addon.getSetting('context_show_info') == 'true':
-            context_menu.append((localize(30123), 'Action(Info)'))
-
-        # View Cast
-        if plugin_addon.getSetting('context_view_cast') == 'true' and self.series_id != 0:
-            # context_menu.append((localize(30134), 'RunPlugin(%s&cmd=viewCast)'))
-            pass
-
-        # Refresh
-        if plugin_addon.getSetting('context_refresh') == 'true':
-            context_menu.append((localize(30131), 'Container.Refresh'))
-
-        # Eigakan
-        # Probe / Transcode
-        # TODO lang fix
-        if plugin_addon.getSetting('enableEigakan') == 'true':
-            if plugin_addon.getSetting('context_pick_file') == 'true' and len(self.items) > 1:
-                context_menu.append(('Probe', script_utils.url_probe_episode(ep_id=self.id)))
-                context_menu.append(('Transcode', script_utils.url_transcode_episode(ep_id=self.id)))
-                context_menu.append(('Direct Play', 'RunPlugin(%s)' % puf(nakamoriplugin.direct_play_video, self.id)))
-            else:
-                file_ = self.get_file()
-                file_id = file_.id
-                context_menu.append(('Probe', script_utils.url_probe_file(file_id=file_id)))
-                context_menu.append(('Transcode', script_utils.url_transcode_file(file_id=file_id)))
-                context_menu.append(('Direct Play', 'RunPlugin(%s)' % puf(nakamoriplugin.direct_play_video, self.id, self.get_file().id)))
 
         # the default ones that say the rest are kodi's
         context_menu += Directory.get_context_menu_items(self)
@@ -1597,7 +1557,7 @@ class File(Directory):
         model_utils.set_stream_info(li, self)
         li.set_art(self)
         context = self.get_context_menu_items()
-        if context is not None and len(context) > 0 and not li.replace_context_menu_items(context):
+        if context is not None and len(context) > 0:
             li.add_context_menu_items(context)
         return li.list_item
 

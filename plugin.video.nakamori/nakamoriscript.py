@@ -182,7 +182,7 @@ def file_list(ep_id):
     ep = Episode(ep_id, build_full_object=True)
     items = [(x.name, x.id) for x in ep]
     selected_id = kodi_utils.show_file_list(items)
-    nakamoriplayer.play_video(selected_id, ep_id)
+    nakamoriplayer.play_video(file_id=selected_id, ep_id=ep_id)
 
 
 @script.route('/file/<file_id>/rescan')
@@ -208,7 +208,8 @@ def probe_file(file_id):
     f = File(file_id, build_full_object=True)
     file_url = f.url_for_player
     content = '"file":"' + file_url + '"'
-    url = 'http://%s:%s/api/probe/%s' % (plugin_addon.getSetting('ipEigakan'), plugin_addon.getSetting('portEigakan'), file_id)
+    schema = 'https' if plugin_addon.getSetting('use_https') == 'true' else 'http'
+    url = schema + '://%s:%s/api/probe/%s' % (plugin_addon.getSetting('ipEigakan'), plugin_addon.getSetting('portEigakan'), file_id)
     busy = xbmcgui.DialogProgress()
     # TODO lang fix
     busy.create('Please wait', 'Probing')

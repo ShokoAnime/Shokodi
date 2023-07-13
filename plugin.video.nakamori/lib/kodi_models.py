@@ -42,19 +42,15 @@ class WatchedStatus(object):
 
 
 class ListItem:
-    def __init__(self, label='', label2='', icon_image='', thumbnail_image='', path='', offscreen=False):
+    def __init__(self, label='', label2='', path='', offscreen=False):
         if float(kodi_version) > 18:
             self.list_item = xbmcgui.ListItem(label=label, label2=label2, path=path, offscreen=offscreen)
-            if icon_image is not None and icon_image != '':
-                self.set_icon(icon_image)
-            if thumbnail_image is not None and thumbnail_image != '':
-                self.set_thumb(thumbnail_image)
-            self.videoTag: xbmc.InfoTagVideo = self.list_item.getVideoInfoTag()
+            self.videoTag = self.list_item.getVideoInfoTag()
         else:
-            self.list_item = xbmcgui.ListItem(label, label2, icon_image, thumbnail_image, path)
+            self.list_item = xbmcgui.ListItem(label, label2, path=path)
 
     def set_info(self, type, infoLabels):
-        if float(kodi_version) > 19:
+        if float(kodi_version) > 20:
             if type == 'video':
                 try:
                     self.videoTag.setTitle(self.list_item.getLabel())
@@ -128,6 +124,8 @@ class ListItem:
             self.list_item.addStreamInfo(type, info)
 
     def set_cast(self, cast):
+        if len(cast) <= 0:
+            return
         if float(kodi_version) > 18:
             actors = []
             for c in cast:
@@ -150,13 +148,6 @@ class ListItem:
 
     def add_context_menu_items(self, items):
         self.list_item.addContextMenuItems(items=items)
-
-    def replace_context_menu_items(self, items):
-        try:
-            self.list_item.addContextMenuItems(items=items, replaceItems=True)
-            return True
-        except:
-            return False
 
     def set_art(self, dir_obj):
         """

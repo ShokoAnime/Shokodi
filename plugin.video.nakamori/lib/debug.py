@@ -19,6 +19,9 @@ except ImportError:
     pass
 
 
+profile = cProfile.Profile()
+
+
 def profile_this(func):
     """
     This can be used to profile any function.
@@ -32,19 +35,31 @@ def profile_this(func):
         """
         a small wrapper
         """
-        profile = cProfile.Profile()
         try:
-            profile.enable(builtins=False)
+            profile.enable()
             result = func(*args, **kwargs)
             profile.disable()
             return result
         finally:
-            stream = StringIO()
-            sort_by = u'cumulative'
-            ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
-            ps.print_stats(20)
-            xbmc.log(u'Profiled Function: ' + func.__name__ + u'\n' + stream.getvalue(), xbmc.LOGWARNING)
+            pass
     return profiled_func
+
+
+def print_profiler():
+    global profile
+    stream = StringIO()
+    sort_by = u'cumulative'
+    ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
+    ps.print_stats(20)
+    xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
+
+    stream = StringIO()
+    sort_by = u'time'
+    ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
+    ps.print_stats(20)
+    xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
+
+    profile = cProfile.Profile()
 
 
 def debug_init():

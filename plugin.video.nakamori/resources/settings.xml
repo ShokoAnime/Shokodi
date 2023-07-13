@@ -58,8 +58,6 @@
         <setting label="30062" type="bool" id="context_krypton_watched" default="true"/>
         <setting label="30125" type="bool" id="context_show_vote_Episode" default="true"/>
         <setting label="30124" type="bool" id="context_show_vote_Series" default="true"/>
-        <setting label="30134" type="bool" id="context_view_cast" default="true"/>
-        <setting label="30131" type="bool" id="context_refresh" default="true"/>
         <!-- maintenance -->
 		<setting label="30097" type="lsep"/>
         <setting label="30080" type="action" id="action1" action="RunScript(plugin.video.nakamori,/kodi/clear_listitem_cache)" option="close"/>
@@ -121,11 +119,6 @@
         <setting label="30086" type="text" id="remote_ip" default="localhost" visible="System.HasAddon(script.module.pydevd-pycharm)" enable="System.HasAddon(script.module.pydevd-pycharm)"/>
         <setting label="30066" type="bool" id="request_nocast" default="false"/>
 		<setting label="30169" type="bool" id="fix_seiyuu_pic" default="false"/>
-		<setting label="30169" type="bool" id="seiyuu_gif" default="false"/>
-        <!-- experimental/misc -->
-        <setting label="30146" type="lsep"/>
-        <setting label="30145" type="bool" id="experimental" default="false"/>
-		<!-- noname -->
-		<setting label="30108" type="bool" id="send_data" default="true" visible="false"/>
+		<setting label="30145" type="bool" id="use_hhtps" default="false"/>
     </category>
 </settings>

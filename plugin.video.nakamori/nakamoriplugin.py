@@ -157,7 +157,6 @@ def show_series_episode_types_menu(series_id, episode_type):
 
 
 def add_episodes(series, episode_type):
-    from lib.kodi_models import ListItem
     plugin_dir.set_content('episodes')
     series.add_sort_methods(routing_plugin.handle)
     select = kodi_utils.get_kodi_setting('videolibrary.tvshowsselectfirstunwatcheditem') > 0 \
@@ -338,7 +337,7 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
         selected_id = file_id
 
     # all of real work is done here
-    nakamoriplayer.play_video(selected_id, ep_id, mark_as_watched, resume)
+    nakamoriplayer.play_video(file_id=selected_id, ep_id=ep_id, mark_as_watched=mark_as_watched, resume=resume)
     while kodi_utils.is_dialog_active():
         xbmc.sleep(500)
     kodi_utils.move_to_next()

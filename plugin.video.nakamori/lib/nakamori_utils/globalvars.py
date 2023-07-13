@@ -29,7 +29,8 @@ plugin_version = plugin_addon.getAddonInfo('version')
 plugin_home = translatePath(plugin_addon.getAddonInfo('path'))
 plugin_img_path = os.path.join(plugin_addon.getAddonInfo('path'), 'resources', 'media')
 
-server = 'http://' + plugin_addon.getSetting('ipaddress') + ':' + plugin_addon.getSetting('port')
+schema = 'https' if plugin_addon.getSetting('use_https') == 'true' else 'http'
+server = schema + '://' + plugin_addon.getSetting('ipaddress') + ':' + plugin_addon.getSetting('port')
 
 tag_setting_flags = 0
 tag_setting_flags |= 1 << 0 if plugin_addon.getSetting('MiscTags') == 'true' else 0

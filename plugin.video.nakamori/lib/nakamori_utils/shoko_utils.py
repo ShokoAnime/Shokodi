@@ -148,7 +148,8 @@ def get_server_status(ip=plugin_addon.getSetting('ipaddress'), port=plugin_addon
         port = pyproxy.safe_int(port)
         port = port if port != 0 else 8111
 
-    url = 'http://%s:%i/api/init/status' % (ip, port)
+    schema = 'https' if plugin_addon.getSetting('use_https') == 'true' else 'http'
+    url = '%s://%s:%i/api/init/status' % (schema, ip, port)
     try:
         # this should throw if there's an error code
         response = pyproxy.get_json(url)
@@ -272,7 +273,9 @@ def get_version(ip=plugin_addon.getSetting('ipaddress'), port=plugin_addon.getSe
         _good_ip = plugin_addon.getSetting('good_ip')
         if not force and _shoko_version != LooseVersion('0.1') and _good_ip == ip:
             return _shoko_version
-        json_file = pyproxy.get_json('http://' + str(ip) + ':' + str(port) + '/api/version')
+
+        schema = 'https' if plugin_addon.getSetting('use_https') == 'true' else 'http'
+        json_file = pyproxy.get_json(schema + '://' + str(ip) + ':' + str(port) + '/api/version')
         if json_file is None:
             return legacy
         try:
@@ -310,7 +313,8 @@ def can_connect(ip=None, port=None):
         ip = plugin_addon.getSetting('ipaddress')
     try:
         # this handles the case of errors as well
-        json_file = pyproxy.get_json('http://%s:%i/api/version' % (ip, port))
+        schema = 'https' if plugin_addon.getSetting('use_https') == 'true' else 'http'
+        json_file = pyproxy.get_json('%s://%s:%i/api/version' % (schema, ip, port))
         if json_file is None:
             return False
         return True
