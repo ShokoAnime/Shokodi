@@ -100,6 +100,8 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=Non
         series = get_series_for_episode(ep_id)
         ep.series_id = series.id
         ep.series_name = series.name
+        if resume:
+            ep.resume = True
         item = ep.get_listitem()
         f = ep.get_file_with_id(file_id)
     else:
@@ -110,11 +112,12 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=Non
                 f = episode.get_file()
         if f is None:
             f = File(file_id, build_full_object=True)
+
+        if resume:
+            f.resume = True
         item = f.get_listitem()
 
     if item is not None:
-        if resume:
-            item.resume()
         file_url = f.url_for_player if f is not None else None
         item.setPath(file_url)
 

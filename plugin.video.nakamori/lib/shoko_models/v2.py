@@ -1165,6 +1165,8 @@ class Episode(Directory):
             season = '0'
         self.season = pyproxy.safe_int(season)
 
+        self.resume = False
+
         eh.spam(self)
 
     def get_file(self):
@@ -1250,6 +1252,9 @@ class Episode(Directory):
         context = self.get_context_menu_items()
         if context is not None and len(context) > 0:
             li.add_context_menu_items(context)
+
+        if self.resume:
+            li.resume()
 
         return li.list_item
 
@@ -1510,6 +1515,8 @@ class File(Directory):
             self.audio_streams = {}
             self.sub_streams = {}
 
+        self.resume = False
+
         eh.spam(self)
 
     def get_full_object(self):
@@ -1553,6 +1560,9 @@ class File(Directory):
         # Files don't have watched states in the API, so this is all that's needed
         if self.resume_time > 0 and plugin_addon.getSetting('file_resume') == 'true':
             li.set_property('ResumeTime', str(self.resume_time))
+
+        if self.resume:
+            li.resume()
 
         model_utils.set_stream_info(li, self)
         li.set_art(self)

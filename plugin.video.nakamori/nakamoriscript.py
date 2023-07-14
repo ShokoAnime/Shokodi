@@ -39,9 +39,9 @@ def series_info(aid=0):
 
 
 @script.route('/seriesinfo/<aid>/')
-def series_info(id=0):
+def series_info(aid=0):
     from lib.windows import series_info as info
-    info.open_seriesinfo(id=id)
+    info.open_seriesinfo(id=aid)
 
 
 @script.route('/arbiter/<wait>/<path:arg>')
@@ -201,33 +201,12 @@ def rehash_file(file_id):
     f.rehash()
 
 
-@script.route('/file/<file_id>/probe')
-@try_function(ErrorPriority.BLOCKING)
-def probe_file(file_id):
-    from lib.shoko_models.v2 import File
-    f = File(file_id, build_full_object=True)
-    file_url = f.url_for_player
-    content = '"file":"' + file_url + '"'
-    schema = 'https' if plugin_addon.getSetting('use_https') == 'true' else 'http'
-    url = schema + '://%s:%s/api/probe/%s' % (plugin_addon.getSetting('ipEigakan'), plugin_addon.getSetting('portEigakan'), file_id)
-    busy = xbmcgui.DialogProgress()
-    # TODO lang fix
-    busy.create('Please wait', 'Probing')
-    data = pyproxy.post_json(url, content)
-    busy.close()
-    xbmcgui.Dialog().ok('probe results', '%s' % data)
-
-
 @script.route('/episode/<ep_id>/set_watched/<watched>')
 @try_function(ErrorPriority.HIGH, 'Error Setting Watched Status')
 def set_episode_watched_status(ep_id, watched):
     from lib.shoko_models.v2 import Episode
     ep = Episode(ep_id)
     ep.set_watched_status(watched)
-    if plugin_addon.getSetting('sync_to_library') == 'true':
-        playcount = '1' if watched else '0'
-        # lastplayed = 'string'
-        xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "method": "VideoLibrary.SetEpisodeDetails", "params": {"playcount": ' + playcount + ' , "episodeid": ' + ep_id + '}, "id": 1 }')
     kodi_utils.refresh()
 
 

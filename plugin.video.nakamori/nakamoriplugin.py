@@ -18,6 +18,16 @@ routing_plugin = routing.Plugin('plugin://plugin.video.nakamori', convert_args=T
 routing_plugin.handle = int(sys.argv[1])
 url_for = routing_plugin.url_for
 
+resume_arg = False
+if len(sys.argv) > 2:
+    for arg in sys.argv:
+        parts = arg.split(':')
+        if len(parts) < 2: continue
+        if not parts[0].strip().lower() == 'resume': continue
+        if not parts[1].strip().lower() == 'true': continue
+        resume_arg = True
+        break
+
 # I had to read up on this. Functions have read access to this if they don't declare a plugin_dir
 # if you want to do something like del plugin_dir, then you need to do this:
 # def play():
@@ -345,7 +355,7 @@ def play_video_internal(ep_id, file_id, mark_as_watched=True, resume=False):
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play')
 def play_video(ep_id, file_id):
-    play_video_internal(ep_id, file_id)
+    play_video_internal(ep_id, file_id, resume=resume_arg)
 
 
 @routing_plugin.route('/episode/<ep_id>/file/<file_id>/play_without_marking')
