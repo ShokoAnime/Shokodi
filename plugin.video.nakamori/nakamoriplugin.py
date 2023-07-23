@@ -8,7 +8,8 @@ import xbmcplugin
 import nakamoriplayer
 from lib import debug, error_handler
 from lib.error_handler import try_function, show_messages, ErrorPriority, exception
-from lib.kodi_models import DirectoryListing, WatchedStatus, ListItem
+from lib.proxy.kodi.enums import WatchedStatus
+from lib.proxy.kodi.directory_listing import DirectoryListing
 from lib.nakamori_utils import kodi_utils, shoko_utils, script_utils, model_utils
 from lib.proxy.python_version_proxy import python_proxy as pyproxy
 from lib.nakamori_utils.globalvars import *

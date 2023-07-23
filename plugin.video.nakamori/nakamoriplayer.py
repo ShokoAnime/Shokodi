@@ -8,7 +8,7 @@ from lib.nakamori_utils.globalvars import *
 from lib import error_handler as eh
 from lib.error_handler import spam, log, ErrorPriority
 from lib.nakamori_utils import script_utils
-from lib.proxy.kodi_version_proxy import kodi_proxy
+from lib.proxy.kodi import kodi_proxy
 
 busy = xbmcgui.DialogProgress()
 

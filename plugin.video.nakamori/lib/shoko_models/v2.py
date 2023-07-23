@@ -20,12 +20,14 @@ except:
     if len(sys.argv) > 2:
         eh.exception(eh.ErrorPriority.BLOCKING)
 
-from lib.kodi_models import ListItem, WatchedStatus, UniqueIds
+from lib.proxy.kodi import ListItem
+from lib.proxy.kodi.enums import WatchedStatus
+from lib.proxy.kodi.unique_ids import UniqueIds
 from lib.nakamori_utils.globalvars import *
 from lib.nakamori_utils import kodi_utils, shoko_utils, script_utils
 from lib.nakamori_utils import model_utils
 
-from lib.proxy.kodi_version_proxy import kodi_proxy
+from lib.proxy.kodi import kodi_proxy
 from lib.proxy.python_version_proxy import python_proxy as pyproxy
 
 localize = plugin_addon.getLocalizedString
@@ -937,7 +939,7 @@ class Series(Directory):
             return rating_sum/items_count
         return 0
 
-    def did_you_rate_every_episode(self):
+    def all_episodes_voted(self):
         for ep in self.items:
             if ep.user_rating == 0 and ep.episode_type == 'Episode':
                 return False

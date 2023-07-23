@@ -6,7 +6,7 @@ from lib import error_handler as eh
 from lib.error_handler import ErrorPriority
 from lib.nakamori_utils.globalvars import *
 from lib.proxy.python_version_proxy import python_proxy as pyproxy
-from lib.proxy.kodi_version_proxy import kodi_proxy as kproxy
+from lib.proxy.kodi import kodi_proxy as kproxy
 
 import xbmc
 import xbmcaddon

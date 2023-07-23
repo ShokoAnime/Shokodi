@@ -137,7 +137,7 @@ def vote_for_series(series_id):
     suggest_rating = ''
     if plugin_addon.getSetting('suggest_series_vote') == 'true':
         if plugin_addon.getSetting('suggest_series_vote_all_eps') == 'true':
-            if not series.did_you_rate_every_episode:
+            if not series.all_episodes_voted:
                 xbmcgui.Dialog().ok(plugin_addon.getLocalizedString(30353))
                 return
         suggest_rating = ' [ %s ]' % series.suggest_rating_based_on_episode_rating
@@ -165,14 +165,6 @@ def vote_for_episode(ep_id):
         return
     ep = Episode(ep_id)
     ep.vote(my_vote)
-
-
-@script.route('/tvshows/<vote_type>/vote')
-@try_function(ErrorPriority.BLOCKING)
-def vote_for_tvshows(vote_type):
-    from lib.kodi_models import VideoLibraryItem
-    vl_item = VideoLibraryItem()
-    vl_item.vote(vote_type)
 
 
 @script.route('/ep/<ep_id>/file_list')
