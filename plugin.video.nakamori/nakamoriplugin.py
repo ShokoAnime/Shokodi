@@ -37,14 +37,12 @@ plugin_dir = DirectoryListing()
 
 
 def fail_menu():
-    global plugin_dir
     plugin_dir.success = False
-    del plugin_dir
+    plugin_dir.finish()
 
 
 def finish_menu():
-    global plugin_dir
-    del plugin_dir
+    plugin_dir.finish()
 
 
 # Order matters on these. In this, it goes try -> route -> show_main_menu
@@ -376,9 +374,8 @@ def script(script_url):
 
 @routing_plugin.route('/script/<path:script_url>')
 def run_script(script_url):
-    global plugin_dir
     plugin_dir.success = False
-    del plugin_dir
+    plugin_dir.finish()
 
     xbmc.executebuiltin(script_url)
 

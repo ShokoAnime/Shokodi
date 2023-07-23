@@ -232,23 +232,24 @@ class DirectoryListing(object):
     def __init__(self, content_type='', cache=False):
         self.pending = []
         self.handle = int(sys.argv[1])
-        self.cache = cache
+        self._cache = cache
         self.success = True
-        self.content_type = content_type
-        if self.content_type != '':
+        self._content_type = content_type
+        if self._content_type != '':
             xbmcplugin.setContent(self.handle, content_type)
-        self.immediate = False
+        self._immediate = False
+        self._finished = False
 
     def set_immediate(self, immediate):
-        self.immediate = immediate
+        self._immediate = immediate
 
     def set_cached(self):
-        self.cache = True
+        self._cache = True
 
     def set_content(self, content_type):
-        self.content_type = content_type
+        self._content_type = content_type
 
-        if self.content_type != '':
+        if self._content_type != '':
             xbmcplugin.setContent(self.handle, content_type)
 
     def extend(self, iterable):
@@ -262,7 +263,7 @@ class DirectoryListing(object):
     def append(self, item, folder=True, total_items=0):
         result = get_tuple(item, folder)
         if result is not None:
-            if self.immediate:
+            if self._immediate:
                 if total_items != 0:
                     return xbmcplugin.addDirectoryItem(self.handle, result[0], result[1], result[2], total_items)
                 else:
@@ -274,32 +275,38 @@ class DirectoryListing(object):
             raise RuntimeError('Attempting to Add Not a ListItem to the List')
 
     def insert(self, index, obj, folder=True):
-        if self.immediate:
+        if self._immediate:
             raise RuntimeError('Cannot change order of items after adding. Immediate mode is enabled')
         item = get_tuple(obj, folder)
         return self.pending.insert(index, item)
 
     def __getitem__(self, item):
-        if self.immediate:
+        if self._immediate:
             raise RuntimeError('Cannot get items after adding. Immediate mode is enabled')
         return self.pending.__getitem__(item)
 
     def __setitem__(self, key, value):
-        if self.immediate:
+        if self._immediate:
             raise RuntimeError('Cannot change order of items after adding. Immediate mode is enabled')
         item = get_tuple(value, True)
         return self.pending.__setitem__(key, item)
 
     def __delitem__(self, key):
-        if self.immediate:
+        if self._immediate:
             raise RuntimeError('Cannot change order of items after adding. Immediate mode is enabled')
         return self.pending.__delitem__(key)
 
-    def __del__(self):
-        if not self.immediate and len(self.pending) > 0:
+    def finish(self):
+        if self._finished:
+            return
+        if not self._immediate and len(self.pending) > 0:
             xbmcplugin.addDirectoryItems(self.handle, self.pending, self.pending.__len__())
         if xbmcplugin is not None:
-            xbmcplugin.endOfDirectory(self.handle, succeeded=self.success, cacheToDisc=self.cache)
+            xbmcplugin.endOfDirectory(self.handle, succeeded=self.success, cacheToDisc=self._cache)
+        self._finished = True
+
+    def __del__(self):
+        self.finish()
 
 
 class VideoLibraryItem(object):
