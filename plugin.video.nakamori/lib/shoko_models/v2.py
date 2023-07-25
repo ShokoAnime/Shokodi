@@ -32,11 +32,6 @@ from lib.proxy.python_version_proxy import python_proxy as pyproxy
 
 localize = plugin_addon.getLocalizedString
 
-try:
-    unicode('abc')
-except:
-    unicode = str
-
 
 # noinspection Duplicates,PyUnusedFunction
 class Directory(object):
@@ -60,7 +55,7 @@ class Directory(object):
         self.get_children = get_children
         self.sort_index = 0
         self.sizes = None
-        if isinstance(json_node, (str, int, unicode)):
+        if pyproxy.is_string(json_node) or pyproxy.isnumeric(json_node):
             self.id = json_node
             return
 
@@ -145,11 +140,6 @@ class Directory(object):
                 banner = json_node['art']['banner'][0]['url']
                 if banner is not None and ':' not in banner:
                     banner = server + banner
-
-            # TODO need to play with this a little more
-            if kodi_utils.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
-                if hasattr(self, 'studio'):
-                    icon = 'resource://resource.images.studios.white/{studio}.png'.format(studio=self.studio)
         except:
             pass
         self.fanart = fanart
@@ -161,7 +151,7 @@ class Directory(object):
         pass
 
     def set_watched_status(self, watched):
-        if isinstance(watched, str) or isinstance(watched, unicode):
+        if pyproxy.is_string(watched):
             watched = watched.lower() != 'false'
 
         url = self.base_url()
@@ -426,7 +416,7 @@ class Filter(Directory):
                 json_node = self.get_full_object()
 
         # check again, as we might have replaced it above
-        if isinstance(json_node, (str, int, unicode)):
+        if pyproxy.is_string(json_node) or pyproxy.isnumeric(json_node):
             eh.spam(self)
             return
 
@@ -538,7 +528,7 @@ class Group(Directory):
             self.filter_id = filter_id
 
         # check again, as we might have replaced it above
-        if isinstance(json_node, (str, int, unicode)):
+        if pyproxy.is_string(json_node) or pyproxy.isnumeric(json_node):
             eh.spam(self)
             return
 
@@ -667,7 +657,7 @@ class Series(Directory):
             Directory.__init__(self, json_node, get_children)
         self.episode_types = []
         # check again, as we might have replaced it above
-        if isinstance(json_node, (str, int, unicode)):
+        if pyproxy.is_string(json_node) or pyproxy.isnumeric(json_node):
             eh.spam(self)
             return
 
@@ -953,7 +943,7 @@ class SeriesTypeList(Series):
     """
     def __init__(self, json_node, episode_type, get_children=False):
         self.episode_type = episode_type
-        if isinstance(json_node, (int, str, unicode)):
+        if pyproxy.is_string(json_node) or pyproxy.isnumeric(json_node):
             self.id = json_node
             self.get_children = get_children
             json_node = self.get_full_object()
@@ -1132,7 +1122,7 @@ class Episode(Directory):
             json_node = self.get_full_object()
             Directory.__init__(self, json_node)
         # check again, as we might have replaced it above
-        if isinstance(json_node, (str, int, unicode)):
+        if pyproxy.is_string(json_node) or pyproxy.isnumeric(json_node):
             eh.spam(self)
             return
 
@@ -1471,7 +1461,7 @@ class File(Directory):
             json_node = self.get_full_object()
             Directory.__init__(self, json_node)
         # check again, as we might have replaced it above
-        if isinstance(json_node, (str, int, unicode)):
+        if pyproxy.is_string(json_node) or pyproxy.isnumeric(json_node):
             eh.spam(self)
             return
 

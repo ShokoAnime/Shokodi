@@ -7,20 +7,10 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-try:
-    translatePath = xbmcvfs.translatePath
-except (ImportError, NameError, AttributeError):
-    translatePath = xbmc.translatePath
-
-try:
-    unicode('abc')
-except:
-    unicode = str
-
 from lib.nakamori_utils.globalvars import *
 from lib import error_handler as eh
 from lib.error_handler import ErrorPriority
-from lib.nakamori_utils.globalvars import plugin_addon
+from lib.nakamori_utils.globalvars import plugin_addon, translatePath
 from lib.proxy.python_version_proxy import python_proxy as pyproxy
 
 try:
@@ -383,43 +373,6 @@ def set_user_sort_method(content):
     set_sort_method(method_for_sorting)
 
 
-def get_media_type_from_container():
-    if get_cond_visibility('Container.Content(tvshows)'):
-        return "show"
-    elif get_cond_visibility('Container.Content(seasons)'):
-        return "season"
-    elif get_cond_visibility('Container.Content(episodes)'):
-        return "episode"
-    elif get_cond_visibility('Container.Content(movies)'):
-        return "movie"
-    elif get_cond_visibility('Container.Content(files)'):
-        return 'file'
-    elif get_cond_visibility('Container.Content(genres)'):
-        return 'genre'
-    elif get_cond_visibility('Container.Content(years)'):
-        return 'years'
-    elif get_cond_visibility('Container.Content(actors)'):
-        return 'actor'
-    elif get_cond_visibility('Container.Content(playlists)'):
-        return 'playlist'
-    elif get_cond_visibility('Container.Content(plugins)'):
-        return 'plugin'
-    elif get_cond_visibility('Container.Content(studios)'):
-        return 'studio'
-    elif get_cond_visibility('Container.Content(directors)'):
-        return 'director'
-    elif get_cond_visibility('Container.Content(sets)'):
-        return 'set'
-    elif get_cond_visibility('Container.Content(tags)'):
-        return 'tag'
-    elif get_cond_visibility('Container.Content(countries)'):
-        return 'country'
-    elif get_cond_visibility('Container.Content(roles)'):
-        return 'role'
-    else:
-        return None
-
-
 def get_device_id(reset=False):
     client_id = xbmcgui.Window(10000).getProperty('nakamori_deviceId')
 
@@ -447,10 +400,6 @@ def create_id():
         return uuid4().int
     except:
         return uuid4()
-
-
-def get_cond_visibility(condition):
-    return xbmc.getCondVisibility(condition)
 
 
 def is_dialog_active():

@@ -10,16 +10,22 @@ try:
 except ImportError:
     from io import StringIO
 
+
+line = None
+profile = None
+has_profiled = False
 has_line_profiler = False
+
+
 try:
-    # noinspection PyUnresolvedReferences
-    import line_profiler as line_profiler
+    import line_profiler
+    line = line_profiler.LineProfiler()
     has_line_profiler = True
 except ImportError:
     pass
 
-
-profile = cProfile.Profile()
+if not has_line_profiler:
+    profile = cProfile.Profile()
 
 
 def profile_this(func):
@@ -36,30 +42,60 @@ def profile_this(func):
         a small wrapper
         """
         try:
-            profile.enable()
+            start_profiling(func)
             result = func(*args, **kwargs)
-            profile.disable()
+            stop_profiling()
             return result
         finally:
             pass
     return profiled_func
 
 
+def start_profiling(func):
+    global has_profiled
+    has_profiled = True
+    if has_line_profiler:
+        if func not in line.functions:
+            line.add_function(func)
+        line.enable()
+    else:
+        profile.enable()
+
+
+def stop_profiling():
+    if has_line_profiler:
+        line.disable()
+    else:
+        profile.disable()
+
+
 def print_profiler():
-    global profile
-    stream = StringIO()
-    sort_by = u'cumulative'
-    ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
-    ps.print_stats(20)
-    xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
+    global has_profiled
+    if not has_profiled:
+        return
 
-    stream = StringIO()
-    sort_by = u'time'
-    ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
-    ps.print_stats(20)
-    xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
+    has_profiled = False
 
-    profile = cProfile.Profile()
+    if has_line_profiler:
+        global line
+        stream = StringIO()
+        line.print_stats(stream=stream)
+        xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
+        line = line_profiler.LineProfiler()
+    else:
+        global profile
+        stream = StringIO()
+        sort_by = u'cumulative'
+        ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
+        ps.print_stats(20)
+        xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
+
+        stream = StringIO()
+        sort_by = u'time'
+        ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
+        ps.print_stats(20)
+        xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
+        profile = cProfile.Profile()
 
 
 def debug_init():

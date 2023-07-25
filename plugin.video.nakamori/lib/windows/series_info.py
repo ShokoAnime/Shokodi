@@ -2,16 +2,10 @@
 import xbmcgui
 from lib.shoko_models import v2 as model
 from lib.nakamori_utils.globalvars import *
+from lib.proxy.python_version_proxy import python_proxy as pyproxy
 
 ADDON = xbmcaddon.Addon('plugin.video.nakamori')
-CWD = ADDON.getAddonInfo('path').decode('utf-8')
-
-try:
-    import xbmcvfs
-    translatePath = xbmcvfs.translatePath
-except (ImportError, NameError, AttributeError):
-    import xbmc
-    translatePath = xbmc.translatePath
+CWD = pyproxy.decode(ADDON.getAddonInfo('path'))
 
 ACTION_PREVIOUS_MENU = 10
 ACTION_NAV_BACK = 92
@@ -19,12 +13,11 @@ ACTION_NAV_BACK = 92
 # lists
 FIRST_DAY = 55
 
-img = os.path.join(xbmcaddon.Addon('plugin.video.nakamori').getAddonInfo('path'), 'resources', 'media')
-font_path = os.path.join(xbmcaddon.Addon('plugin.video.nakamori').getAddonInfo('path'), 'fonts')
+img = os.path.join(CWD, 'resources', 'media')
+font_path = os.path.join(CWD, 'fonts')
 
 # noinspection PyTypeChecker
-profileDir = ADDON.getAddonInfo('profile')
-profileDir = translatePath(profileDir)
+profileDir = translatePath(ADDON.getAddonInfo('profile'))
 
 color = ADDON.getSetting('ac_color')
 font_ttf = ADDON.getSetting('ac_font')

@@ -44,6 +44,10 @@ class BasePythonProxy:
         """
         pass
 
+    @abstractmethod
+    def is_string(self, i):
+        pass
+
     def get_data(self, url, referer, timeout, apikey):
         import lib.error_handler as eh
         headers = {
@@ -330,6 +334,9 @@ class Python2Proxy(BasePythonProxy):
             # error('Unicode Error', error_type='Unicode Error')
             return ''
 
+    def is_string(self, i):
+        return isinstance(i, (str, unicode, basestring))
+
     def isnumeric(self, value):
         return unicode(value).isnumeric()
 
@@ -361,6 +368,9 @@ class Python3Proxy(BasePythonProxy):
         except:
             # error('Unicode Error', error_type='Unicode Error')
             return ''
+
+    def is_string(self, i):
+        return isinstance(i, str)
 
     def isnumeric(self, value):
         # noinspection PyUnresolvedReferences

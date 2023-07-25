@@ -223,7 +223,6 @@ def add_continue_item(series, episode_type, watched_index):
     plugin_dir.insert(0, continue_item.get_listitem(), continue_item.is_kodi_folder)
 
 
-
 @routing_plugin.route('/menu/filter/unsorted')
 @try_function(ErrorPriority.BLOCKING, except_func=fail_menu)
 def show_unsorted_menu():
@@ -419,6 +418,7 @@ def main():
             raise RuntimeError(plugin_localize(30158))
 
     routing_plugin.run()
+    debug.print_profiler()
 
 
 if __name__ == '__main__':

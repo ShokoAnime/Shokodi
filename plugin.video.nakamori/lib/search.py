@@ -11,22 +11,13 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 
-
-def decode_utf8(_string):
-    if sys.version_info < (3, 0):
-        return _string.decode('utf-8')
-    else:
-        return _string
+from lib.nakamori_utils.globalvars import translatePath
+from lib.proxy.python_version_proxy import python_proxy as pyproxy
 
 
 ADDON_ID = 'plugin.video.nakamori'
 addon = xbmcaddon.Addon(id=ADDON_ID)
-profileDir = addon.getAddonInfo('profile')
-try:
-    import xbmcvfs
-    profileDir = decode_utf8(xbmcvfs.translatePath(profileDir))
-except (ImportError, NameError, AttributeError):
-    profileDir = decode_utf8(xbmc.translatePath(profileDir))
+profileDir = pyproxy.decode(translatePath(addon.getAddonInfo('profile')))
 
 # create profile dirs
 if not os.path.exists(profileDir):

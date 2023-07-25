@@ -7,20 +7,16 @@ from collections import defaultdict, Counter
 
 import xbmc
 import xbmcgui
-import xbmcvfs
 from lib import class_dump
-from lib.nakamori_utils.globalvars import plugin_addon, plugin_version
+from lib.nakamori_utils.globalvars import plugin_addon, plugin_version, translatePath
+
 
 try:
     addon_path = 'special://home/addons'
-    addon_path = xbmcvfs.translatePath(addon_path).replace('\\', '/')
-except (ImportError, NameError, AttributeError):
-    try:
-        addon_path = 'special://home/addons'
-        addon_path = xbmc.translatePath(addon_path).replace('\\', '/')
-    except (ImportError, NameError):
-        addon_path = os.path.expanduser('~/Documents/GitHub/Nakamori').replace('\\', '/')
-        from lib import kodi_dummy as xbmc
+    addon_path = translatePath(addon_path).replace('\\', '/')
+except (ImportError, NameError):
+    addon_path = os.path.expanduser('~/Documents/GitHub/Nakamori').replace('\\', '/')
+    from lib import kodi_dummy as xbmc
 
 
 # The plan is:

@@ -10,17 +10,6 @@ from lib.proxy.kodi import kodi_proxy as kproxy
 
 import xbmc
 import xbmcaddon
-import xbmcvfs
-
-try:
-    translatePath = xbmcvfs.translatePath
-except (ImportError, NameError, AttributeError):
-    translatePath = xbmc.translatePath
-
-try:
-    unicode('')
-except:
-    unicode = str
 
 
 def get_tags(tag_node):
@@ -42,7 +31,7 @@ def get_tags(tag_node):
         current_length = 0
         # the '3' here is because the separator ' | ' is 3 chars
         for tag in tag_node:
-            if isinstance(tag, str) or isinstance(tag, unicode):
+            if pyproxy.is_string(tag):
                 if short_tag and current_length + len(tag) + 3 > 50:
                     break
                 temp_genres.append(tag)
@@ -480,7 +469,7 @@ def remove_anidb_links(data=''):
     Returns: new string without links
 
     """
-    p = re.compile(r'(https?://anidb\.net/[0-9A-z/\-_.?=&]+[ ]*\[)([\S ]+?)(\])')
+    p = re.compile(r'(https?://anidb\.net/[0-9A-z/\-_.?=&]+ *\[)([\S ]+?)(])')
     return p.sub(r'\2', data)
 
 
