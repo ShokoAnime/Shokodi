@@ -1,12 +1,11 @@
 import json
 import sys
 
-import routing
 import xbmc
 import xbmcgui
 import xbmcplugin
 import nakamoriplayer
-from lib import debug, error_handler
+from lib import debug, error_handler, routing
 from lib.error_handler import try_function, show_messages, ErrorPriority, exception
 from lib.proxy.kodi.enums import WatchedStatus
 from lib.proxy.kodi.directory_listing import DirectoryListing

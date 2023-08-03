@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import nakamoriplayer
-from lib import debug
-from lib import search
 import xbmcgui
 
-import routing
+import nakamoriplayer
+from lib import debug, routing, search
 from lib.error_handler import spam, ErrorPriority, try_function, show_messages
 from lib.nakamori_utils import kodi_utils, shoko_utils
-from lib.proxy.python_version_proxy import python_proxy as pyproxy
-
 from lib.nakamori_utils.globalvars import *
+from lib.proxy.python_version_proxy import python_proxy as pyproxy
 
 script = routing.Script(base_url=os.path.split(__file__)[-1], convert_args=True)
 

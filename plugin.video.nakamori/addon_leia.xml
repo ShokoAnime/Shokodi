@@ -2,8 +2,6 @@
 <addon id="plugin.video.nakamori" name="Nakamori" version="3.6.14" provider-name="da3dsoul">
 	<requires>
 		<import addon="xbmc.python" version="2.25.0" />
-		<import addon="script.module.future" version="0.16.0.4"/>
-		<import addon="script.module.routing" version="0.2.4.1"/>
 		<import addon="script.module.web-pdb" optional="true"/>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="nakamoriplugin.py">

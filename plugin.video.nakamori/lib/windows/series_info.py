@@ -26,6 +26,8 @@ font_size = ADDON.getSetting('ac_size')
 
 class SeriesInfo(xbmcgui.WindowXML):
     def __init__(self, strXMLname, strFallbackPath, strDefaultName, forceFallback, id, aid):
+        xbmcgui.WindowXML.__init__(self, xmlFilename=strXMLname, scriptPath=strFallbackPath, defaultSkin=strDefaultName,
+                                   defaultRes=forceFallback)
         self.window_type = 'window'
         self.calendar_collection = {}
         self.aid = aid
