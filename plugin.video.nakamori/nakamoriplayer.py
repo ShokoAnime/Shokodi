@@ -292,9 +292,9 @@ class Player(xbmc.Player):
         if self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING:
             return True
 
-        # try for 10s to start playing
+        # try for 60s to start playing
         count = 0
-        while count < 20 and not (self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING):
+        while count < 120 and not (self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING):
             count += 1
             xbmc.sleep(500)
 
