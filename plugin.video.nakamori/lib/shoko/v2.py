@@ -2,33 +2,22 @@
 # -*- coding: utf-8 -*-
 import json
 import time
-from hashlib import md5
 
 from abc import abstractmethod
 
 from lib import class_dump
 from lib import error_handler as eh
-from lib.nakamori_utils.kodi_utils import Sorting
-import xbmcplugin
 
-try:
-    import nakamoriplugin
-    # This puts a dependency on plugin, which is a no no. It'll need to be replaced later
-    puf = nakamoriplugin.routing_plugin.url_for
-except:
-    import sys
-    if len(sys.argv) > 2:
-        eh.exception(eh.ErrorPriority.BLOCKING)
-
-from lib.proxy.kodi import ListItem
-from lib.proxy.kodi.enums import WatchedStatus
-from lib.proxy.kodi.unique_ids import UniqueIds
-from lib.nakamori_utils.globalvars import *
-from lib.nakamori_utils import kodi_utils, shoko_utils, script_utils
-from lib.nakamori_utils import model_utils
+from lib.utils.globalvars import *
+from lib.shoko import connection_handler
+from lib.utils import model_utils
 
 from lib.proxy.kodi import kodi_proxy
-from lib.proxy.python_version_proxy import python_proxy as pyproxy
+from lib.proxy.kodi.enums import WatchedStatus
+from lib.proxy.kodi.unique_ids import UniqueIds
+from lib.proxy.python import proxy as pyproxy
+from plugin_routes import PluginRoutes
+from script_routes import ScriptRoutes
 
 localize = plugin_addon.getLocalizedString
 
@@ -38,6 +27,7 @@ class Directory(object):
     """
     A directory object, the base for Groups, Series, Episodes, etc
     """
+
     def __init__(self, json_node, get_children=False):
         """
         Create a directory object from a json node, containing only what is needed to form a ListItem.
@@ -160,12 +150,11 @@ class Directory(object):
         if plugin_addon.getSetting('syncwatched') == 'true':
             pyproxy.get_json(url)
         else:
-            xbmc.executebuiltin('Action(ToggleWatched)')
+            kodi_proxy.executebuiltin('Action(ToggleWatched)')
 
         if plugin_addon.getSetting('watchedbox') == 'true':
             msg = localize(30201) + ' ' + (localize(30202) if watched else localize(30203))
-            xbmc.executebuiltin('Notification(' + localize(30200) + ', ' + msg + ', 2000, ' +
-                                plugin_addon.getAddonInfo('icon') + ')')
+            kodi_proxy.Dialog.notification(localize(30200), msg)
 
     def vote(self, value):
         url = self.base_url() + '/vote'
@@ -180,7 +169,7 @@ class Directory(object):
         :rtype: ListItem
         """
         url = self.get_plugin_url()
-        li = ListItem(self.name, path=url)
+        li = kodi_proxy.ListItem(self.name, path=url)
         li.set_path(url)
         infolabels = self.get_infolabels()
         li.set_info(type='video', infoLabels=infolabels)
@@ -205,7 +194,7 @@ class Directory(object):
 
     def is_watched(self):
         local_only = plugin_addon.getSetting('local_total') == 'true'
-        no_specials = kodi_utils.get_kodi_setting('ignore_specials_watched')
+        no_specials = kodi_proxy.Util.get_kodi_setting('ignore_specials_watched')
         sizes = self.sizes
         if sizes is None:
             return WatchedStatus.UNWATCHED
@@ -254,7 +243,7 @@ class Directory(object):
 
     def get_watched_episodes(self):
         # we don't consider local, because we can't watch an episode that we don't have
-        no_specials = kodi_utils.get_kodi_setting('ignore_specials_watched')
+        no_specials = kodi_proxy.Util.get_kodi_setting('ignore_specials_watched')
         sizes = self.sizes
         if sizes is None:
             return 0
@@ -266,7 +255,7 @@ class Directory(object):
 
     def get_total_episodes(self):
         local_only = plugin_addon.getSetting('local_total') == 'true'
-        no_specials = kodi_utils.get_kodi_setting('ignore_specials_watched')
+        no_specials = kodi_proxy.Util.get_kodi_setting('ignore_specials_watched')
         sizes = self.sizes
         if sizes is None:
             return 0
@@ -313,20 +302,20 @@ class Directory(object):
     def hide_description(self, infolabels):
         if self.is_watched() == WatchedStatus.WATCHED:
             return
-        if not kodi_utils.get_kodi_setting('videolibrary.showunwatchedplots')\
+        if not kodi_proxy.Util.get_kodi_setting('videolibrary.showunwatchedplots') \
                 or plugin_addon.getSetting('hide_plot') == 'true':
             infolabels['plot'] = localize(30079)
 
     def add_sort_methods(self, handle):
-        xbmcplugin.addSortMethod(handle, Sorting.none.listitem_id)
-        xbmcplugin.addSortMethod(handle, Sorting.title.listitem_id)
-        xbmcplugin.addSortMethod(handle, Sorting.date.listitem_id)
-        xbmcplugin.addSortMethod(handle, Sorting.rating.listitem_id)
-        xbmcplugin.addSortMethod(handle, Sorting.year.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.none.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.title.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.date.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.rating.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.year.listitem_id)
 
     def apply_default_sorting(self):
         sorting_setting = plugin_addon.getSetting('default_sort_series')
-        kodi_utils.set_user_sort_method(sorting_setting)
+        kodi_proxy.Sorting.set_sort_method(sorting_setting)
 
 
 class CustomItem(Directory):
@@ -391,6 +380,7 @@ class Filter(Directory):
     """
     A filter object, contains a unified method of representing a filter, with convenient converters
     """
+
     def __init__(self, json_node, build_full_object=False, get_children=False):
         """
         Create a filter object from a json node, containing everything that is relevant to a ListItem.
@@ -400,7 +390,7 @@ class Filter(Directory):
         """
         Directory.__init__(self, json_node, get_children)
         # we are making this overrideable for Unsorted and such
-        self.plugin_url = 'plugin://plugin.video.nakamori/menu/filter/%s/' % self.id
+        self.plugin_url = plugin_router.url_for(PluginRoutes.show_filter_menu, self.id)
         self.directory_filter = False
 
         if build_full_object:
@@ -408,7 +398,7 @@ class Filter(Directory):
             if self.size < 0:
                 # First, download basic info
                 json_node = self.get_full_object()
-                self.plugin_url = 'plugin://plugin.video.nakamori/menu/filter/%s/' % self.id
+                self.plugin_url = plugin_router.url_for(PluginRoutes.show_filter_menu, self.id)
                 Directory.__init__(self, json_node, get_children)
                 self.directory_filter = json_node.get('type', 'filter') == 'filters'
             # then download children, optimized for type
@@ -466,7 +456,7 @@ class Filter(Directory):
             self.name = 'Unsorted Files'
             self.sort_index = 6
             self.apply_image_override('unsort.png')
-            self.plugin_url = puf(nakamoriplugin.show_unsorted_menu)
+            self.plugin_url = plugin_router.url_for(PluginRoutes.show_unsorted_menu)
 
     def process_children(self, json_node):
         items = json_node.get('filters', [])
@@ -509,6 +499,7 @@ class Group(Directory):
     """
     A group object, contains a unified method of representing a group, with convenient converters
     """
+
     def __init__(self, json_node, build_full_object=False, get_children=False, filter_id=0):
         """
         Create a group object from a json node, containing everything that is relevant to a ListItem.
@@ -560,7 +551,7 @@ class Group(Directory):
         return 'group'
 
     def get_plugin_url(self):
-        return puf(nakamoriplugin.show_group_menu, self.id, self.filter_id)
+        return plugin_router.url_for(PluginRoutes.show_group_menu, self.id, self.filter_id)
 
     def get_listitem(self):
         """
@@ -569,7 +560,7 @@ class Group(Directory):
         :rtype: ListItem
         """
         url = self.get_plugin_url()
-        li = ListItem(self.name, path=url)
+        li = kodi_proxy.ListItem(self.name, path=url)
         infolabels = self.get_infolabels()
         li.set_path(url)
         li.set_watched_flags(infolabels, self.is_watched(), 1)
@@ -617,8 +608,10 @@ class Group(Directory):
         context_menu = []
 
         # Mark as watched/unwatched
-        watched_item = (localize(30126), script_utils.url_group_watched_status(self.id, True))
-        unwatched_item = (localize(30127), script_utils.url_group_watched_status(self.id, False))
+        watched_item = (
+        localize(30126), script_router.url_for(ScriptRoutes.set_group_watched_status, self.id, True))
+        unwatched_item = (
+        localize(30127), script_router.url_for(ScriptRoutes.set_group_watched_status, self.id, False))
         if plugin_addon.getSetting('context_krypton_watched') == 'true':
             watched = self.is_watched()
             if watched == WatchedStatus.WATCHED:
@@ -640,6 +633,7 @@ class Series(Directory):
     """
     A series object, contains a unified method of representing a series, with convenient converters
     """
+
     def __init__(self, json_node, build_full_object=False, get_children=False, seiyuu_pic=False, use_aid=False):
         """
         Create a series object from a json node, containing everything that is relevant to a ListItem
@@ -706,7 +700,7 @@ class Series(Directory):
 
     def get_plugin_url(self):
         try:
-            return puf(nakamoriplugin.show_series_menu, self.id)
+            return plugin_router.url_for(PluginRoutes.show_series_menu, self.id)
         except:
             return str(self.id)
 
@@ -723,7 +717,7 @@ class Series(Directory):
         # We need to assume not airing, as there is no end date provided in API
         name = self.name
 
-        li = ListItem(name, path=self.url)
+        li = kodi_proxy.ListItem(name, path=self.url)
         infolabels = self.get_infolabels()
         li.set_path(self.url)
         li.set_watched_flags(infolabels, self.is_watched(), 1)
@@ -852,8 +846,8 @@ class Series(Directory):
         context_menu = []
 
         # Mark as watched/unwatched
-        watched_item = (localize(30126), script_utils.url_series_watched_status(self.id, True))
-        unwatched_item = (localize(30127), script_utils.url_series_watched_status(self.id, False))
+        watched_item = (localize(30126), script_router.url_for(ScriptRoutes.set_series_watched_status, self.id, True))
+        unwatched_item = (localize(30127), script_router.url_for(ScriptRoutes.set_series_watched_status, self.id, False))
         if plugin_addon.getSetting('context_krypton_watched') == 'true':
             watched = self.is_watched()
             if watched == WatchedStatus.WATCHED:
@@ -869,7 +863,7 @@ class Series(Directory):
 
         # Vote Series
         if plugin_addon.getSetting('context_show_vote_Series') == 'true':
-            context_menu.append((localize(30124), script_utils.url_vote_for_series(self.id)))
+            context_menu.append((localize(30124), script_router.url_for(ScriptRoutes.vote_for_series, self.id)))
 
         # TODO Things to add: View Cast, Play All, Related, Similar
 
@@ -877,21 +871,20 @@ class Series(Directory):
 
     def vote(self, value):
         Directory.vote(self, value)
-        xbmc.executebuiltin('Notification(%s, %s %s, 7500, %s)' % (plugin_addon.getLocalizedString(30321),
-                                                                        plugin_addon.getLocalizedString(30322),
-                                                                        str(value), plugin_addon.getAddonInfo('icon')))
+        kodi_proxy.Dialog.notification(plugin_addon.getLocalizedString(30321), plugin_addon.getLocalizedString(30322) +
+                                       " " + str(value))
 
     def add_sort_methods(self, handle):
-        xbmcplugin.addSortMethod(handle, Sorting.none.listitem_id)
-        xbmcplugin.addSortMethod(handle, Sorting.episode_number.listitem_id)
-        xbmcplugin.addSortMethod(handle, Sorting.date.listitem_id)
-        xbmcplugin.addSortMethod(handle, Sorting.title.listitem_id)
-        xbmcplugin.addSortMethod(handle, Sorting.rating.listitem_id)
-        xbmcplugin.addSortMethod(handle, Sorting.year.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.none.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.episode_number.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.date.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.title.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.rating.listitem_id)
+        kodi_proxy.Sorting.add_sort_method(kodi_proxy.Sorting.year.listitem_id)
 
     def apply_default_sorting(self):
         sorting_setting = plugin_addon.getSetting('default_sort_episodes')
-        kodi_utils.set_user_sort_method(sorting_setting)
+        kodi_proxy.Sorting.set_sort_method(sorting_setting)
 
     def get_mpaa_rating(self):
         """
@@ -926,7 +919,7 @@ class Series(Directory):
                 rating_sum += ep.user_rating
                 items_count += 1
         if items_count > 0:
-            return rating_sum/items_count
+            return rating_sum / items_count
         return 0
 
     def all_episodes_voted(self):
@@ -941,6 +934,7 @@ class SeriesTypeList(Series):
     """
     The Episode Type List for a series
     """
+
     def __init__(self, json_node, episode_type, get_children=False):
         self.episode_type = episode_type
         if pyproxy.is_string(json_node) or pyproxy.isnumeric(json_node):
@@ -961,7 +955,7 @@ class SeriesTypeList(Series):
                 pass
 
     def get_plugin_url(self):
-        return puf(nakamoriplugin.show_series_episode_types_menu, self.id, self.episode_type)
+        return plugin_router.url_for(PluginRoutes.show_series_episode_types_menu, self.id, self.episode_type)
 
     def get_listitem(self, url=None):
         """
@@ -971,7 +965,7 @@ class SeriesTypeList(Series):
         """
         url = self.get_plugin_url()
 
-        li = ListItem(self.episode_type, path=url)
+        li = kodi_proxy.ListItem(self.episode_type, path=url)
         infolabels = self.get_infolabels()
         li.set_path(url)
         li.set_watched_flags(infolabels, self.is_watched(), 1)
@@ -1096,6 +1090,7 @@ class Episode(Directory):
     """
     An episode object, contains a unified method of representing an episode, with convenient converters
     """
+
     def __init__(self, json_node, series=None, build_full_object=False):
         """
         Create an episode object from a json node, containing everything that is relevant to a ListItem
@@ -1193,7 +1188,7 @@ class Episode(Directory):
         return 'ep'
 
     def get_plugin_url(self):
-        return 'plugin://plugin.video.nakamori/episode/%s/file/%s/play' % (self.id, 0)
+        return plugin_router.url_for(PluginRoutes.play_video, ep_id=self.id)
 
     def is_watched(self):
         if self.watched:
@@ -1212,7 +1207,7 @@ class Episode(Directory):
         self.url = url
         if self.url is None:
             self.url = self.get_plugin_url()
-        li = ListItem(self.name, path=self.url)
+        li = kodi_proxy.ListItem(self.name, path=self.url)
         li.set_path(self.url)
         infolabels = self.get_infolabels()
 
@@ -1341,7 +1336,7 @@ class Episode(Directory):
                         # datetime im broken this one should work but is not, and im not using 8 line funny workaround
                         # str(datetime.strptime(str(f.date_added), '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y')).encode('utf-8')
                         # https://bugs.python.org/issue27400
-                        x = str(f.date_added)[8:10] + '.' +str(f.date_added)[5:7] + '.' + str(f.date_added)[0:4]
+                        x = str(f.date_added)[8:10] + '.' + str(f.date_added)[5:7] + '.' + str(f.date_added)[0:4]
                         self.hash_content += str(x).encode('utf-8')
             except Exception as ex:
                 eh.exception(eh.ErrorPriority.HIGHEST, ex)
@@ -1352,7 +1347,7 @@ class Episode(Directory):
         # Play
         if plugin_addon.getSetting('context_show_play') == 'true':
             # I change this to play, because with 'show info' this does not play file
-            url = 'RunPlugin(%s)' % puf(nakamoriplugin.play_video, self.id, self.get_file().id)
+            url = 'RunPlugin(%s)' % plugin_router.url_for(PluginRoutes.play_video, self.id, self.get_file().id)
             context_menu.append((localize(30065), url))
             # context_menu.append((localize(30065), 'Action(Select)'))
 
@@ -1360,21 +1355,24 @@ class Episode(Directory):
         if self.get_file() is not None and self.get_file().resume_time > 0 \
                 and plugin_addon.getSetting('file_resume') == 'true':
             label = localize(30141) + ' (%s)' % time.strftime('%H:%M:%S', time.gmtime(self.get_file().resume_time))
-            url = 'RunPlugin(%s)' % puf(nakamoriplugin.resume_video, self.id, self.get_file().id)
+            url = 'RunPlugin(%s)' % plugin_router.url_for(PluginRoutes.resume_video, self.id, self.get_file().id)
             context_menu.append((label, url))
 
         # Play (No Scrobble)
         if plugin_addon.getSetting('context_show_play_no_watch') == 'true':
-            context_menu.append((localize(30132), 'RunPlugin(%s)' % puf(nakamoriplugin.play_video_without_marking,
-                                                                        self.id, self.get_file().id)))
+            context_menu.append((localize(30132), 'RunPlugin(%s)' %
+                                 plugin_router.url_for(PluginRoutes.play_video_without_marking, self.id,
+                                                       self.get_file().id)))
 
         # Inspect
         if plugin_addon.getSetting('context_pick_file') == 'true' and len(self.items) > 1:
-            context_menu.append((localize(30133), script_utils.url_file_list(self.id)))
+            context_menu.append((localize(30133), script_router.url_for(ScriptRoutes.file_list, self.id)))
 
         # Mark as watched/unwatched
-        watched_item = (localize(30128), script_utils.url_episode_watched_status(self.id, True))
-        unwatched_item = (localize(30129), script_utils.url_episode_watched_status(self.id, False))
+        watched_item = (localize(30128), script_router.url_for(ScriptRoutes.set_episode_watched_status,
+                                                               ep_id=self.id, watched=True))
+        unwatched_item = (localize(30129), script_router.url_for(ScriptRoutes.set_episode_watched_status, ep_id=self.id,
+                                                                 watched=False))
         if plugin_addon.getSetting('context_krypton_watched') == 'true':
             if self.watched:
                 context_menu.append(unwatched_item)
@@ -1391,11 +1389,12 @@ class Episode(Directory):
 
         # Vote Episode
         if plugin_addon.getSetting('context_show_vote_Episode') == 'true':
-            context_menu.append((localize(30125), script_utils.url_vote_for_episode(self.id)))
+            context_menu.append((localize(30125), script_router.url_for(ScriptRoutes.vote_for_episode, self.id)))
 
         # Vote Series
         if plugin_addon.getSetting('context_show_vote_Series') == 'true' and self.series_id != 0:
-            context_menu.append((localize(30124), script_utils.url_vote_for_series(self.series_id)))
+            context_menu.append(
+                (localize(30124), script_router.url_for(ScriptRoutes.vote_for_series, self.series_id)))
 
         # the default ones that say the rest are kodi's
         context_menu += Directory.get_context_menu_items(self)
@@ -1404,9 +1403,8 @@ class Episode(Directory):
 
     def vote(self, value):
         Directory.vote(self, value)
-        xbmc.executebuiltin('Notification(%s, %s %i, 7500, %s)' % (plugin_addon.getLocalizedString(30323),
-                                                                        plugin_addon.getLocalizedString(30322),
-                                                                        value, plugin_addon.getAddonInfo('icon')))
+        kodi_proxy.Dialog.notification(plugin_addon.getLocalizedString(30323), plugin_addon.getLocalizedString(30322) +
+                                       " " + value)
 
     def hide_images(self):
         if plugin_addon.getSetting('hide_images') == 'true' and self.is_watched() != WatchedStatus.WATCHED:
@@ -1446,6 +1444,7 @@ class File(Directory):
     """
     A file object, contains a unified method of representing a json_node file, with convenient converters
     """
+
     def __init__(self, json_node, build_full_object=False):
         """
         Create a file object from a json node, containing everything that is relevant to a ListItem
@@ -1528,7 +1527,7 @@ class File(Directory):
         return 'file'
 
     def get_plugin_url(self):
-        return 'plugin://plugin.video.nakamori/episode/%s/file/%s/play_without_marking' % (0, self.id)
+        return plugin_router.url_for(PluginRoutes.play_video_without_marking, file_id=self.id)
 
     @property
     def url_for_player(self):
@@ -1544,7 +1543,7 @@ class File(Directory):
         :rtype: ListItem
         """
         url = self.get_plugin_url()
-        li = ListItem(self.name, path=url)
+        li = kodi_proxy.ListItem(self.name, path=url)
         li.set_path(url)
         infolabels = self.get_infolabels()
         li.set_info(type='video', infoLabels=infolabels)
@@ -1581,8 +1580,8 @@ class File(Directory):
 
     def get_context_menu_items(self):
         context_menu = [
-            (localize(30120), script_utils.url_rescan_file(self.id)),
-            (localize(30121), script_utils.url_rehash_file(self.id))
+            (localize(30120), script_router.url_for(ScriptRoutes.rescan_file, self.id)),
+            (localize(30121), script_router.url_for(ScriptRoutes.rehash_file, self.id))
         ]
         # the default ones that say the rest are kodi's
         context_menu += Directory.get_context_menu_items(self)
@@ -1600,14 +1599,14 @@ class File(Directory):
         :param current_time: current time in seconds
         """
         offset_url = server + '/api/file/offset'
-        offset_body = '"id":%i,"offset":%i' % (self.id, current_time)
-        pyproxy.post_json(offset_url, offset_body)
-        
+        offset_body = '{"id":%i,"offset":%i}' % (self.id, current_time)
+        pyproxy.post_data(offset_url, offset_body)
+
     def rehash(self):
-        shoko_utils.rehash_file(self.id)
+        connection_handler.perform_server_action('rehash', self.id)
 
     def rescan(self):
-        shoko_utils.rescan_file(self.id)
+        connection_handler.perform_server_action('rescan', self.id)
 
 
 class Sizes(object):
@@ -1640,7 +1639,6 @@ def get_sizes(json_node):
     return result
 
 
-@eh.try_function(eh.ErrorPriority.NORMAL)
 def get_series_for_episode(ep_id):
     url = server + '/api/serie/fromep'
     url = model_utils.add_default_parameters(url, ep_id, 0)

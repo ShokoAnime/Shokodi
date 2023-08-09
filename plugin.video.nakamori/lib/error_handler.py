@@ -5,33 +5,28 @@ import sys
 import traceback
 from collections import defaultdict, Counter
 
-import xbmc
-import xbmcgui
 from lib import class_dump
-from lib.nakamori_utils.globalvars import plugin_addon, plugin_version, translatePath
-
+from lib.utils.globalvars import plugin_addon, plugin_version, translatePath
 
 try:
+    import xbmc
     addon_path = 'special://home/addons'
     addon_path = translatePath(addon_path).replace('\\', '/')
+
+    def _info(message):
+        xbmc.log(message, xbmc.LOGINFO)
+
+    def _error(message):
+        xbmc.log(message, xbmc.LOGERROR)
+
 except (ImportError, NameError):
     addon_path = os.path.expanduser('~/Documents/GitHub/Nakamori').replace('\\', '/')
-    from lib import kodi_dummy as xbmc
 
+    def _info(message):
+        pass
 
-# The plan is:
-# gather all errors/exceptions, regardless of whether they are painless
-# sort and group them
-# BLOCKING errors will immediately return and break
-# otherwise, log only HIGH and above priority errors
-# log the count and place(s) of occurrence
-# Show a dialog OK message that there was an error if it was HIGHEST or greater
-# Show a notification if it was HIGH
-# log counts of normal errors if they happen a lot, like more than 5 times
-# We will normally not even log LOW priority errors,
-# but we may enable it (and logging all errors) in the settings
-# Errors will start being collected at the start of the plugin cycle, and will only show messages when done
-# Especially suppress errors during playback unless it is BLOCKING
+    def _error(message):
+        pass
 
 
 class ErrorPriority:
@@ -103,6 +98,44 @@ __exceptions = defaultdict(list)
 file_exclusions = {'error_handler', 'routing', '__init__'}
 
 
+class Try:
+    def __init__(self, error_priority=ErrorPriority.NORMAL, message='', func=None, except_func=None):
+        self.func = func
+        self.instance = None
+        self.error_priority = error_priority
+        self.message = message
+        self.except_func = except_func
+        if self.func is not None:
+            self.__name__ = func.__name__
+
+    def __call__(self, func):
+        if self.func is None:
+            self.func = func
+            self.__name__ = func.__name__
+
+        def call(*args, **kwargs):
+            if self.instance is None and len(args) > 0:
+                self.instance = args[0]
+
+            try:
+                wrapped_method = self.func(self.instance, *args[1:], **kwargs)
+            except:
+                exception(self.error_priority, self.message)
+                if self.except_func is not None:
+                    self.except_func(self.instance)
+                if self.error_priority == ErrorPriority.BLOCKING:
+                    show_messages()
+                    # sys.exit is called if BLOCKING errors exist in the above
+                return None
+
+            return wrapped_method
+
+        if self.func is not None:
+            call.__name__ = self.func.__name__
+
+        return call
+
+
 def try_function(error_priority, message='', except_func=None, *exc_args, **exc_kwargs):
     def try_inner1(func):
         def try_inner2(*args, **kwargs):
@@ -120,20 +153,13 @@ def try_function(error_priority, message='', except_func=None, *exc_args, **exc_
     return try_inner1
 
 
-def kodi_log(text):
-    xbmc.log(text, xbmc.LOGINFO)
-
-
-def kodi_error(text):
-    xbmc.log(text, xbmc.LOGERROR)
-
-
 # noinspection PyProtectedMember
 def get_simple_trace(fullpath=False):
     # this gets the frame that is not in this file
     filepath, line_number, clsname, class_name, lines, index, path = '', 0, '', '', [], 0, ''
     for frame_index in range(0, 12):
         try:
+            # noinspection PyUnresolvedReferences
             f = sys._getframe(frame_index)
             filepath, line_number, clsname, lines, index = inspect.getframeinfo(f)
             try:
@@ -185,7 +211,7 @@ def log(*args):
     :param args: some objects to log
     :return:
     """
-    from lib.proxy.python_version_proxy import python_proxy as pp
+    from lib.proxy.python import proxy as pp
     try:
         text = class_dump.dump_to_text(*args)
     except:
@@ -194,7 +220,7 @@ def log(*args):
 
     if text == '':
         return
-    kodi_log(__get_caller_prefix() + pp.decode(text))
+    _info(__get_caller_prefix() + pp.decode(text))
 
 
 def error(*args):
@@ -205,11 +231,11 @@ def error(*args):
     :param args: some objects to log
     :return:
     """
-    from lib.proxy.python_version_proxy import python_proxy as pp
+    from lib.proxy.python import proxy as pp
     text = class_dump.dump_to_text(*args)
     if text == '':
         return
-    kodi_error(__get_caller_prefix() + pp.decode(text))
+    _error(__get_caller_prefix() + pp.decode(text))
 
 
 def exception(priority, *args):
@@ -220,10 +246,10 @@ def exception(priority, *args):
         # We don't actually have an Exception
         pass
     text = class_dump.dump_to_text(*args)
-    exception_internal(exc_type, exc_obj, exc_tb, priority, text)
+    __exception_internal(exc_type, exc_obj, exc_tb, priority, text)
 
 
-def exception_internal(exc_type, exc_obj, exc_tb, priority, message=''):
+def __exception_internal(exc_type, exc_obj, exc_tb, priority, message=''):
     """
     The priority determines how the system will handle or display the error. The message is self-explanatory.
     sys.exc_info() will give the required information for the first arguments. Otherwise, just pass None to them.
@@ -246,8 +272,9 @@ def exception_internal(exc_type, exc_obj, exc_tb, priority, message=''):
     place = get_simple_trace(fullpath=True)
 
     if exc_obj is not None and exc_tb is not None:
-        if msg == '':
+        if msg == '' or msg is None:
             msg = str(exc_obj)
+
         ex = NakamoriError(msg, exc_type, place)
         if priority == ErrorPriority.BLOCKING or plugin_addon.getSetting('spamLog') == 'true':
             for line in traceback.format_exc().replace('\r', '\n').split('\n'):
@@ -310,41 +337,40 @@ def show_messages():
         exes = Counter(exes).items()
         exes = sorted(exes)
         # log only if we are spamming
-        if plugin_addon.getSetting('spamLog') != 'true':
-            exes = [x for x in exes if x[1] > 5]
-            print_exceptions(exes)
+        exes = [x for x in exes if x[1] > 5]
+        print_exceptions(exes)
 
 
 def print_exceptions(exes):
-    from lib.proxy.python_version_proxy import python_proxy as pp
+    from lib.proxy.python import proxy as pp
     if exes is None or len(exes) == 0:
         return
 
     plural = True if len(exes) > 1 else False
     pluralized_msg = 'were errors' if plural else 'was an error'
     msg = 'There ' + pluralized_msg + ' while executing Nakamori.'
-    kodi_error(__get_basic_prefix() + msg)
+    _error(__get_basic_prefix() + msg)
 
     msg = 'Nakamori Version ' + str(plugin_version)
-    kodi_error(__get_basic_prefix() + msg)
+    _error(__get_basic_prefix() + msg)
 
     url = sys.argv[0]
     if len(sys.argv) > 2 and sys.argv[2] != '':
         url += sys.argv[2]
     msg = 'The url accessed was ' + pp.unquote(url)
-    kodi_error(__get_basic_prefix() + msg)
+    _error(__get_basic_prefix() + msg)
 
     for ex in exes:
         key, value = ex  # type: NakamoriError, int
         msg = key.exc_message + ' -- Exception: ' + key.exc_type + ' at ' + key.exc_trace
-        kodi_error(__get_basic_prefix() + msg)
+        _error(__get_basic_prefix() + msg)
         if len(key.exc_full_trace) > 0:
             for line in key.exc_full_trace:
-                kodi_error(__get_basic_prefix() + line)
+                _error(__get_basic_prefix() + line)
 
         if value > 1:
             msg = 'This error occurred ' + str(value) + ' times.'
-            kodi_error(__get_basic_prefix() + msg)
+            _error(__get_basic_prefix() + msg)
 
 
 def show_dialog_for_exception(ex):
@@ -355,12 +381,13 @@ def show_dialog_for_exception(ex):
     :return:
     """
 
+    from lib.proxy.kodi import kodi_proxy
     msg = ex[0].exc_message
     if msg == '':
         msg = ex[0].exc_type
     msg += '\n  at ' + ex[0].exc_trace + '\nThis occurred ' + \
         str(ex[1]) + ' times.'
-    xbmcgui.Dialog().ok('Nakamori: An Error Occurred', msg)
+    kodi_proxy.Dialog.ok('Nakamori: An Error Occurred', msg)
 
 
 def show_notification_for_exception(ex):
@@ -370,6 +397,7 @@ def show_notification_for_exception(ex):
     :type ex: (NakamoriError, int)
     :return:
     """
+    from lib.proxy.kodi import kodi_proxy
+
     msg = ex[0].exc_message + '\nThis occurred ' + str(ex[1]) + ' times.'
-    xbmc.executebuiltin('Notification(Nakamori: An Error Occurred, ' + msg + ', 2000, ' +
-                        plugin_addon.getAddonInfo('icon') + ')')
+    kodi_proxy.Dialog.notification('Nakamori: An Error Occurred', msg)

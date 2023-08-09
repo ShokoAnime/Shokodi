@@ -2,18 +2,20 @@
 # -*- coding: utf-8 -*-
 import os
 
-import xbmc
-import xbmcaddon
+from lib import routing
 
 try:
     import xbmcvfs
     translatePath = xbmcvfs.translatePath
 except (ImportError, NameError, AttributeError):
+    import xbmc
+    # noinspection PyUnresolvedReferences
     translatePath = xbmc.translatePath
 
 
 # The plugin object for nakamori.plugin
-plugin_addon = xbmcaddon.Addon('plugin.video.nakamori')
+import xbmcaddon
+plugin_addon = xbmcaddon.Addon()
 plugin_version = plugin_addon.getAddonInfo('version')
 plugin_home = translatePath(plugin_addon.getAddonInfo('path'))
 plugin_img_path = os.path.join(plugin_addon.getAddonInfo('path'), 'resources', 'media')
@@ -31,3 +33,6 @@ tag_setting_flags |= 1 << 5 if plugin_addon.getSetting('SettingTags') == 'true' 
 tag_setting_flags |= 1 << 6 if plugin_addon.getSetting('ProgrammingTags') == 'true' else 0
 tag_setting_flags |= 1 << 7 if plugin_addon.getSetting('GenreTags') == 'true' else 0
 tag_setting_flags |= 1 << 31 if plugin_addon.getSetting('InvertTags') == 'Show' else 0
+
+plugin_router = routing.Plugin('plugin.video.nakamori', convert_args=True)
+script_router = routing.Script('plugin.video.nakamori', convert_args=True)

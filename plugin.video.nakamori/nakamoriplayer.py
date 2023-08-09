@@ -2,15 +2,13 @@
 import json
 from threading import Thread
 
-import xbmcgui
-
-from lib.nakamori_utils.globalvars import *
+from lib.utils.globalvars import *
 from lib import error_handler as eh
 from lib.error_handler import spam, log, ErrorPriority
-from lib.nakamori_utils import script_utils
 from lib.proxy.kodi import kodi_proxy
+from script_routes import ScriptRoutes
 
-busy = xbmcgui.DialogProgress()
+import xbmc
 
 
 class PlaybackStatus(object):
@@ -31,37 +29,40 @@ def finished_episode(ep_id, file_id, current_time, total_time):
         # mitigate the external player, skipping intro/outro/pv so we cut your setting in half
         mark /= 2
     mark /= 100
-    spam('mark = %s * total (%s) = %s vs current = %s' % (mark, total_time, (total_time*mark), current_time))
+    spam('mark = %s * total (%s) = %s vs current = %s' % (mark, total_time, (total_time * mark), current_time))
     if (total_time * mark) <= current_time:
         _finished = True
-        log('Video current_time (%s) has passed watch mark (%s). Marking is as watched!' % (current_time, (total_time*mark)))
+        log('Video current_time (%s) has passed watch mark (%s). Marking is as watched!' % (current_time,
+                                                                                            (total_time * mark)))
 
     if _finished:
         if int(ep_id) != 0 and plugin_addon.getSetting('vote_always') == 'true':
             spam('vote_always, voting on episode')
-            script_utils.vote_for_episode(ep_id)
+            kodi_proxy.executebuiltin(script_router.url_for(ScriptRoutes.vote_for_episode, ep_id))
 
         if ep_id != 0:
-            from lib.shoko_models.v2 import Episode
+            from lib.shoko.v2 import Episode
             ep = Episode(ep_id, build_full_object=False)
             spam('mark as watched, episode')
             ep.set_watched_status(True)
 
             # vote on finished series
             if plugin_addon.getSetting('vote_on_series') == 'true':
-                from lib.shoko_models.v2 import get_series_for_episode
-                series = get_series_for_episode(ep_id)
-                # voting should be only when you really watch full series
-                spam('vote_on_series, mark: %s / %s' % (series.sizes.watched_episodes, series.sizes.total_episodes))
-                if series.sizes.watched_episodes - series.sizes.total_episodes == 0:
-                    script_utils.vote_for_series(series.id)
-
+                try:
+                    from lib.shoko.v2 import get_series_for_episode
+                    series = get_series_for_episode(ep_id)
+                    # voting should be only when you really watch full series
+                    spam('vote_on_series, mark: %s / %s' % (series.sizes.watched_episodes, series.sizes.total_episodes))
+                    if series.sizes.watched_episodes - series.sizes.total_episodes == 0:
+                        kodi_proxy.executebuiltin(script_router.url_for(ScriptRoutes.vote_for_series, series.id))
+                except:
+                    eh.exception(ErrorPriority.NORMAL)
         elif file_id != 0:
             # file watched states
             pass
 
         # refresh only when we really did watch episode, this way we wait until all action after watching are executed
-        script_utils.arbiter(10, 'Container.Refresh')
+        kodi_proxy.executebuiltin(script_router.url_for(ScriptRoutes.arbiter, wait=10, arg='Container.Refresh'))
 
 
 def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=None):
@@ -71,10 +72,11 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=Non
     :param ep_id: episode ID, not needed, but it fills in a lot of info
     :param mark_as_watched: should we mark it after playback
     :param resume: should we auto-resume
+    :param episode:
     :return: True if successfully playing
     """
 
-    from lib.shoko_models.v2 import Episode, File, get_series_for_episode
+    from lib.shoko.v2 import Episode, File, get_series_for_episode
 
     # check if we're already playing something
     try:
@@ -82,7 +84,7 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=Non
         active_players = json.loads(player_response)['results']
 
         while len(active_players) > 0:
-            xbmc.sleep(500)
+            kodi_proxy.sleep(500)
             player_response = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Player.GetActivePlayers", "id": 1}')
             active_players = json.loads(player_response)['results']
     except:
@@ -138,12 +140,12 @@ def player_loop(player):
         monitor = xbmc.Monitor()
 
         while not player.isPlayingVideo():
-            xbmc.sleep(100)
+            kodi_proxy.sleep(100)
 
         spam('Player Loop: Started Playing - PlaybackState is: ', player.PlaybackStatus)
 
         while player.PlaybackStatus != PlaybackStatus.STOPPED and player.PlaybackStatus != PlaybackStatus.ENDED:
-            xbmc.sleep(500)
+            kodi_proxy.sleep(500)
 
         if player.PlaybackStatus == PlaybackStatus.STOPPED or player.PlaybackStatus == PlaybackStatus.ENDED:
             log('Playback Ended - Shutting Down: ', monitor.abortRequested())
@@ -153,8 +155,6 @@ def player_loop(player):
         eh.exception(ErrorPriority.NORMAL)
 
 
-# noinspection PyUnusedFunction
-import xbmc
 class Player(xbmc.Player):
     def __init__(self):
         spam('Player Initialized')
@@ -193,7 +193,7 @@ class Player(xbmc.Player):
     def stop_loops(self, t):
         self._s = None
         while t is not None and t.is_alive():
-            xbmc.sleep(100)
+            kodi_proxy.sleep(100)
 
     def onAVStarted(self):
         # Will be called when Kodi has a video or audiostream.
@@ -223,7 +223,7 @@ class Player(xbmc.Player):
             self.start_loops()
             # we are making the player global, so if a stop is issued, then Playing will change
             while not self.isPlaying() and self.PlaybackStatus == PlaybackStatus.PLAYING:
-                xbmc.sleep(100)
+                kodi_proxy.sleep(100)
             if self.PlaybackStatus != PlaybackStatus.PLAYING:
                 return
         except:
@@ -282,7 +282,7 @@ class Player(xbmc.Player):
             return
         try:
             if self.time > 10:
-                from lib.shoko_models.v2 import File
+                from lib.shoko.v2 import File
                 f = File(self.file_id)
                 f.set_resume_time(kodi_proxy.duration_from_kodi(self.time))
         except:
@@ -296,7 +296,7 @@ class Player(xbmc.Player):
         count = 0
         while count < 120 and not (self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING):
             count += 1
-            xbmc.sleep(500)
+            kodi_proxy.sleep(500)
 
         return self.isPlayingVideo() and self.PlaybackStatus == PlaybackStatus.PLAYING
 
@@ -324,11 +324,11 @@ class Player(xbmc.Player):
                     self.time = self.getTime()
 
                     if self.time <= 10:
-                        xbmc.sleep(2500)
+                        kodi_proxy.sleep(2500)
                         continue
 
                     self.scrobble_time()
-                    xbmc.sleep(2500)
+                    kodi_proxy.sleep(2500)
                 except:
                     pass  # while buffering
 

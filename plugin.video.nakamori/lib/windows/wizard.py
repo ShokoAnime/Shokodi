@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import xbmcgui
 from lib import error_handler
-from lib.nakamori_utils import shoko_utils, kodi_utils
-from lib.nakamori_utils.globalvars import *
-from lib.proxy.python_version_proxy import python_proxy as pyproxy
+from lib.shoko import connection_handler
+from lib.utils.globalvars import *
+from lib.proxy.kodi import kodi_proxy
+from lib.proxy.python import proxy as pyproxy
 
 ADDON = xbmcaddon.Addon(id='plugin.video.nakamori')
 CWD = pyproxy.decode(ADDON.getAddonInfo('path'))
@@ -37,7 +38,7 @@ COLOR_WHITE = '0xAAFFFFFF'
 # noinspection PyUnusedFunction,PySameParameterValue
 class LoginWizard(xbmcgui.WindowXML):
     def __init__(self, xml_file, resource_path, skin, skin_res):
-        xbmcgui.WindowXML.__init__(self, xml_file, resource_path, skin, skin_res, False)
+        xbmcgui.WindowXML.__init__(self, xml_file, resource_path, skin, skin_res)
         self.window_type = 'window'
         self.login = ''
         self.password = ''
@@ -109,26 +110,28 @@ class LoginWizard(xbmcgui.WindowXML):
 
     def onClick(self, control):
         if control == OK_BUTTON:
+            if not connection_handler.can_user_connect():
+                return
             # populate info from edits
             login = str(self._box_login.getText()).strip()
             password = str(self._box_password.getText()).strip()
             # check auth
             apikey = None
             try:
-                apikey = shoko_utils.get_apikey(login, password)
+                apikey = connection_handler.get_apikey(login, password)
             except:
                 error_handler.exception(error_handler.ErrorPriority.NORMAL)
-            if apikey is not None:
-                plugin_addon.setSetting('apikey', apikey)
-                plugin_addon.setSetting(id='login', value='')
-                plugin_addon.setSetting(id='password', value='')
-                if shoko_utils.can_user_connect():
-                    self.setProperty('script.module.nakamori.running', 'false')
-                    self.cancelled = False
-                    self.close()
-                    return
+            if apikey is None:
+                kodi_proxy.Dialog.ok(MSG_HEADER, MSG_NOAUTH)
+                return
 
-            kodi_utils.message_box(MSG_HEADER, MSG_NOAUTH)
+            plugin_addon.setSetting('apikey', apikey)
+            plugin_addon.setSetting(id='login', value='')
+            plugin_addon.setSetting(id='password', value='')
+
+            self.setProperty('script.module.nakamori.running', 'false')
+            self.cancelled = False
+            self.close()
 
 
 # noinspection PyUnusedFunction,PySameParameterValue
@@ -196,14 +199,14 @@ class ConnectionWizard(xbmcgui.WindowXML):
 
     def onClick(self, control):
         if control == OK_BUTTON:
-            if shoko_utils.can_connect(ip=str(self._box_ip.getText()), port=str(self._box_port.getText())):
+            if connection_handler.can_connect(ip=str(self._box_ip.getText()), port=str(self._box_port.getText())):
                 plugin_addon.setSetting(id='ipaddress', value=str(self._box_ip.getText()))
                 plugin_addon.setSetting(id='port', value=str(self._box_port.getText()))
                 self.cancelled = False
                 self.close()
             else:
                 # show message
-                kodi_utils.message_box(MSG_HEADER, MSG_CONNECT)
+                kodi_proxy.Dialog.ok(MSG_HEADER, MSG_CONNECT)
 
 
 def open_connection_wizard():

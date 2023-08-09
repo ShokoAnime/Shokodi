@@ -764,24 +764,24 @@ msgctxt "#30185"
 msgid "Require all Episodes being rated before suggesting"
 msgstr "Require all Episodes being rated before suggesting"
 
-#: shoko_utils.py
+#: connection_handler.py
 msgctxt "#30189"
 msgid "Queued File for Rehash"
 msgstr "Queued File for Rehash"
 
-#: shoko_utils.py
+#: connection_handler.py
 msgctxt "#30190"
 msgid "Queued File for Rescan"
 msgstr "Queued File for Rescan"
 
-#: shoko_utils.py
+#: connection_handler.py
 msgctxt "#30191"
 msgid "Refreshing in 10 seconds"
 msgstr "Refreshing in 10 seconds"
 
 
 
-#: shoko_utils.py
+#: connection_handler.py
 msgctxt "#30193"
 msgid "It may take some time."
 msgstr "It may take some time."
@@ -806,7 +806,7 @@ msgctxt "#30197"
 msgid "No connection to Shoko server"
 msgstr "No connection to Shoko server"
 
-#: shoko_utils.py
+#: connection_handler.py
 msgctxt "#30198"
 msgid "Queued Run Import on Server"
 msgstr "Queued Run Import on Server"
@@ -948,72 +948,72 @@ msgctxt "#30245"
 msgid "Unable to Execute JSONRPC to Kodi"
 msgstr "Unable to Execute JSONRPC to Kodi"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30246"
 msgid "Server Error"
 msgstr "Server Error"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30247"
 msgid "There was an error starting Shoko Server"
 msgstr "There was an error starting Shoko Server"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30248"
 msgid "Check the server\'s status."
 msgstr "Check the server\'s status."
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30249"
 msgid "Feel free to ask for advice on our discord"
 msgstr "Feel free to ask for advice on our discord"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30250"
 msgid "Waiting for Server Startup"
 msgstr "Waiting for Server Startup"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30251"
 msgid "Connection Error"
 msgstr "Connection Error"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30252"
 msgid "There was an error connecting to Shoko Server"
 msgstr "There was an error connecting to Shoko Server"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30253"
 msgid "If you have set up Shoko Server, feel free to ask for advice on our discord."
 msgstr "If you have set up Shoko Server, feel free to ask for advice on our discord."
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30254"
 msgid "If you do, please provide your kodi.log and Shoko Server log."
 msgstr "If you do, please provide your kodi.log and Shoko Server log."
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30255"
 msgid "Error Getting apikey"
 msgstr "Error Getting apikey"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30256"
 msgid "It didn't error, but it didn't init either"
 msgstr "It didn't error, but it didn't init either"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30257"
 msgid "Starting Scrobble"
 msgstr "Starting Scrobble"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30258"
 msgid "Paused Scrobble"
 msgstr "Paused Scrobble"
 
-#: shoko_utils
+#: connection_handler
 msgctxt "#30259"
 msgid "Stopping Scrobble"
 msgstr "Stopping Scrobble"

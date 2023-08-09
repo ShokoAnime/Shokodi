@@ -4,20 +4,13 @@ try:
 except:
     from pysqlite2 import dbapi2 as database
 
-import os.path
-import sys
 
-import xbmc
-import xbmcaddon
-import xbmcgui
-
-from lib.nakamori_utils.globalvars import translatePath
-from lib.proxy.python_version_proxy import python_proxy as pyproxy
+from lib.utils.globalvars import *
+from lib.proxy.kodi import kodi_proxy
+from lib.proxy.python import proxy as pyproxy
 
 
-ADDON_ID = 'plugin.video.nakamori'
-addon = xbmcaddon.Addon(id=ADDON_ID)
-profileDir = pyproxy.decode(translatePath(addon.getAddonInfo('profile')))
+profileDir = pyproxy.decode(translatePath(plugin_addon.getAddonInfo('profile')))
 
 # create profile dirs
 if not os.path.exists(profileDir):
@@ -103,11 +96,14 @@ def check_in_database(term):
     db_cursor = db_connection.cursor()
     db_cursor.execute('SELECT Count(search_term) FROM search WHERE search_term=?', (term,))
     data = db_cursor.fetchone()
+    if hasattr(data, '__getitem__'):
+        return data[0]
+
     return data > 0
 
 
 def clear_search_history():
-    do_clean = xbmcgui.Dialog().yesno('Confirm Delete', 'Are you sure you want to delete ALL search terms?')
+    do_clean = kodi_proxy.Dialog.yes_no('Confirm Delete', 'Are you sure you want to delete ALL search terms?')
     if do_clean:
         remove_search_history()
-        xbmc.executebuiltin('Container.Refresh')
+        kodi_proxy.Dialog.refresh()

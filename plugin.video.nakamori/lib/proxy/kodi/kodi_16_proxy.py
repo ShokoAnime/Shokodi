@@ -1,12 +1,20 @@
-import xbmcgui
+import json
 
-from lib.nakamori_utils.globalvars import *
+import xbmc
+import xbmcgui
+import xbmcplugin
+
+from lib import error_handler as eh
+from lib.utils.globalvars import *
 from lib.proxy.kodi.enums import *
 
 
 class Kodi16Proxy:
     def __init__(self):
         plugin_addon.setSetting('kodi18', 'false')
+        self.Dialog = self.Dialog(self)
+        self.Sorting = self.Sorting(self)
+        self.Util = self.Util(self)
 
     def user_agent(self):
         """
@@ -58,6 +66,90 @@ class Kodi16Proxy:
         """
         temp_genre = ' | '.join(tag_obj_string)
         return temp_genre
+
+    @staticmethod
+    def executebuiltin(command):
+        xbmc.executebuiltin(command)
+
+    @staticmethod
+    def sleep(timemillis):
+        xbmc.sleep(timemillis)
+
+    class Dialog:
+        parent = None  # type: type[Kodi16Proxy]
+
+        @classmethod
+        def __init__(cls, proxy):
+            # type: (object, Kodi16Proxy) -> None
+            cls.parent = proxy.__class__
+
+        @classmethod
+        def notification(cls, header, message):
+            cls.parent.executebuiltin('Notification(%s, %s, 2000, %s)' % (header, message, plugin_addon.getAddonInfo('icon')))
+
+        @staticmethod
+        def ok(header, message):
+            text = message.splitlines()
+            # noinspection PyArgumentList
+            return xbmcgui.Dialog().ok(header, text[0], text[1] if len(text) > 1 else '',
+                                       text[2] if len(text) > 2 else '')
+
+        @staticmethod
+        def yes_no(header, message, no_label='', yes_label='', auto_close=0):
+            text = message.splitlines()
+            # noinspection PyArgumentList
+            return xbmcgui.Dialog().yesno(header, text[0], text[1] if len(text) > 1 else '',
+                                          text[2] if len(text) > 2 else '')
+
+        @staticmethod
+        def context(items):
+            return xbmcgui.Dialog().contextmenu(items)
+
+        @staticmethod
+        def select(header, items):
+            return xbmcgui.Dialog().select(header, items)
+
+        @staticmethod
+        def text_input(heading):
+            """
+            Shows a keyboard, and returns the text entered
+            :return: the text that was entered
+            """
+            keyb = xbmc.Keyboard('', heading)
+            keyb.doModal()
+            search_text = ''
+
+            if keyb.isConfirmed():
+                search_text = keyb.getText()
+            return search_text
+
+        @classmethod
+        def refresh(cls):
+            """
+            Refresh and re-request data from server
+            refresh watch status as we now mark episode and refresh list so it show real status not kodi_cached
+            Allow time for the ui to reload
+            """
+            cls.parent.executebuiltin('Container.Refresh')
+            cls.parent.sleep(1000)
+
+        class Progress:
+            def __init__(self, heading, message=''):
+                text = message.splitlines()
+                self.dialog = xbmcgui.DialogProgress()
+                # noinspection PyArgumentList
+                self.dialog.create(heading, text[0], text[1] if len(text) > 1 else '', text[2] if len(text) > 2 else '')
+
+            def update(self, percent, message=''):
+                text = message.splitlines()
+                # noinspection PyArgumentList
+                self.dialog.update(percent, text[0], text[1] if len(text) > 1 else '', text[2] if len(text) > 2 else '')
+
+            def close(self):
+                self.dialog.close()
+
+            def is_cancelled(self):
+                return self.dialog.iscanceled()
 
     class ListItem:
         def __init__(self, label='', label2='', path='', offscreen=False):
@@ -155,3 +247,222 @@ class Kodi16Proxy:
             if resume is None or resume == '':
                 return
             self.list_item.setProperty('StartOffset', resume)
+
+    class Sorting(object):
+        _parent = None  # type: type[Kodi16Proxy]
+        _sorting_types = []
+
+        @classmethod
+        def __init__(cls, proxy):
+            # type: (object, Kodi16Proxy) -> None
+            cls._parent = proxy.__class__
+
+        class SortingMethod(object):
+            def __init__(self, types, container_id, name, listitem_id):
+                self.container_id = container_id
+                self.name = name
+                self.listitem_id = listitem_id
+                types.append(self)
+
+        # There are apparently two lists. SetSortMethod uses a container sorting list, and ListItem uses the one from stubs
+        import xbmcplugin
+        none = SortingMethod(_sorting_types, 45, "Server", xbmcplugin.SORT_METHOD_UNSORTED)
+        label = SortingMethod(_sorting_types, 1, "Label", xbmcplugin.SORT_METHOD_LABEL)
+        date = SortingMethod(_sorting_types, 2, "Date", xbmcplugin.SORT_METHOD_DATE)
+        title = SortingMethod(_sorting_types, 7, "Title", xbmcplugin.SORT_METHOD_TITLE)
+        time = SortingMethod(_sorting_types, 9, "Duration", xbmcplugin.SORT_METHOD_DURATION)
+        year = SortingMethod(_sorting_types, 16, "Year", xbmcplugin.SORT_METHOD_VIDEO_YEAR)
+        rating = SortingMethod(_sorting_types, 17, "Rating", xbmcplugin.SORT_METHOD_VIDEO_RATING)
+        user_rating = SortingMethod(_sorting_types, 18, "User Rating", xbmcplugin.SORT_METHOD_VIDEO_USER_RATING)
+        episode_number = SortingMethod(_sorting_types, 23, "Episode", xbmcplugin.SORT_METHOD_EPISODE)
+        sort_title = SortingMethod(_sorting_types, 29, "Sort Title", xbmcplugin.SORT_METHOD_VIDEO_SORT_TITLE)
+
+        string2id = dict((k.name, k.container_id) for k in _sorting_types)
+        # inverse dict
+        id2string = dict((v, k) for k, v in string2id.items())
+
+        @classmethod
+        def set_sort_method(cls, content):
+            method_for_sorting = cls.string2id.get(content, cls.none.container_id)
+            if method_for_sorting == cls.none.container_id:
+                return
+            cls._parent.executebuiltin('Container.SetSortMethod(' + str(method_for_sorting) + ')')
+
+        @classmethod
+        def add_sort_method(cls, method):
+            xbmcplugin.addSortMethod(plugin_router.handle, method)
+
+    class Util(object):
+        try:
+            from sqlite3 import dbapi2 as _database
+        except:
+            # noinspection PyUnresolvedReferences
+            from pysqlite2 import dbapi2 as _database
+
+        _parent = None  # type: type[Kodi16Proxy]
+        _localize = None
+        _kodi_settings_cache = {}
+
+        @classmethod
+        def __init__(cls, proxy):
+            # type: (object, Kodi16Proxy) -> None
+            cls._parent = proxy.__class__
+            cls._localize = plugin_addon.getLocalizedString
+
+        # noinspection SqlNoDataSourceInspection,SqlDialectInspection
+        @classmethod
+        def clear_listitem_cache(cls):
+            """
+            Clear mark for nakamori files in kodi db
+            :return:
+            """
+            ret = cls._parent.Dialog.yes_no(cls._localize(30104), "\n".join([cls._localize(30081), cls._localize(30112)]))
+            if ret:
+                db_files = []
+                db_path = os.path.join(translatePath('special://home'), 'userdata')
+                db_path = os.path.join(db_path, 'Database')
+                for r, d, f in os.walk(db_path):
+                    for files in f:
+                        if 'MyVideos' in files:
+                            db_files.append(files)
+                for db_file in db_files:
+                    db_connection = cls._database.connect(os.path.join(db_path, db_file))
+                    db_cursor = db_connection.cursor()
+                    db_cursor.execute('DELETE FROM files WHERE strFilename like "%plugin.video.nakamori%"')
+                    db_connection.commit()
+                    db_connection.close()
+                if len(db_files) > 0:
+                    cls._parent.Dialog.ok('', cls._localize(30138))
+
+        # noinspection SqlDialectInspection,SqlNoDataSourceInspection
+        @classmethod
+        def clear_image_cache(cls):
+            """
+            Clear image cache in kodi db
+            :return:
+            """
+            ret = cls._parent.Dialog.yes_no(cls._localize(30104), cls._localize(30081), cls._localize(30112))
+            if not ret:
+                return
+
+            db_files = cls._get_databases()
+            for db_file in db_files:
+                db_connection = cls._database.connect(db_file)
+                db_cursor = db_connection.cursor()
+                db_cursor.execute('DELETE FROM texture WHERE url LIKE "%%%s/api/%%"' % plugin_addon.getSetting('port'))
+                db_connection.commit()
+                db_cursor.execute('DELETE FROM texture WHERE url LIKE "%nakamori%"')
+                db_connection.commit()
+                db_connection.close()
+            if len(db_files) > 0:
+                cls._parent.Dialog.ok('', cls._localize(30138))
+
+        @classmethod
+        def _get_databases(cls):
+            db_files = []
+            db_path = os.path.join(translatePath('special://home'), 'userdata')
+            db_path = os.path.join(db_path, 'Database')
+            for basepath, dirs, files in os.walk(db_path):
+                for file in files:
+                    if 'Textures' not in file:
+                        continue
+                    db_files.append(os.path.join(db_path, file))
+            return db_files
+
+        @classmethod
+        def move_to_index(cls, index, absolute=False):
+            try:
+                interval = 250
+                wait_time = 4000
+                elapsed = 0
+                while elapsed < wait_time:
+                    wind, control_list = cls._get_control_list()
+                    if control_list is not None:
+                        cls.move_position_on_list(control_list, index, absolute)
+                        return
+                    cls._parent.sleep(interval)
+                    elapsed += interval
+            except:
+                eh.exception(eh.ErrorPriority.HIGH, cls._localize(30243))
+
+        @classmethod
+        def _get_control_list(cls):
+            try:
+                # because of how Window works, we need to keep it loaded for as long as we use control_list
+                wind = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+                control_list = wind.getControl(wind.getFocusId())
+                if not isinstance(control_list, xbmcgui.ControlList):
+                    return None, None
+
+                return wind, control_list
+            except:
+                pass
+
+        @classmethod
+        def move_position_on_list(cls, control_list, position=0, absolute=False):
+            # type: (xbmcgui.ControlList, int, bool) -> None
+            """
+            Move to the position in a list - use episode number for position
+            Args:
+                control_list: the list control
+                position: the move_position_on_listindex of the item not including settings
+                absolute: bypass setting and set position directly
+            """
+            if not absolute:
+                if position < 0:
+                    position = 0
+                if plugin_addon.getSetting('show_continue') == 'true':
+                    position = int(position + 1)
+                if cls.get_kodi_setting('filelists.showparentdiritems'):
+                    position = int(position + 1)
+            try:
+                size = control_list.size()
+                if position == size:
+                    position = size - 1
+
+                control_list.selectItem(position)
+            except:
+                eh.exception(eh.ErrorPriority.HIGH, cls._localize(30243))
+
+        @staticmethod
+        def jsonrpc(method, params):
+            try:
+                values = (method, json.dumps(params))
+                request = '{"jsonrpc":"2.0","method":"%s","params":%s, "id": 1}' % values
+                return_data = xbmc.executeJSONRPC(request)
+                result = json.loads(return_data)
+                return result
+            except:
+                eh.exception(eh.ErrorPriority.HIGH, 'JSONRPC failed')
+                return None
+
+        @classmethod
+        def get_kodi_setting(cls, setting):
+            try:
+                if setting in cls._kodi_settings_cache:
+                    return cls._kodi_settings_cache[setting]
+
+                method = 'Settings.GetSettingValue'
+                params = {'setting': setting}
+                result = cls.jsonrpc(method, params)
+                if result is not None and 'result' in result and 'value' in result['result']:
+                    result = result['result']['value']
+                    cls._kodi_settings_cache[setting] = result
+                    return result
+            except:
+                eh.exception(eh.ErrorPriority.HIGH)
+            return None
+
+        @staticmethod
+        def is_dialog_active():
+            x = -1
+            try:
+                x = xbmcgui.getCurrentWindowDialogId()
+                x = int(x)
+            except:
+                pass
+            # https://github.com/xbmc/xbmc/blob/master/xbmc/guilib/WindowIDs.h
+            if 10099 <= x <= 10160:
+                return True
+
+            return False

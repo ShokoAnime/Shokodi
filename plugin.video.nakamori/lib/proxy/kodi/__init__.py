@@ -1,10 +1,9 @@
 import json
 
-from lib.nakamori_utils.globalvars import *
-
 
 def get_installed_version():
     # retrieve current installed version
+    import xbmc
     json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "method": "Application.GetProperties", "params": {"properties": ["version", "name"]}, "id": 1 }')
     json_query = json.loads(json_query)
     version_installed = []

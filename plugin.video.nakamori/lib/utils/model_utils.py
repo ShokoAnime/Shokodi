@@ -4,12 +4,9 @@ from collections import defaultdict
 
 from lib import error_handler as eh
 from lib.error_handler import ErrorPriority
-from lib.nakamori_utils.globalvars import *
-from lib.proxy.python_version_proxy import python_proxy as pyproxy
-from lib.proxy.kodi import kodi_proxy as kproxy
-
-import xbmc
-import xbmcaddon
+from lib.utils.globalvars import *
+from lib.proxy.kodi import kodi_proxy as kproxy, kodi_proxy
+from lib.proxy.python import proxy as pyproxy
 
 
 def get_tags(tag_node):
@@ -62,51 +59,10 @@ def get_cast_and_role_new(data, fix_seiyuu_pic=False):
         for char in data:
             char_charname = char.get('character', '')
             char_seiyuuname = char.get('staff', '')
-            char_seiyuupic = ''
-            animated_pictures = True if plugin_addon.getSetting('seiyuu_gif') == 'true' else False
-            try:
-                if animated_pictures:
-                    # TODO as for now it eats a lot of disk space and the process it slows down loading time significantly
-                    # TODO this is as test for quality / performence
-                    file_name = str(char_seiyuuname).replace(' ', '') + str(char_charname).replace(' ', '')
-                    profileDir = translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
-                    import os
-                    if not os.path.exists(profileDir):
-                        os.mkdir(profileDir)
-                    new_image_url = os.path.join(profileDir, 'characters')
-                    if not os.path.exists(new_image_url):
-                        os.mkdir(new_image_url)
-                    new_image_url = os.path.join(new_image_url, file_name + '.gif')
-                    if not os.path.exists(new_image_url):
-                        frames = []
-                        actor_pic = server + char.get('staff_image', '')
-                        char_pic = server + char.get('character_image', '')
-                        if actor_pic != '' and char_pic != '':
-                            from PIL import ImageFont, ImageDraw, Image
-                            from io import BytesIO
-                            try:
-                                from urllib.request import urlopen
-                            except ImportError:
-                                from urllib2 import urlopen
-                            img1 = Image.open(BytesIO(urlopen(actor_pic).read()))
-                            img2 = Image.open(BytesIO(urlopen(char_pic).read()))
-                            # TODO Center characters
-                            # TODO resize image and/or crop
-                            frames.append(img1)
-                            frames.append(img2)
-                            frames[0].save(new_image_url, format='GIF', append_images=frames[1:], save_all=True, duration=500,
-                                           loop=0)
-                    char_seiyuupic = new_image_url
-                else:
-                    # region OLD
-                    if fix_seiyuu_pic:
-                        char_seiyuupic = server + char.get('staff_image', '')
-                    else:
-                        char_seiyuupic = server + char.get('character_image', '')
-                    # endregion OLD
-            except Exception as ex:
-                # TODO UNTIL THIS IS NOT POLISHED OR MOVED TO SERVER LEAVE THIS AS IS
-                xbmc.log('EEEEEEE------- ' + str(ex), xbmc.LOGINFO)
+            if fix_seiyuu_pic:
+                char_seiyuupic = server + char.get('staff_image', '')
+            else:
+                char_seiyuupic = server + char.get('character_image', '')
 
             # only add it if it has data
             # reorder these to match the convention (Actor is cast, character is role, in that order)
@@ -510,3 +466,24 @@ def add_default_parameters(url, obj_id, level):
     if plugin_addon.getSetting('request_nocast') == 'true':
         key = pyproxy.set_parameter(key, 'nocast', 1)
     return key
+
+
+def show_file_list(files):
+    """
+    Create DialogBox with file list to pick if there is more than 1 file for episode
+    :param files: list of tuples of names to the object
+    :type files: List[Tuple[str,int]]
+    :return: int (id of picked file or 0 if none)
+    """
+    if len(files) > 1:
+        items = [x[0] for x in files]
+        my_file = kodi_proxy.Dialog.select(plugin_addon.getLocalizedString(30196), items)
+        if my_file > -1:
+            return files[my_file][1]
+        else:
+            # cancel -1,0
+            return 0
+    elif len(files) == 1:
+        return files[0][1]
+    else:
+        return 0

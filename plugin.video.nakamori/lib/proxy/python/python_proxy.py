@@ -1,22 +1,26 @@
+from abc import abstractmethod
 import gzip
 import json
 import ssl
-import sys
 from io import BytesIO
-from abc import abstractmethod
-
-from lib.nakamori_utils.globalvars import plugin_addon
-
 from socket import timeout
 
 try:
+    # noinspection PyUnresolvedReferences
     from urllib.parse import urlparse, quote, unquote_plus, quote_plus, urlencode
+    # noinspection PyUnresolvedReferences
     from urllib.request import urlopen, Request
+    # noinspection PyUnresolvedReferences
     from urllib.error import HTTPError
 except ImportError:
+    # noinspection PyUnresolvedReferences
     from urllib import quote, unquote_plus, quote_plus, urlencode
+    # noinspection PyUnresolvedReferences
     from urlparse import urlparse
+    # noinspection PyUnresolvedReferences
     from urllib2 import urlopen, Request, HTTPError, URLError
+
+from lib.utils.globalvars import plugin_addon
 
 
 class BasePythonProxy:
@@ -137,26 +141,13 @@ class BasePythonProxy:
             url += array3[0] + '=' + array3[1] + '&'
         return url[:-1]
 
-    def post_json(self, url_in, body, custom_timeout=int(plugin_addon.getSetting('timeout'))):
-        """
-        Push data to server using 'POST' method
-        :param url_in:
-        :param body:
-        :custom_timeout: if not given timeout from plugin setting will be used
-        :return:
-        """
-        if len(body) > 3:
-            proper_body = '{' + body + '}'
-            return self.post_data(url=url_in, data_in=proper_body, custom_timeout=custom_timeout)
-        else:
-            return None
-
-    def post_data(self, url, data_in, custom_timeout=int(plugin_addon.getSetting('timeout'))):
+    def post_data(self, url, data_in, suppress=False, custom_timeout=int(plugin_addon.getSetting('timeout'))):
         """
         Send a message to the server and wait for a response
         Args:
             url: the URL to send the data to
             data_in: the message to send (in json)
+            suppress: swallow the errors
             custom_timeout: if not given timeout from plugin setting will be used
 
         Returns: The response from the server
@@ -169,6 +160,7 @@ class BasePythonProxy:
         headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'Accept-Encoding': 'gzip',
         }
 
         apikey = plugin_addon.getSetting('apikey')
@@ -185,20 +177,31 @@ class BasePythonProxy:
         data_out = None
         try:
             response = urlopen(req, timeout=custom_timeout)
-            data_out = self.decode(response.read())
+            if response.info().get('Content-Encoding') == 'gzip':
+                eh.spam('Got gzipped response. Decompressing')
+                try:
+                    buf = BytesIO(response.read())
+                    f = gzip.GzipFile(fileobj=buf)
+                    data_out = self.decode(f.read())
+                except:
+                    from lib.error_handler import ErrorPriority
+                    eh.exception(ErrorPriority.NORMAL)
+            else:
+                data_out = self.decode(response.read())
             response.close()
+
             eh.spam('Response Body:', data_out)
             eh.spam('Checking Response for a text error.\n')
-            if data_out is not None and data_out != '' and data_out.trim().starts_with('{'):
+            if data_out is not None and data_out != '' and data_out.strip().startswith('{'):
                 self.parse_possible_error(req, data_out)
         except timeout:
             # if using very short time out to not wait for response it will throw time out err,
             # but we check if that was intended by checking custom_timeout
             # if it wasn't intended we handle it the old way
             if custom_timeout == int(plugin_addon.getSetting('timeout')):
-                eh.exception(ErrorPriority.HIGH)
+                eh.exception(ErrorPriority.NORMAL if suppress else ErrorPriority.HIGH)
         except:
-            eh.exception(ErrorPriority.HIGH, data_out)
+            eh.exception(ErrorPriority.NORMAL if suppress else ErrorPriority.HIGH, data_out)
         return data_out
 
     def parse_parameters(self, input_string):
@@ -255,7 +258,7 @@ class BasePythonProxy:
 
             body = self.get_data(url_in, None, timeout, apikey)
 
-        except http_error as err:
+        except HTTPError as err:
             raise err
         except:
             eh.exception(ErrorPriority.HIGH)
@@ -286,7 +289,11 @@ class BasePythonProxy:
                     error_msg = 'The connection was refused as unauthorized'
 
                 code = self.safe_int(code)
-                raise HTTPError(request.get_full_url(), code, error_msg, request.headers, None)
+                raise self.http_error(request.get_full_url(), code, error_msg, request.headers)
+
+    @abstractmethod
+    def http_error(self, url, code, msg, hdrs):
+        pass
 
     @staticmethod
     def safe_int(obj):
@@ -304,78 +311,3 @@ class BasePythonProxy:
             return int(obj)
         except:
             return 0
-
-
-class Python2Proxy(BasePythonProxy):
-    def __init__(self):
-        BasePythonProxy.__init__(self)
-
-    def encode(self, i):
-        try:
-            if isinstance(i, str):
-                return i
-            elif isinstance(i, unicode):
-                return i.encode('utf-8')
-            else:
-                return str(i)
-        except:
-            pass  # nt.error('Unicode Error', error_type='Unicode Error')
-            return ''
-
-    def decode(self, i):
-        try:
-            if isinstance(i, bytes):
-                return i.decode('utf-8')
-            elif isinstance(i, unicode):
-                return i
-            else:
-                return unicode(i)
-        except:
-            # error('Unicode Error', error_type='Unicode Error')
-            return ''
-
-    def is_string(self, i):
-        return isinstance(i, (str, unicode, basestring))
-
-    def isnumeric(self, value):
-        return unicode(value).isnumeric()
-
-
-class Python3Proxy(BasePythonProxy):
-    def __init__(self):
-        BasePythonProxy.__init__(self)
-
-    def encode(self, i):
-        try:
-            if isinstance(i, bytes):
-                return i
-            elif isinstance(i, str):
-                return i.encode('utf-8')
-            else:
-                return str(i).encode('utf-8')
-        except:
-            # nt.error('Unicode Error', error_type='Unicode Error')
-            return ''
-
-    def decode(self, i):
-        try:
-            if isinstance(i, bytes):
-                return i.decode('utf-8')
-            elif isinstance(i, str):
-                return i
-            else:
-                return str(i)
-        except:
-            # error('Unicode Error', error_type='Unicode Error')
-            return ''
-
-    def is_string(self, i):
-        return isinstance(i, str)
-
-    def isnumeric(self, value):
-        # noinspection PyUnresolvedReferences
-        return str(value).isnumeric()
-
-
-python_proxy = Python2Proxy() if sys.version_info[0] < 3 else Python3Proxy()
-http_error = HTTPError

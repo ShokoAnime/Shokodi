@@ -14,9 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import inspect
 import re
 import sys
+
 try:
     from urlparse import urlsplit, parse_qs
 except ImportError:
@@ -63,7 +64,7 @@ class Addon(object):
     :type convert_args: bool
     """
 
-    def __init__(self, base_url=None, convert_args=False):
+    def __init__(self, base_url=None, convert_args=False, instance=None):
         self._rules = {}  # function to list of rules
         if sys.argv:
             self.path = urlsplit(sys.argv[0]).path or '/'
@@ -74,10 +75,15 @@ class Addon(object):
         else:
             self.handle = -1
         self.args = {}
-        self.base_url = base_url
         self.convert_args = convert_args
+
+        self.base_url = base_url
         if self.base_url is None:
-            self.base_url = "plugin://" + xbmcaddon.Addon().getAddonInfo('id')
+            self.base_url = "plugin://" + _addon_id
+        elif not self.base_url.startswith('plugin://'):
+            self.base_url = 'plugin://' + self.base_url.rstrip('/')
+
+        self.instance = instance
 
     def route_for(self, path):
         """
@@ -108,9 +114,12 @@ class Addon(object):
         """
         Construct and returns an URL for view function with give arguments.
         """
-        if func in self._rules:
-            for rule in self._rules[func]:
-                path = rule.make_path(*args, **kwargs)
+        for key in self._rules.keys():
+            if func.__name__ != key.__name__:
+                continue
+
+            for rule in self._rules[key]:  # type: UrlRule
+                path = rule.make_path(func, *args, **kwargs)
                 if path is not None:
                     return self.url_for_path(path)
         raise RoutingError("No known paths to '{0}' with args {1} and "
@@ -150,7 +159,11 @@ class Addon(object):
                 if not rule.exact_match(path):
                     continue
                 log("Dispatching to '%s', exact match" % view_func.__name__)
-                view_func()
+                if self.instance is not None:
+                    inst_func = self.instance.__getattribute__(view_func.__name__)
+                    inst_func()
+                else:
+                    view_func()
                 return
 
         # then, search for regex matches
@@ -162,9 +175,17 @@ class Addon(object):
                 if self.convert_args:
                     kwargs = dict((k, try_convert(v)) for k, v in list(kwargs.items()))
                 log("Dispatching to '%s', args: %s" % (view_func.__name__, kwargs))
-                view_func(**kwargs)
+                if self.instance is not None:
+                    inst_func = self.instance.__getattribute__(view_func.__name__)
+                    inst_func(**kwargs)
+                else:
+                    view_func(**kwargs)
                 return
         raise RoutingError('No route to path "%s"' % path)
+
+    def get_routes(self):
+        # type: (Addon) -> list[UrlRule]
+        return self._rules.values()
 
 
 class Plugin(Addon):
@@ -174,11 +195,9 @@ class Plugin(Addon):
     :type handle: int
     """
 
-    def __init__(self, base_url=None, convert_args=False):
+    def __init__(self, base_url=None, convert_args=False, instance=None):
         self.base_url = base_url
-        if self.base_url is None:
-            self.base_url = "plugin://" + xbmcaddon.Addon().getAddonInfo('id')
-        Addon.__init__(self, self.base_url, convert_args)
+        Addon.__init__(self, self.base_url, convert_args, instance)
         if len(sys.argv) < 2:
             # we are probably not dealing with a plugin, or it was called incorrectly from an addon
             raise TypeError('There was no handle provided. This needs to be called from a Kodi Plugin.')
@@ -199,8 +218,14 @@ class Script(Addon):
     A routing handler bound to a kodi script
     """
 
-    def __init__(self, base_url=None, convert_args=False):
-        Addon.__init__(self, base_url, convert_args)
+    def __init__(self, base_url=None, convert_args=False, instance=None):
+        self.base_url = base_url
+        if self.base_url is None:
+            self.base_url = "script://" + _addon_id
+        elif not self.base_url.startswith('script://'):
+            self.base_url = 'script://' + self.base_url.rstrip('/')
+
+        Addon.__init__(self, base_url, convert_args, instance=instance)
 
     def run(self, argv=None):
         if argv is None:
@@ -217,22 +242,36 @@ class Script(Addon):
         self.path = path.rstrip('/')
         self._dispatch(path)
 
+    def url_for(self, func, *args, **kwargs):
+        """
+        Construct and returns an URL for view function with give arguments.
+        """
+        for key in self._rules.keys():
+            if func.__name__ != key.__name__:
+                continue
 
-class UrlRule(object):
+            for rule in self._rules[key]:  # type: UrlRule
+                path = rule.make_path(func, *args, **kwargs)
+                if path is not None:
+                    path = path if path.startswith('/') else '/' + path
+                    return 'RunScript(%s,%s)' % (_addon_id, path)
+        raise RoutingError("No known paths to '{0}' with args {1} and "
+                           "kwargs {2}".format(func.__name__, args, kwargs))
+
+
+class UrlRule:
     def __init__(self, pattern):
-        pattern = pattern.rstrip('/')
         arg_regex = re.compile('<([A-z_][A-z0-9_]*)>')
         self._has_args = bool(arg_regex.search(pattern))
 
-        kw_pattern = r'<(?:[^:]+:)?([A-z_][A-z0-9_]*)>'
+        kw_pattern = r'<(?:[A-Za-z]+:)?([A-Za-z_][A-Za-z0-9_]*)>'
         self._pattern = re.sub(kw_pattern, '{\\1}', pattern)
         self._keywords = re.findall(kw_pattern, pattern)
 
-        p = re.sub('<([A-z_][A-z0-9_]*)>', '<string:\\1>', pattern)
-        p = re.sub('<string:([A-z_][A-z0-9_]*)>', '(?P<\\1>[^/]+?)', p)
-        p = re.sub('<path:([A-z_][A-z0-9_]*)>', '(?P<\\1>.*)', p)
-        self._compiled_pattern = p
-        self._regex = re.compile('^' + p + '$')
+        p = re.sub('<([A-Za-z_][A-Za-z0-9_]*)>', '<string:\\1>', pattern)
+        p = re.sub('<string:([A-Za-z_][A-Za-z0-9_]*)>', '(?P<\\1>[^/]+?)', p)
+        p = re.sub('<path:([A-Za-z_][A-Za-z0-9_]*)>', '(?P<\\1>.*)', p)
+        self._regex = re.compile('^%s$' % p.rstrip('/'))
 
     def match(self, path):
         """
@@ -240,13 +279,13 @@ class UrlRule(object):
         arguments if match, otherwise None.
         """
         # match = self._regex.search(urlsplit(path).path)
-        match = self._regex.search(path)
+        match = self._regex.search(path.rstrip('/'))
         return dict((k, unquote_plus(v)) for k, v in match.groupdict().items()) if match else None
 
     def exact_match(self, path):
-        return not self._has_args and self._pattern == path
+        return not self._has_args and self._pattern.rstrip('/') == path.rstrip('/')
 
-    def make_path(self, *args, **kwargs):
+    def make_path(self, func, *args, **kwargs):
         """Construct a path from arguments."""
         if args and kwargs:
             return None  # can't use both args and kwargs
@@ -265,13 +304,38 @@ class UrlRule(object):
         qs_kwargs = dict(((k, v) for k, v in list(kwargs.items()) if k not in self._keywords))
 
         query = '?' + urlencode(qs_kwargs) if qs_kwargs else ''
+
+        # try to fill defaults
+        if func is not None and len(url_kwargs.items()) < len(re.findall('{[A-z_][A-z0-9_]*}', self._pattern)):
+            defaults = self.get_default_args(func)
+            for k, v in defaults.items():
+                if k in url_kwargs or k not in self._keywords:
+                    continue
+                url_kwargs[k] = v
+
         try:
             return self._pattern.format(**url_kwargs) + query
         except KeyError:
             return None
 
+    @staticmethod
+    def get_default_args(func):
+        """
+        returns a dictionary of arg_name:default_values for the input function
+        """
+        if sys.version_info.major < 3:
+            args, varargs, keywords, defaults = inspect.getargspec(func)
+            return dict(zip(args[-len(defaults):], defaults))
+
+        signature = inspect.signature(func)
+        return {
+            k: v.default
+            for k, v in signature.parameters.items()
+            if v.default is not inspect.Parameter.empty
+        }
+
     def __str__(self):
-        return b"Rule(pattern=%s, keywords=%s)" % (self._pattern, self._keywords)
+        return "Rule(pattern=%s, keywords=%s)" % (self._pattern, ",".join([str(x[0]) + ":" + str(x[1]) for x in self._keywords]))
 
 
 def try_convert(value):

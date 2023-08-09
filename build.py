@@ -82,13 +82,14 @@ def get_news(path):
 
     # build the text based on previous version.
     # This is important, as someone might open kodi for the first time in a while and skip several versions
-    max_version = (LooseVersion('0'), [])
+    max_version = (LooseVersion('0'), list())
     for k, v in changelog.items():
         if LooseVersion(k) > max_version[0]:
-            max_version = (LooseVersion(k), v)
+            max_version = (LooseVersion(k), list(v))
 
     changelog_text = 'Version ' + max_version[0].vstring
-    for line in max_version[1]:
+    changelog_values = max_version[1]
+    for line in changelog_values:
         changelog_text += '[CR]- ' + line
 
     return changelog_text

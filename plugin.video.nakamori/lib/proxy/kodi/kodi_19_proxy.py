@@ -1,7 +1,7 @@
 import xbmc
 import xbmcgui
 
-from lib.nakamori_utils.globalvars import plugin_addon
+from lib.utils.globalvars import plugin_addon
 from lib.proxy.kodi.enums import WatchedStatus
 from lib.proxy.kodi.kodi_18_proxy import Kodi18Proxy
 
@@ -9,6 +9,16 @@ from lib.proxy.kodi.kodi_18_proxy import Kodi18Proxy
 class Kodi19Proxy(Kodi18Proxy):
     def __init__(self):
         Kodi18Proxy.__init__(self)
+
+    class Dialog(Kodi18Proxy.Dialog):
+        @staticmethod
+        def ok(header, message):
+            return xbmcgui.Dialog().ok(header, message)
+
+        @staticmethod
+        def yes_no(header, message, no_label='', yes_label='', auto_close=0):
+            # noinspection PyArgumentList
+            return xbmcgui.Dialog().yesno(header, message, nolabel=no_label, yeslabel=yes_label, autoclose=auto_close)
 
     class ListItem(Kodi18Proxy.ListItem):
         def __init__(self, label='', label2='', path='', offscreen=False):

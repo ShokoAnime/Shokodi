@@ -1,10 +1,14 @@
 import json
 from collections import defaultdict
 try:
+    # noinspection PyUnresolvedReferences,PyStatementEffect,PyUnboundLocalVariable
     basestring
+    # noinspection PyUnresolvedReferences,PyStatementEffect,PyUnboundLocalVariable
     unicode
 except NameError:
-    basestring = str  #For Python 3
+    # noinspection PyUnresolvedReferences
+    basestring = str
+    # noinspection PyUnresolvedReferences
     unicode = str
 # Surprisingly, there is no better way to do this...
 

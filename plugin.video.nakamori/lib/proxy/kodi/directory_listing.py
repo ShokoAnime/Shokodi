@@ -86,6 +86,7 @@ class DirectoryListing(object):
             xbmcplugin.addDirectoryItems(self.handle, self.pending, self.pending.__len__())
         if xbmcplugin is not None:
             xbmcplugin.endOfDirectory(self.handle, succeeded=self.success, cacheToDisc=self._cache)
+        del self.pending[:]
         self._finished = True
 
     def __del__(self):

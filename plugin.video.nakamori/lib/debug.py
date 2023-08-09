@@ -2,30 +2,19 @@
 import cProfile
 import pstats
 import sys
-from lib.nakamori_utils.globalvars import *
+from lib.utils.globalvars import *
 from lib import error_handler as eh
 from lib.error_handler import ErrorPriority
+from lib.proxy.kodi import kodi_proxy
+
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
 
-line = None
-profile = None
 has_profiled = False
-has_line_profiler = False
-
-
-try:
-    import line_profiler
-    line = line_profiler.LineProfiler()
-    has_line_profiler = True
-except ImportError:
-    pass
-
-if not has_line_profiler:
-    profile = cProfile.Profile()
+profile = cProfile.Profile()
 
 
 def profile_this(func):
@@ -54,19 +43,11 @@ def profile_this(func):
 def start_profiling(func):
     global has_profiled
     has_profiled = True
-    if has_line_profiler:
-        if func not in line.functions:
-            line.add_function(func)
-        line.enable()
-    else:
-        profile.enable()
+    profile.enable()
 
 
 def stop_profiling():
-    if has_line_profiler:
-        line.disable()
-    else:
-        profile.disable()
+    profile.disable()
 
 
 def print_profiler():
@@ -75,27 +56,19 @@ def print_profiler():
         return
 
     has_profiled = False
+    global profile
+    stream = StringIO()
+    sort_by = u'cumulative'
+    ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
+    ps.print_stats(20)
+    xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
 
-    if has_line_profiler:
-        global line
-        stream = StringIO()
-        line.print_stats(stream=stream)
-        xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
-        line = line_profiler.LineProfiler()
-    else:
-        global profile
-        stream = StringIO()
-        sort_by = u'cumulative'
-        ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
-        ps.print_stats(20)
-        xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
-
-        stream = StringIO()
-        sort_by = u'time'
-        ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
-        ps.print_stats(20)
-        xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
-        profile = cProfile.Profile()
+    stream = StringIO()
+    sort_by = u'time'
+    ps = pstats.Stats(profile, stream=stream).sort_stats(sort_by)
+    ps.print_stats(20)
+    xbmc.log(u'Profiled Function: \n' + stream.getvalue(), xbmc.LOGWARNING)
+    profile = cProfile.Profile()
 
 
 def debug_init():
@@ -107,6 +80,7 @@ def debug_init():
     if plugin_addon.getSetting('remote_debug') == 'true':
         # try pycharm first
         try:
+            # noinspection PyUnresolvedReferences
             import pydevd
             # try to connect multiple times...in case we forgot to start it
             # TODO Show a message to the user that we are waiting on the debugger
@@ -122,7 +96,7 @@ def debug_init():
                     tries += 1
                     # we keep this message the same, as kodi will merge them into Previous line repeats...
                     eh.spam('Failed to connect to debugger')
-                    xbmc.sleep(1000)
+                    kodi_proxy.sleep(1000)
         except (ImportError, NameError):
             eh.log('unable to import pycharm debugger, falling back on the web-pdb')
             try:

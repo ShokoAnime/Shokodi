@@ -4,11 +4,9 @@ from distutils.version import LooseVersion
 
 import xbmcgui
 from lib import error_handler
-from lib.nakamori_utils.globalvars import *
-from lib.proxy.python_version_proxy import python_proxy as pyproxy
+from lib.utils.globalvars import *
 
-ADDON = xbmcaddon.Addon(id='plugin.video.nakamori')
-CWD = ADDON.getAddonInfo('path')
+CWD = plugin_addon.getAddonInfo('path')
 if isinstance(CWD, bytes):
     CWD = CWD.decode('utf-8')
 
@@ -21,6 +19,7 @@ CONTENT_TEXTBOX = 303
 
 class Information(xbmcgui.WindowXMLDialog):
     def __init__(self, xmlFile, resourcePath, skin, skinRes):
+        xbmcgui.WindowXMLDialog.__init__(self, xmlFilename=xmlFile, scriptPath=resourcePath, defaultSkin=skin, defaultRes=skinRes)
         self.window_type = 'window'
 
     def onInit(self):
@@ -50,8 +49,7 @@ class Information(xbmcgui.WindowXMLDialog):
 
 def get_changelog_text():
     # Populate the changelog internally
-    changelog_path = os.path.join(pyproxy.decode(xbmcaddon.Addon(id='plugin.video.nakamori').getAddonInfo('path')),
-                                  'changelog.txt')
+    changelog_path = os.path.join(CWD, 'changelog.txt')
     fstream = open(changelog_path, 'r')
     changelog = defaultdict(list)
     current_version = None
