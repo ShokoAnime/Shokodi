@@ -6,12 +6,11 @@ from lib.utils.globalvars import *
 from lib.proxy.kodi import kodi_proxy
 from lib.proxy.python import proxy as pyproxy
 
-ADDON = xbmcaddon.Addon(id='plugin.video.nakamori')
-CWD = pyproxy.decode(ADDON.getAddonInfo('path'))
+CWD = pyproxy.decode(plugin_addon.getAddonInfo('path'))
 
-MSG_HEADER = ADDON.getLocalizedString(30334)
-MSG_CONNECT = ADDON.getLocalizedString(30335)
-MSG_NOAUTH = ADDON.getLocalizedString(30336)
+MSG_HEADER = plugin_addon.getLocalizedString(30334)
+MSG_CONNECT = plugin_addon.getLocalizedString(30335)
+MSG_NOAUTH = plugin_addon.getLocalizedString(30336)
 
 OK_BUTTON = 201
 ACTION_PREVIOUS_MENU = 10
@@ -31,7 +30,7 @@ CENTER_Y = 6
 CENTER_X = 2
 
 # resources
-RSC_OK = ADDON.getLocalizedString(30327)
+RSC_OK = plugin_addon.getLocalizedString(30327)
 COLOR_WHITE = '0xAAFFFFFF'
 
 
@@ -52,7 +51,6 @@ class LoginWizard(xbmcgui.WindowXML):
         self._label_password = None
 
     def onInit(self):
-        self.setProperty('script.module.nakamori.running', 'true')
         # static bind
         self._button_ok = self.getControl(OK_BUTTON)
         self._label_login = self.getControl(LABEL_LOGIN)
@@ -97,7 +95,6 @@ class LoginWizard(xbmcgui.WindowXML):
 
     def onAction(self, action):
         if action == ACTION_PREVIOUS_MENU:
-            self.setProperty('script.module.nakamori.running', 'false')
             self.close()
         if action == ACTION_NAV_BACK:
             self.close()
@@ -109,29 +106,32 @@ class LoginWizard(xbmcgui.WindowXML):
         pass
 
     def onClick(self, control):
-        if control == OK_BUTTON:
-            if not connection_handler.can_user_connect():
-                return
-            # populate info from edits
-            login = str(self._box_login.getText()).strip()
-            password = str(self._box_password.getText()).strip()
-            # check auth
-            apikey = None
-            try:
-                apikey = connection_handler.get_apikey(login, password)
-            except:
-                error_handler.exception(error_handler.ErrorPriority.NORMAL)
-            if apikey is None:
-                kodi_proxy.Dialog.ok(MSG_HEADER, MSG_NOAUTH)
-                return
+        if control != OK_BUTTON:
+            return
 
-            plugin_addon.setSetting('apikey', apikey)
-            plugin_addon.setSetting(id='login', value='')
-            plugin_addon.setSetting(id='password', value='')
+        if not connection_handler.can_user_connect():
+            return
 
-            self.setProperty('script.module.nakamori.running', 'false')
-            self.cancelled = False
-            self.close()
+        # populate info from edits
+        login = str(self._box_login.getText()).strip()
+        password = str(self._box_password.getText()).strip()
+        # check auth
+        apikey = None
+        try:
+            apikey = connection_handler.get_apikey(login, password)
+        except:
+            error_handler.exception(error_handler.ErrorPriority.NORMAL)
+
+        if apikey is None:
+            kodi_proxy.Dialog.ok(MSG_HEADER, MSG_NOAUTH)
+            return
+
+        plugin_addon.setSetting('apikey', apikey)
+        plugin_addon.setSetting(id='login', value='')
+        plugin_addon.setSetting(id='password', value='')
+
+        self.cancelled = False
+        self.close()
 
 
 # noinspection PyUnusedFunction,PySameParameterValue
@@ -150,7 +150,6 @@ class ConnectionWizard(xbmcgui.WindowXML):
         self._label_port = None
 
     def onInit(self):
-        self.setProperty('script.module.nakamori.running', 'true')
         # static bind
         self._box_ip = self.getControl(IP_ADDRESS)
         self._box_port = self.getControl(PORT_NUMBER)
@@ -186,8 +185,9 @@ class ConnectionWizard(xbmcgui.WindowXML):
 
     def onAction(self, action):
         if action == ACTION_PREVIOUS_MENU:
-            self.setProperty('script.module.nakamori.running', 'false')
             self.close()
+            return
+
         if action == ACTION_NAV_BACK:
             self.close()
 
@@ -198,15 +198,18 @@ class ConnectionWizard(xbmcgui.WindowXML):
         pass
 
     def onClick(self, control):
-        if control == OK_BUTTON:
-            if connection_handler.can_connect(ip=str(self._box_ip.getText()), port=str(self._box_port.getText())):
-                plugin_addon.setSetting(id='ipaddress', value=str(self._box_ip.getText()))
-                plugin_addon.setSetting(id='port', value=str(self._box_port.getText()))
-                self.cancelled = False
-                self.close()
-            else:
-                # show message
-                kodi_proxy.Dialog.ok(MSG_HEADER, MSG_CONNECT)
+        if control != OK_BUTTON:
+            return
+
+        if not connection_handler.can_connect(ip=str(self._box_ip.getText()), port=str(self._box_port.getText())):
+            # show message
+            kodi_proxy.Dialog.ok(MSG_HEADER, MSG_CONNECT)
+            return
+
+        plugin_addon.setSetting(id='ipaddress', value=str(self._box_ip.getText()))
+        plugin_addon.setSetting(id='port', value=str(self._box_port.getText()))
+        self.cancelled = False
+        self.close()
 
 
 def open_connection_wizard():

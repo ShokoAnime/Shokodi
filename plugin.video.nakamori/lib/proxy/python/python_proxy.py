@@ -26,6 +26,7 @@ from lib.utils.globalvars import plugin_addon
 class BasePythonProxy:
     def __init__(self):
         self.api_key = ''
+        self.HTTPError = HTTPError
 
     def set_temporary_apikey(self, apikey):
         self.api_key = apikey
@@ -52,7 +53,7 @@ class BasePythonProxy:
     def is_string(self, i):
         pass
 
-    def get_data(self, url, referer, timeout, apikey):
+    def get_data(self, url, referer, time_out, apikey):
         import lib.error_handler as eh
         headers = {
             'Accept': 'application/json',
@@ -73,13 +74,13 @@ class BasePythonProxy:
         eh.spam('Getting Data ---')
         eh.spam('URL: ', url)
         eh.spam('Headers: ', headers)
-        eh.spam('Timeout: ', timeout)
+        eh.spam('Timeout: ', time_out)
 
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
 
-        response = urlopen(req, timeout=int(timeout), context=ctx)
+        response = urlopen(req, timeout=int(time_out), context=ctx)
         if response.info().get('Content-Encoding') == 'gzip':
             eh.spam('Got gzipped response. Decompressing')
             try:
@@ -250,13 +251,13 @@ class BasePythonProxy:
         import lib.error_handler as eh
         from lib.error_handler import ErrorPriority
         try:
-            timeout = plugin_addon.getSetting('timeout')
+            time_out = plugin_addon.getSetting('timeout')
             if self.api_key is None or self.api_key == '':
                 apikey = plugin_addon.getSetting('apikey')
             else:
                 apikey = self.api_key
 
-            body = self.get_data(url_in, None, timeout, apikey)
+            body = self.get_data(url_in, None, time_out, apikey)
 
         except HTTPError as err:
             raise err
