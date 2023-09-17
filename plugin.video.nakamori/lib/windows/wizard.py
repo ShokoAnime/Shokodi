@@ -109,7 +109,7 @@ class LoginWizard(xbmcgui.WindowXML):
         if control != OK_BUTTON:
             return
 
-        if not connection_handler.can_user_connect():
+        if not connection_handler.can_connect():
             return
 
         # populate info from edits
