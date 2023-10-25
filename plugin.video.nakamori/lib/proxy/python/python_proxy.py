@@ -135,6 +135,8 @@ class BasePythonProxy:
 
         url = array1[0] + '?'
         array2 = array1[1].split('&')
+        array2.append(parameter + '=' + value)
+
         for key in array2:
             array3 = key.split('=')
             if array3[0] == parameter:

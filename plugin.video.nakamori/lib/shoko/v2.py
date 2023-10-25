@@ -510,13 +510,13 @@ class Group(Directory):
         :type filter_id: int
         """
         self.filter_id = 0
+        if filter_id != 0 and filter_id != '0':
+            self.filter_id = filter_id
         Directory.__init__(self, json_node, get_children)
         # don't redownload info on an okay object
         if build_full_object and (self.size < 0 or (get_children and len(self.items) < 1)):
             json_node = self.get_full_object()
             Directory.__init__(self, json_node, get_children)
-        if filter_id != 0 and filter_id != '0':
-            self.filter_id = filter_id
 
         # check again, as we might have replaced it above
         if pyproxy.is_string(json_node) or pyproxy.isnumeric(json_node):
