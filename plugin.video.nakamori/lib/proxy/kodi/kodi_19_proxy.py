@@ -20,6 +20,16 @@ class Kodi19Proxy(Kodi18Proxy):
             # noinspection PyArgumentList
             return xbmcgui.Dialog().yesno(header, message, nolabel=no_label, yeslabel=yes_label, autoclose=auto_close)
 
+        class Progress(Kodi18Proxy.Dialog.Progress):
+            def __init__(self, heading, message=''):
+                self.dialog = xbmcgui.DialogProgress()
+                # noinspection PyArgumentList
+                self.dialog.create(heading, message)
+
+            def update(self, percent, message=''):
+                # noinspection PyArgumentList
+                self.dialog.update(percent, message)
+
     class ListItem(Kodi18Proxy.ListItem):
         def __init__(self, label='', label2='', path='', offscreen=False):
             self.list_item = xbmcgui.ListItem(label=label, label2=label2, path=path, offscreen=offscreen)
@@ -57,10 +67,14 @@ class Kodi19Proxy(Kodi18Proxy):
             """
             set the needed flags on a listitem for watched or resume icons
             :param self:
-            :param infolabels
+            :param infolabels:
+            :type infolabels: dict
             :param flag:
             :type flag: WatchedStatus
-            :param resume_time: int s
+            :param resume_time:
+            :type resume_time: int
+            :param total_time:
+            :type total_time: int
             :return:
             """
             if flag == WatchedStatus.UNWATCHED:

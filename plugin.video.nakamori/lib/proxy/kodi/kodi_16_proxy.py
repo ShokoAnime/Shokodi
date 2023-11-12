@@ -221,10 +221,14 @@ class Kodi16Proxy:
             """
             set the needed flags on a listitem for watched or resume icons
             :param self:
-            :param infolabels
+            :param infolabels:
+            :type infolabels: dict
             :param flag:
             :type flag: WatchedStatus
-            :param resume_time: int s
+            :param resume_time:
+            :type resume_time: int
+            :param total_time:
+            :type total_time: int
             :return:
             """
             if flag == WatchedStatus.UNWATCHED:

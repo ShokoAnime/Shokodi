@@ -158,6 +158,8 @@ def is_type_list(title):
 def get_title(data, lang=None, title_type=None):
     """
     Get the title based on settings
+    :param title_type:
+    :param lang:
     :param data: json node containing the title
     :return: string of the desired title
     :rtype: str

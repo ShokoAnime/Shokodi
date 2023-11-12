@@ -113,7 +113,7 @@ def get_server_status(ip=plugin_addon.getSetting('ipaddress'), port=plugin_addon
         busy = kodi_proxy.Dialog.Progress(localized(30250), startup_state)
         busy.update(1)
         # poll every second until the server gives us a response that we want
-        while not busy.iscanceled():
+        while not busy.is_cancelled():
             kodi_proxy.sleep(1000)
             response = pyproxy.get_json(url)
 
@@ -172,7 +172,7 @@ def startup_handle_no_connection(ip=None, port=None):
     # poll every second until the server gives us a response that we want
     counter = 0
     time = 30
-    while not busy.iscanceled() and counter < time:
+    while not busy.is_cancelled() and counter < time:
         kodi_proxy.sleep(1000)
         busy.update(int(round(counter * 100.0 / 30)))
         if can_connect(ip, port):
