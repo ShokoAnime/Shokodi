@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repository.shokodi" name="Shokodi Repository" version="2.0.0" provider-name="da3dsoul">
+	<extension point="xbmc.addon.repository" name="Shokodi Repository">
+		<dir maxversion="18.9.0">
+			<info compressed="false">https://da3dsoul.dev/shokodi/Legacy/addons.xml</info>
+			<checksum>https://da3dsoul.dev/shokodi/Legacy/addons.xml.md5</checksum>
+			<datadir zip="true">https://da3dsoul.dev/shokodi/Legacy</datadir>
+			<hashes>false</hashes>
+		</dir>
+		<dir minversion="19.0.0">
+			<info compressed="false">https://da3dsoul.dev/shokodi/Future/addons.xml</info>
+			<checksum>https://da3dsoul.dev/shokodi/Future/addons.xml.md5</checksum>
+			<datadir zip="true">https://da3dsoul.dev/shokodi/Future</datadir>
+			<hashes>false</hashes>
+		</dir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Shokodi</summary>
+		<description>This Repo contains Shokodi. The goal is to have fewer features that always work with any version.</description>
+		<disclaimer>The owner and submitters to this repository do not host or distribute any of the content displayed by these addons nor do they have any affiliation with the content providers.</disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
