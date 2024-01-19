@@ -341,7 +341,7 @@ class NakamoriPlugin(PluginRoutes):
     @staticmethod
     def restart_plugin():
         kodi_proxy.executebuiltin(script_router.url_for(ScriptRoutes.arbiter, wait=0,
-                                                        arg='RunAddon("plugin.video.nakamori")'))
+                                                        arg='RunAddon("plugin.video.shokodi")'))
 
     @Try(ErrorPriority.BLOCKING)
     def main(self):

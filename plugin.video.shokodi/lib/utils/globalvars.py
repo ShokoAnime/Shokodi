@@ -34,5 +34,5 @@ tag_setting_flags |= 1 << 6 if plugin_addon.getSetting('ProgrammingTags') == 'tr
 tag_setting_flags |= 1 << 7 if plugin_addon.getSetting('GenreTags') == 'true' else 0
 tag_setting_flags |= 1 << 31 if plugin_addon.getSetting('InvertTags') == 'Show' else 0
 
-plugin_router = routing.Plugin('plugin.video.nakamori', convert_args=True)
-script_router = routing.Script('plugin.video.nakamori', convert_args=True)
+plugin_router = routing.Plugin('plugin.video.shokodi', convert_args=True)
+script_router = routing.Script('plugin.video.shokodi', convert_args=True)

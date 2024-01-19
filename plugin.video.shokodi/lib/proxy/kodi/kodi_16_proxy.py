@@ -332,7 +332,7 @@ class Kodi16Proxy:
                 for db_file in db_files:
                     db_connection = cls._database.connect(os.path.join(db_path, db_file))
                     db_cursor = db_connection.cursor()
-                    db_cursor.execute('DELETE FROM files WHERE strFilename like "%plugin.video.nakamori%"')
+                    db_cursor.execute('DELETE FROM files WHERE strFilename like "%plugin.video.shokodi%"')
                     db_connection.commit()
                     db_connection.close()
                 if len(db_files) > 0:

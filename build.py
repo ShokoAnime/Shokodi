@@ -49,7 +49,7 @@ def get_all_file_paths(directory):
     return file_paths
 
 
-nakamori_directory = ['plugin.video.nakamori']
+nakamori_directory = ['plugin.video.shokodi']
 addon_xml_leia = 'addon_leia.xml'
 addon_xml_matrix = 'addon_matrix.xml'
 
@@ -146,7 +146,7 @@ def main():
             # Writing files to a zipfile for Leia
             addon_path = os.path.join(root_path, directory, addon_xml_leia)
             version = get_addon_version(addon_path)
-            out_leia = os.path.join(out, 'plugin.video.nakamori-'+version+'.zip')
+            out_leia = os.path.join(out, 'plugin.video.shokodi-'+version+'.zip')
             if os.path.exists(out_leia):
                 os.remove(out_leia)
             with ZipFile(out_leia, 'w') as zip_file:
@@ -165,7 +165,7 @@ def main():
             # Writing files to a zipfile for Matrix
             addon_path = os.path.join(root_path, directory, addon_xml_matrix)
             version = get_addon_version(addon_path)
-            out_matrix = os.path.join(out, 'plugin.video.nakamori-' + version + '.zip')
+            out_matrix = os.path.join(out, 'plugin.video.shokodi-' + version + '.zip')
             if os.path.exists(out_matrix):
                 os.remove(out_matrix)
             with ZipFile(out_matrix, 'w') as zip_file:
