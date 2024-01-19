@@ -22,7 +22,7 @@ As some of you may have discovered, Kodi does not handle anime well. With lots o
 ## Thanks
 
 This was initially based on [JAVStream](http://www.ptom.co.uk/home/). The code is far from it at this point, but they still deserve a thanks.\
-This was forked from Nakamori, and BigRetroMike put a lot of work into making this a reality. This project diverged due to creative differences, but this still wouldn't exist without his efforts. Thanks BRM!\
+This was forked from shokodi, and BigRetroMike put a lot of work into making this a reality. This project diverged due to creative differences, but this still wouldn't exist without his efforts. Thanks BRM!\
 A big thanks to the Kodi community for helping with many Kodi related issues over the years.\
 An even bigger thanks to the Kodi Team for never giving up, no matter how annoying we all are.\
 Also screw those guys. They make our lives so hard sometimes. Pray they never become Plex.

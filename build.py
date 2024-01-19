@@ -49,7 +49,7 @@ def get_all_file_paths(directory):
     return file_paths
 
 
-nakamori_directory = ['plugin.video.shokodi']
+shokodi_directory = ['plugin.video.shokodi']
 addon_xml_leia = 'addon_leia.xml'
 addon_xml_matrix = 'addon_matrix.xml'
 
@@ -124,7 +124,7 @@ def restore_backup(addon_xml_path):
 def main():
     root_path = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
-    for directory in nakamori_directory:
+    for directory in shokodi_directory:
         try:
             replace_news(os.path.join(root_path, directory, addon_xml_leia))
             replace_news(os.path.join(root_path, directory, addon_xml_matrix))

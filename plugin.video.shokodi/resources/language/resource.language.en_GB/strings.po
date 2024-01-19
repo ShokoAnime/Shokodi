@@ -4,7 +4,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: Nakamori\n"
+"Project-Id-Version: shokodi\n"
 "Language: en\n"
 
 #: settings.xml
@@ -237,7 +237,7 @@ msgctxt "#30052"
 msgid "Use Server Title"
 msgstr "Use Server Title"
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30053"
 msgid "*Go to First Unwatched Episode*"
 msgstr "*Go to First Unwatched Episode*"
@@ -639,47 +639,47 @@ msgctxt "#30149"
 msgid "External player watch fix"
 msgstr "External player watch fix"
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30151"
 msgid "Unable to Add Query to List"
 msgstr "Unable to Add Query to List"
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30152"
 msgid "No Episodes in Series"
 msgstr "No Episodes in Series"
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30153"
 msgid "Unable to Add Episode"
 msgstr "Unable to Add Episode"
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30154"
 msgid "We were unable to connect to Shoko Server.\n Please enter a valid IP or host."
 msgstr "We were unable to connect to Shoko Server.\n Please enter a valid IP or host."
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30155"
 msgid "Could not connect. Please check your connection settings."
 msgstr "Could not connect. Please check your connection settings."
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30156"
 msgid "Unable to Login"
 msgstr "Unable to Login"
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30157"
 msgid "We were unable to log in to Shoko Server.\n Please enter a valid Username and Password.\n The default is U: \"Default\" P: \"\" (no quotes)"
 msgstr "We were unable to log in to Shoko Server.\n Please enter a valid Username and Password.\n The default is U: \"Default\" P: \"\" (no quotes)"
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30158"
 msgid "Could not log in. Please check your user settings."
 msgstr "Could not log in. Please check your user settings."
 
-#: nakamoriplugin.py
+#: shokodiplugin.py
 msgctxt "#30159"
 msgid "Unable to Connect"
 msgstr "Unable to Connect"
@@ -786,12 +786,12 @@ msgctxt "#30193"
 msgid "It may take some time."
 msgstr "It may take some time."
 
-#: nakamori.py
+#: shokodi.py
 msgctxt "#30194"
 msgid "Incorrect Credentials"
 msgstr "Incorrect Credentials"
 
-#: nakamori.py
+#: shokodi.py
 msgctxt "#30195"
 msgid "Please change them in Settings"
 msgstr "Please change them in Settings"
@@ -816,22 +816,22 @@ msgctxt "#30199"
 msgid "Queued Import Folder Scan"
 msgstr "Queued Import Folder Scan"
 
-#: nakamoritools.py
+#: shokoditools.py
 msgctxt "#30200"
 msgid "Watched Status Changed"
 msgstr "Watched Status Changed"
 
-#: nakamoritools.py
+#: shokoditools.py
 msgctxt "#30201"
 msgid "Marked as"
 msgstr "Marked as"
 
-#: nakamoritools.py
+#: shokoditools.py
 msgctxt "#30202"
 msgid "Watched"
 msgstr "Watched"
 
-#: nakamoritools.py
+#: shokoditools.py
 msgctxt "#30203"
 msgid "Unwatched"
 msgstr "Unwatched"
@@ -1063,27 +1063,27 @@ msgctxt "#30309"
 msgid "Close"
 msgstr "Close"
 
-#: nakamoritools.py
+#: shokoditools.py
 msgctxt "#30321"
 msgid "Series Voting"
 msgstr "Series Voting"
 
-#: nakamoritools.py
+#: shokoditools.py
 msgctxt "#30322"
 msgid "You Voted"
 msgstr "You Voted"
 
-#: nakamoritools.py
+#: shokoditools.py
 msgctxt "#30323"
 msgid "Episode Voting"
 msgstr "Episode Voting"
 
-#: nakamoriscript.py
+#: shokodiscript.py
 msgctxt "#30325"
 msgid "Connection Wizard"
 msgstr "Connection Wizard"
 
-#: nakamoritools.py
+#: shokoditools.py
 msgctxt "#30326"
 msgid "Enter search text"
 msgstr "Enter search text"
@@ -1112,32 +1112,32 @@ msgctxt "#30341"
 msgid "Enter Shoko Server Host"
 msgstr "Enter Shoko Server Host"
 
-#: nakamoriscript.py
+#: shokodiscript.py
 msgctxt "#30342"
 msgid "Remove Missing Files"
 msgstr "Remove Missing Files"
 
-#: nakamoriscript.py
+#: shokodiscript.py
 msgctxt "#30343"
 msgid "Login Wizard"
 msgstr "Login Wizard"
 
-#: nakamoriscript.py
+#: shokodiscript.py
 msgctxt "#30346"
 msgid "Information"
 msgstr "Information"
 
-#: nakamoriscript.py
+#: shokodiscript.py
 msgctxt "#30348"
 msgid "Settings"
 msgstr "Settings"
 
-#: nakamoriscript.py
+#: shokodiscript.py
 msgctxt "#30349"
 msgid "Run Import"
 msgstr "Run Import"
 
-#: nakamoriscript.py
+#: shokodiscript.py
 msgctxt "#30353"
 msgid "You didn't rate all the episodes for this Series"
 msgstr "You didn't rate all the episodes for this Series"

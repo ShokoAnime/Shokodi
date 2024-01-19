@@ -317,7 +317,7 @@ class Kodi16Proxy:
         @classmethod
         def clear_listitem_cache(cls):
             """
-            Clear mark for nakamori files in kodi db
+            Clear mark for shokodi files in kodi db
             :return:
             """
             ret = cls._parent.Dialog.yes_no(cls._localize(30104), "\n".join([cls._localize(30081), cls._localize(30112)]))
@@ -355,7 +355,7 @@ class Kodi16Proxy:
                 db_cursor = db_connection.cursor()
                 db_cursor.execute('DELETE FROM texture WHERE url LIKE "%%%s/api/%%"' % plugin_addon.getSetting('port'))
                 db_connection.commit()
-                db_cursor.execute('DELETE FROM texture WHERE url LIKE "%nakamori%"')
+                db_cursor.execute('DELETE FROM texture WHERE url LIKE "%shokodi%"')
                 db_connection.commit()
                 db_connection.close()
             if len(db_files) > 0:

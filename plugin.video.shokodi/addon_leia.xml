@@ -4,10 +4,10 @@
 		<import addon="xbmc.python" version="2.14.0" />
 		<import addon="script.module.web-pdb" optional="true"/>
 	</requires>
-	<extension point="xbmc.python.pluginsource" library="nakamoriplugin.py">
+	<extension point="xbmc.python.pluginsource" library="shokodiplugin.py">
 		<provides>video</provides>
 	</extension>
-	<extension point="xbmc.python.script" library="nakamoriscript.py">
+	<extension point="xbmc.python.script" library="shokodiscript.py">
 		<provides>executable</provides>
 	</extension>
 	<extension point="xbmc.addon.metadata">

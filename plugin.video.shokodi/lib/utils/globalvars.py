@@ -13,7 +13,7 @@ except (ImportError, NameError, AttributeError):
     translatePath = xbmc.translatePath
 
 
-# The plugin object for nakamori.plugin
+# The plugin object for shokodi.plugin
 import xbmcaddon
 plugin_addon = xbmcaddon.Addon()
 plugin_version = plugin_addon.getAddonInfo('version')

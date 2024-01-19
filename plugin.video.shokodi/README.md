@@ -1,8 +1,8 @@
 ---------------------------------------------------------
-Nakamori
+shokodi
 ---------------------------------------------------------
 
-Nakamori is designed for Kodi (initial version was released for 15.2 Isengard, but works great on 16.1 Jarvis).
+shokodi is designed for Kodi (initial version was released for 15.2 Isengard, but works great on 16.1 Jarvis).
 The main goal was to connect Shoko (formerly known as JMM) Server to Kodi as a library.
 Kodi wasn't designed with anime in mind. Thanks to a lot of work from community, there are many
 options to improve Kodi compatibility with Anime, which will sometimes break compatibility with non-anime content.

@@ -61,6 +61,6 @@ Sort the filters menu more nicely
 !-- 3.0.8
 Proper handling episode numbers for specials seasons
 Option to replace -continue- item to series information counter
-New commands inside Settings to clear commons errors with Nakamori
+New commands inside Settings to clear commons errors with shokodi
 Spoiler control in settings that give control over what you want to see before watching series
 A lot of logic error bugs have been fixed!

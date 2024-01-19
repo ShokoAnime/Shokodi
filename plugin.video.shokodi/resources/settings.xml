@@ -3,12 +3,12 @@
 	<!-- shoko settings -->
     <category label="30001"> <!-- Shoko Settings -->
         <setting label="30006" type="lsep"/> <!-- Shoko Server -->
-        <setting label="30082" type="action" id="action4" action="RunScript(plugin.video.nakamori,/dialog/wizard/connection)" option="close"/>
-        <setting label="30099" type="action" id="action5" action="RunScript(plugin.video.nakamori,/dialog/wizard/login)" option="close"/>
+        <setting label="30082" type="action" id="action4" action="RunScript(plugin.video.shokodi,/dialog/wizard/connection)" option="close"/>
+        <setting label="30099" type="action" id="action5" action="RunScript(plugin.video.shokodi,/dialog/wizard/login)" option="close"/>
 		<setting label="30100" type="bool" id="more_30001" default="false"/>
 		<!-- advanced -->
         <setting label="30044" type="lsep" visible="eq(-1,true)"/> <!-- Advanced -->
-		<setting label="30017" type="text" id="device" default="nakamori" visible="eq(-2,true)"/>
+		<setting label="30017" type="text" id="device" default="shokodi" visible="eq(-2,true)"/>
 		<!-- hidden -->
         <setting type="text" id="apikey" visible="false"/>
         <setting type="text" id="ipaddress" default="127.0.0.1" visible="false"/>
@@ -60,8 +60,8 @@
         <setting label="30124" type="bool" id="context_show_vote_Series" default="true"/>
         <!-- maintenance -->
 		<setting label="30097" type="lsep"/>
-        <setting label="30080" type="action" id="action1" action="RunScript(plugin.video.nakamori,/kodi/clear_listitem_cache)" option="close"/>
-        <setting label="30139" type="action" id="action2" action="RunScript(plugin.video.nakamori,/kodi/clear_image_cache)" option="close"/>
+        <setting label="30080" type="action" id="action1" action="RunScript(plugin.video.shokodi,/kodi/clear_listitem_cache)" option="close"/>
+        <setting label="30139" type="action" id="action2" action="RunScript(plugin.video.shokodi,/kodi/clear_image_cache)" option="close"/>
     </category>
     <category label="30046">
         <!-- tag blacklist -->
@@ -84,7 +84,7 @@
         <setting label="30033" type="number" id="maxlimit_tag" default="100"/>
         <!-- maintenance -->
 		<setting label="30097" type="lsep"/>
-        <setting label="30110" type="action" id="action3" action="RunScript(plugin.video.nakamori,/search/clear)" enable="System.HasAddon(plugin.video.nakamori)" option="close"/>
+        <setting label="30110" type="action" id="action3" action="RunScript(plugin.video.shokodi,/search/clear)" enable="System.HasAddon(plugin.video.shokodi)" option="close"/>
     </category>
 	<!-- video settings -->
     <category label="30023">

@@ -20,7 +20,7 @@ try:
         xbmc.log(message, xbmc.LOGERROR)
 
 except (ImportError, NameError):
-    addon_path = os.path.expanduser('~/Documents/GitHub/Nakamori').replace('\\', '/')
+    addon_path = os.path.expanduser('~/Documents/GitHub/Shokodi').replace('\\', '/')
 
     def _info(message):
         pass
@@ -60,7 +60,7 @@ class ErrorPriority:
     BLOCKING = ErrorPriority(5, 'BLOCKING')
 
 
-class NakamoriError(object):
+class ShokodiError(object):
     """
     The error object has the point of carrying the traceback and exception info.
     It may also carry some extra data or less data, if the error is raised by us with a specific message
@@ -78,7 +78,7 @@ class NakamoriError(object):
         self.exc_full_trace = []
 
     def __eq__(self, o):
-        if not isinstance(o, NakamoriError):
+        if not isinstance(o, ShokodiError):
             return False
         return self.exc_type == o.exc_type and self.exc_message == o.exc_message and self.exc_trace == o.exc_trace
 
@@ -86,7 +86,7 @@ class NakamoriError(object):
         return hash((self.exc_type, self.exc_message, self.exc_trace))
 
     def __lt__(self, other):
-        if not isinstance(other, NakamoriError):
+        if not isinstance(other, ShokodiError):
             return True
         return (self.exc_type, self.exc_message, self.exc_trace) < (other.exc_type, other.exc_message, other.exc_trace)
 
@@ -191,11 +191,11 @@ def get_simple_trace(fullpath=False):
 
 
 def __get_caller_prefix():
-    return 'Nakamori|' + get_simple_trace() + ' -> '
+    return 'Shokodi|' + get_simple_trace() + ' -> '
 
 
 def __get_basic_prefix():
-    return 'Nakamori|Logger -> '
+    return 'Shokodi|Logger -> '
 
 
 def spam(*args):
@@ -275,7 +275,7 @@ def __exception_internal(exc_type, exc_obj, exc_tb, priority, message=''):
         if msg == '' or msg is None:
             msg = str(exc_obj)
 
-        ex = NakamoriError(msg, exc_type, place)
+        ex = ShokodiError(msg, exc_type, place)
         if priority == ErrorPriority.BLOCKING or plugin_addon.getSetting('spamLog') == 'true':
             for line in traceback.format_exc().replace('\r', '\n').split('\n'):
                 # skip empty lines
@@ -288,7 +288,7 @@ def __exception_internal(exc_type, exc_obj, exc_tb, priority, message=''):
                 tr = line.replace('\\', '/').replace(addon_path, '.')
                 ex.exc_full_trace.append(tr)
     else:
-        ex = NakamoriError(msg, exc_type, place)
+        ex = ShokodiError(msg, exc_type, place)
     # Learning opportunity! If you don't want it to interrupt you with errors, then change the logic in show_...
     # That way, you will still get logs of the errors, but no interruptions!
     # With the previous logic, you are basically saying `if False: else xbmc.log()`
@@ -348,10 +348,10 @@ def print_exceptions(exes):
 
     plural = True if len(exes) > 1 else False
     pluralized_msg = 'were errors' if plural else 'was an error'
-    msg = 'There ' + pluralized_msg + ' while executing Nakamori.'
+    msg = 'There ' + pluralized_msg + ' while executing Shokodi.'
     _error(__get_basic_prefix() + msg)
 
-    msg = 'Nakamori Version ' + str(plugin_version)
+    msg = 'Shokodi Version ' + str(plugin_version)
     _error(__get_basic_prefix() + msg)
 
     url = sys.argv[0]
@@ -361,7 +361,7 @@ def print_exceptions(exes):
     _error(__get_basic_prefix() + msg)
 
     for ex in exes:
-        key, value = ex  # type: NakamoriError, int
+        key, value = ex  # type: ShokodiError, int
         msg = key.exc_message + ' -- Exception: ' + key.exc_type + ' at ' + key.exc_trace
         _error(__get_basic_prefix() + msg)
         if len(key.exc_full_trace) > 0:
@@ -377,7 +377,7 @@ def show_dialog_for_exception(ex):
     """
     Show an OK dialog to say that errors occurred
     :param ex: a tuple of the error and the number of times it occurred
-    :type ex: (NakamoriError, int)
+    :type ex: (ShokodiError, int)
     :return:
     """
 
@@ -387,17 +387,17 @@ def show_dialog_for_exception(ex):
         msg = ex[0].exc_type
     msg += '\n  at ' + ex[0].exc_trace + '\nThis occurred ' + \
         str(ex[1]) + ' times.'
-    kodi_proxy.Dialog.ok('Nakamori: An Error Occurred', msg)
+    kodi_proxy.Dialog.ok('Shokodi: An Error Occurred', msg)
 
 
 def show_notification_for_exception(ex):
     """
     Show a notification to say that errors occurred
     :param ex: a tuple of the error and the number of times it occurred
-    :type ex: (NakamoriError, int)
+    :type ex: (ShokodiError, int)
     :return:
     """
     from lib.proxy.kodi import kodi_proxy
 
     msg = ex[0].exc_message + '\nThis occurred ' + str(ex[1]) + ' times.'
-    kodi_proxy.Dialog.notification('Nakamori: An Error Occurred', msg)
+    kodi_proxy.Dialog.notification('Shokodi: An Error Occurred', msg)

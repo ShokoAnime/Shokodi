@@ -3,7 +3,7 @@
 import lib.utils.model_utils
 from lib.utils.globalvars import *
 
-import nakamoriplayer
+import shokodiplayer
 from lib import debug, search
 from lib.error_handler import spam, ErrorPriority, Try, show_messages
 from lib.proxy.kodi import kodi_proxy
@@ -12,7 +12,7 @@ from lib.shoko import connection_handler
 from script_routes import ScriptRoutes
 
 
-class NakamoriScript(ScriptRoutes):
+class ShokodiScript(ScriptRoutes):
     def root(self):
         items = [
             (plugin_addon.getLocalizedString(30025), (self.wizard_connection, [])),
@@ -128,7 +128,7 @@ class NakamoriScript(ScriptRoutes):
         ep = Episode(ep_id, build_full_object=True)
         items = [(x.name, x.id) for x in ep]
         selected_id = lib.utils.model_utils.show_file_list(items)
-        nakamoriplayer.play_video(file_id=selected_id, ep_id=ep_id)
+        shokodiplayer.play_video(file_id=selected_id, ep_id=ep_id)
 
     @Try(ErrorPriority.BLOCKING)
     def rescan_file(self, file_id):
@@ -172,7 +172,7 @@ class NakamoriScript(ScriptRoutes):
 
 if __name__ == '__main__':
     debug.debug_init()
-    script = NakamoriScript()
+    script = ShokodiScript()
     script_router.instance = script
     script.main()
     show_messages()

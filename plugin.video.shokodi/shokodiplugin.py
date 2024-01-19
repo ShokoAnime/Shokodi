@@ -1,7 +1,7 @@
 import json
 import sys
 
-import nakamoriplayer
+import shokodiplayer
 from lib.utils.globalvars import *
 from lib import debug, error_handler
 from lib.error_handler import show_messages, ErrorPriority, exception, Try
@@ -28,7 +28,7 @@ if len(sys.argv) > 2:
         break
 
 
-class NakamoriPlugin(PluginRoutes):
+class ShokodiPlugin(PluginRoutes):
     def __init__(self):
         self.plugin_dir = DirectoryListing()
 
@@ -319,7 +319,7 @@ class NakamoriPlugin(PluginRoutes):
             selected_id = file_id
 
         # all of real work is done here
-        nakamoriplayer.play_video(file_id=selected_id, ep_id=ep_id, mark_as_watched=mark_as_watched, resume=resume)
+        shokodiplayer.play_video(file_id=selected_id, ep_id=ep_id, mark_as_watched=mark_as_watched, resume=resume)
         while kodi_proxy.Util.is_dialog_active():
             kodi_proxy.sleep(500)
 
@@ -379,7 +379,7 @@ class NakamoriPlugin(PluginRoutes):
 
 
 if __name__ == '__main__':
-    plugin = NakamoriPlugin()
+    plugin = ShokodiPlugin()
     plugin_router.instance = plugin
     plugin.main()
     show_messages()
