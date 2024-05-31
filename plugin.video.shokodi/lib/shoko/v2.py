@@ -420,7 +420,7 @@ class Filter(Directory):
         level = 0
         if self.get_children and self.size > 0:
             level = 1 if self.directory_filter else 2
-        url = model_utils.add_default_parameters(url, self.id, level)
+        url = model_utils.add_default_parameters(url, int(self.id), level)
         if self.id == 0:
             url = pyproxy.set_parameter(url, 'notag', 1)
         return url

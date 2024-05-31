@@ -34,7 +34,13 @@ class Python2Proxy(BasePythonProxy):
         return isinstance(i, (str, unicode, basestring))
 
     def isnumeric(self, value):
-        return unicode(value).isnumeric()
+        if unicode(value).isnumeric():
+            return True
+        try:
+            float(value)
+            return True
+        except (ValueError, TypeError):
+            return False
 
     def http_error(self, url, code, msg, hdrs):
         # noinspection PyArgumentList

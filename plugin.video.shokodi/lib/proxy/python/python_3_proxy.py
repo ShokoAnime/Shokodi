@@ -34,7 +34,13 @@ class Python3Proxy(BasePythonProxy):
 
     def isnumeric(self, value):
         # noinspection PyUnresolvedReferences
-        return str(value).isnumeric()
+        if str(value).isnumeric():
+            return True
+        try:
+            float(value)
+            return True
+        except (ValueError, TypeError):
+            return False
 
     def http_error(self, url, code, msg, hdrs):
         from urllib.error import HTTPError
