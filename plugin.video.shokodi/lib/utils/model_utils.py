@@ -208,17 +208,20 @@ def match_title(data, lang, title_type):
             exclude = True
 
         for title_tag in data.get('titles', []):
-            title = pyproxy.decode(title_tag.get('Title', ''))
-            if pyproxy.decode(title_tag.get('Title', '')) == '':
+            # Handle both v2 (uppercase) and v3 (lowercase) field names
+            title = pyproxy.decode(title_tag.get('Title', title_tag.get('title', '')))
+            if not title:
                 continue
 
-            if title_tag.get('Language', '').lower() != lang.lower():
+            lang_val = title_tag.get('Language', title_tag.get('language', ''))
+            if lang_val.lower() != lang.lower():
                 continue
             # does it match the proper type
-            if exclude and title_tag.get('Type', '').lower() == title_type.lower():
+            type_val = title_tag.get('Type', title_tag.get('type', ''))
+            if exclude and type_val.lower() == title_type.lower():
                 continue
 
-            if not exclude and title_tag.get('Type', '').lower() != title_type.lower():
+            if not exclude and type_val.lower() != title_type.lower():
                 continue
 
             return title
@@ -344,6 +347,8 @@ def get_date(date):
     :type date: str
     :return:
     """
+    if not date:
+        return None
     temp_date = date.split('-')
     if len(temp_date) == 3:  # format is 2016-01-24, we want it 24.01.2016
         return temp_date[1] + '.' + temp_date[2] + '.' + temp_date[0]

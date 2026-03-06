@@ -26,8 +26,11 @@ elif kodi_version < 19:
 elif kodi_version < 20:
     from lib.proxy.kodi.kodi_19_proxy import Kodi19Proxy
     kodi_proxy = Kodi19Proxy()
-else:
+elif kodi_version < 21:
     from lib.proxy.kodi.kodi_20_proxy import Kodi20Proxy
     kodi_proxy = Kodi20Proxy()
+else:
+    from lib.proxy.kodi.kodi_21_proxy import Kodi21Proxy
+    kodi_proxy = Kodi21Proxy()
 
 ListItem = kodi_proxy.ListItem

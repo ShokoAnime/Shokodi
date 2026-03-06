@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -H \"apikey: 659aaf6a-b44d-450e-b940-be70ff1906db\" \"http://15.129.1.6:8111/api/v3/Filter?pageSize=0&topLevelOnly=true\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d, indent=2\\)[:3000]\\)\")",
+      "Bash(xargs grep -l \"class Image\")",
+      "Bash(xargs grep -l \"GetImages\\\\|class Images\")",
+      "Bash(xargs grep -l \"class Images\\\\|public.*Images.*get\")",
+      "Bash(curl -s -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" \"http://15.129.1.6:8111/api/v3/Filter/0/Series?pageSize=1\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); s=d[''List''][0]; print\\(json.dumps\\(s.get\\(''Images'', s.get\\(''images'',{}\\)\\), indent=2\\)\\)\")",
+      "Bash(curl -s -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" \"http://15.129.1.6:8111/api/v3/Filter/0/Series?pageSize=50\")",
+      "Bash(python -c \":*)",
+      "Bash(curl -s -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" \"http://15.129.1.6:8111/api/v3/Series/7\")",
+      "Bash(curl -s -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" \"http://15.129.1.6:8111/api/v3/Series/7?includeDataFrom=TMDB\")",
+      "Bash(curl -s -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" \"http://15.129.1.6:8111/api/v3/Series/7/Images\")",
+      "Bash(robocopy \"c:\\\\Users\\\\da3dsoul\\\\Documents\\\\GitHub\\\\Shokodi\\\\plugin.video.shokodi\" \"C:\\\\Users\\\\da3dsoul\\\\AppData\\\\Roaming\\\\Kodi\\\\addons\\\\plugin.video.shokodi\" /MIR /XD \".git\" \".idea\" \"__pycache__\" /XF \"*.pyc\" \"*.pyo\" /NJH /NJS)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(cmd /c robocopy \"c:\\\\Users\\\\da3dsoul\\\\Documents\\\\GitHub\\\\Shokodi\\\\plugin.video.shokodi\" \"C:\\\\Users\\\\da3dsoul\\\\AppData\\\\Roaming\\\\Kodi\\\\addons\\\\plugin.video.shokodi\" /MIR /XD \".git\" \".idea\" \"__pycache__\" /XF \"*.pyc\" \"*.pyo\" /NJH /NJS)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(pip show kodistubs)",
+      "Read(//c/Users/da3dsoul/**)",
+      "Bash(xargs grep -l \"InfoTagVideo\\\\|setResumePoint\\\\|getResumeTime\")",
+      "Bash(curl -s -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" \"http://15.129.1.6:8111/api/v3/File/130026\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if k in [''id'',''resumePosition'',''userData'',''watchedCount'',''watched'']}, indent=2\\)\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
+      "Bash(curl -s -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" \"http://15.129.1.6:8111/api/v3/File/130026/Scrobble?resumePosition=254430000\" -v)",
+      "Bash(curl -s -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" \"http://15.129.1.6:8111/api/v3/swagger.json\")",
+      "Bash(curl -s \"http://15.129.1.6:8111/api/openapi.json\")",
+      "Bash(curl -s \"http://15.129.1.6:8111/swagger.json\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/ShokoAnime/ShokoServer/master/Shoko.Server/API/v3/Controllers/FileController.cs\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/ShokoAnime/ShokoServer/master/Shoko.Server/API/v3/Models/Shoko/File.cs\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/ShokoAnime/ShokoServer/master/Shoko.Server/Services/UserDataService.cs\")",
+      "Bash(python build.py)",
+      "WebFetch(domain:forum.kodi.tv)"
+    ]
+  }
+}

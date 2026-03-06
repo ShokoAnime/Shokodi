@@ -7,6 +7,7 @@ from lib.proxy.python import proxy as pyproxy
 from lib import error_handler as eh
 from lib.error_handler import ErrorPriority
 
+
 localized = plugin_addon.getLocalizedString
 
 localization_notification_map = {
@@ -60,17 +61,23 @@ def run_import():
     Same as pressing run import in Shoko. It performs many tasks, such as checking for files that are not added
     :return: None
     """
-    perform_server_action('/folder/import', object_id=None, refresh='awhile')
+    key_url = server + '/api/v3/Action/RunImport'
+    eh.spam('url:', key_url)
+    pyproxy.get_json(key_url)
+    refresh_message = localization_refresh_map.get('awhile', '')
+    kodi_proxy.Dialog.notification(localization_notification_map.get('runimport', 'runimport'), refresh_message)
 
 
 def remove_missing_files():
     """
     Run "remove missing files" on server to remove every file that is not accessible by server
-    This give a different localization, so for now, use another method.
-    Ideally, we would make an Enum for Refresh Message
     :return:
     """
-    perform_server_action('remove_missing_files', refresh='awhile')
+    key_url = server + '/api/v3/Action/RemoveMissingFiles/true'
+    eh.spam('url:', key_url)
+    pyproxy.get_json(key_url)
+    refresh_message = localization_refresh_map.get('awhile', '')
+    kodi_proxy.Dialog.notification(localization_notification_map.get('rescan', 'rescan'), refresh_message)
 
 
 def get_server_status(ip=plugin_addon.getSetting('ipaddress'), port=plugin_addon.getSetting('port')):
@@ -263,29 +270,17 @@ def get_apikey(login, password):
 
 
 def can_user_connect():
-    # what better way to try than to just attempt to load the main menu?
     try:
-        # TRY to use new method that no one has yet
-        try:
-            ping = pyproxy.get_json(server + '/api/ping')
-            if ping is not None and 'pong' in ping:
-                return True
-            else:  # should never happen
-                return False
-        except pyproxy.HTTPError as ex:
-            # return false if it's an unauthorized response
-            if ex.code == 401:
-                return False
-            eh.exception(ErrorPriority.NORMAL)
-        # but since no one has it, we can't count on it actually working, so fall back
-        from lib.shoko.v2 import Filter
-        f = Filter(0, build_full_object=True, get_children=False)
-        if f.size < 1:
-            raise RuntimeError(localized(30256))
-        return True
+        ping = pyproxy.get_json(server + '/api/ping')
+        if ping is not None and 'pong' in ping:
+            return True
+        return False
+    except pyproxy.HTTPError as ex:
+        if ex.code == 401:
+            return False
+        eh.exception(ErrorPriority.NORMAL)
+        return False
     except:
-        # because we always check for connection first, we can assume that auth is the only problem
-        # we need to log in
         eh.exception(ErrorPriority.NORMAL)
         plugin_addon.setSetting('apikey', '')
         return False

@@ -91,7 +91,7 @@ class ShokodiScript(ScriptRoutes):
 
     @Try(ErrorPriority.BLOCKING)
     def vote_for_series(self, series_id):
-        from lib.shoko.v2 import Series
+        from lib.shoko import Series
         series = Series(series_id)
         suggest_rating = ''
         if plugin_addon.getSetting('suggest_series_vote') == 'true':
@@ -111,7 +111,7 @@ class ShokodiScript(ScriptRoutes):
 
     @Try(ErrorPriority.BLOCKING)
     def vote_for_episode(self, ep_id):
-        from lib.shoko.v2 import Episode
+        from lib.shoko import Episode
         vote_list = ['Don\'t Vote', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1']
         my_vote = kodi_proxy.Dialog.select(plugin_addon.getLocalizedString(30023), vote_list)
         if my_vote < 1:
@@ -124,40 +124,40 @@ class ShokodiScript(ScriptRoutes):
 
     @Try(ErrorPriority.BLOCKING)
     def file_list(self, ep_id):
-        from lib.shoko.v2 import Episode
-        ep = Episode(ep_id, build_full_object=True)
+        from lib.shoko import Episode
+        ep = Episode.build(ep_id)
         items = [(x.name, x.id) for x in ep]
         selected_id = lib.utils.model_utils.show_file_list(items)
         shokodiplayer.play_video(file_id=selected_id, ep_id=ep_id)
 
     @Try(ErrorPriority.BLOCKING)
     def rescan_file(self, file_id):
-        from lib.shoko.v2 import File
+        from lib.shoko import File
         f = File(file_id)
         f.rescan()
 
     @Try(ErrorPriority.BLOCKING)
     def rehash_file(self, file_id):
-        from lib.shoko.v2 import File
+        from lib.shoko import File
         f = File(file_id)
         f.rehash()
 
     @Try(ErrorPriority.HIGH, 'Error Setting Watched Status')
     def set_episode_watched_status(self, ep_id, watched):
-        from lib.shoko.v2 import Episode
+        from lib.shoko import Episode
         ep = Episode(ep_id)
         ep.set_watched_status(watched)
         kodi_proxy.Dialog.refresh()
 
     @Try(ErrorPriority.HIGH, 'Error Setting Watched Status')
     def set_series_watched_status(self, series_id, watched):
-        from lib.shoko.v2 import Series
+        from lib.shoko import Series
         series = Series(series_id)
         series.set_watched_status(watched)
         kodi_proxy.Dialog.refresh()
 
     def set_group_watched_status(self, group_id, watched):
-        from lib.shoko.v2 import Group
+        from lib.shoko import Group
         group = Group(group_id)
         group.set_watched_status(watched)
         kodi_proxy.Dialog.refresh()

@@ -18,7 +18,7 @@ import xbmcaddon
 plugin_addon = xbmcaddon.Addon()
 plugin_version = plugin_addon.getAddonInfo('version')
 plugin_home = translatePath(plugin_addon.getAddonInfo('path'))
-plugin_img_path = os.path.join(plugin_addon.getAddonInfo('path'), 'resources', 'media')
+plugin_img_path = os.path.join(plugin_addon.getAddonInfo('path'), 'resources')
 
 schema = 'https' if plugin_addon.getSetting('use_https') == 'true' else 'http'
 server = schema + '://' + plugin_addon.getSetting('ipaddress') + ':' + plugin_addon.getSetting('port')

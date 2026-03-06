@@ -1141,3 +1141,27 @@ msgstr "Run Import"
 msgctxt "#30353"
 msgid "You didn't rate all the episodes for this Series"
 msgstr "You didn't rate all the episodes for this Series"
+
+msgctxt "#30354"
+msgid "Seasons"
+msgstr "Seasons"
+
+msgctxt "#30355"
+msgid "Years"
+msgstr "Years"
+
+msgctxt "#30356"
+msgid "Tags"
+msgstr "Tags"
+
+msgctxt "#30357"
+msgid "Show Seasons"
+msgstr "Show Seasons"
+
+msgctxt "#30358"
+msgid "Show Years"
+msgstr "Show Years"
+
+msgctxt "#30359"
+msgid "Show Tags"
+msgstr "Show Tags"

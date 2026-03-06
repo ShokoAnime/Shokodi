@@ -21,7 +21,11 @@
     <category label="30098">
         <setting label="30101" type="bool" id="show_search" default="true"/>
         <setting label="30105" type="bool" id="show_unsort" default="true"/>
+        <setting label="30357" type="bool" id="show_tags" default="true"/>
+        <setting label="30358" type="bool" id="show_years" default="true"/>
+        <setting label="30359" type="bool" id="show_seasons" default="true"/>
         <setting label="30114" type="bool" id="show_shoko" default="false"/>
+        <setting label="30348" type="bool" id="show_settings" default="false"/>
 	</category>
 	<!-- browsing -->
     <category label="30054">

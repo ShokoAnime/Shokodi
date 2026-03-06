@@ -26,6 +26,30 @@ class PluginRoutes(object):
     def show_unsorted_menu(self):
         pass
 
+    @plugin_router.route('/menu/tags')
+    def show_tags_menu(self):
+        pass
+
+    @plugin_router.route('/menu/tags/<path:tag_name>')
+    def show_tag_menu(self, tag_name):
+        pass
+
+    @plugin_router.route('/menu/years')
+    def show_years_menu(self):
+        pass
+
+    @plugin_router.route('/menu/years/<year>')
+    def show_year_menu(self, year):
+        pass
+
+    @plugin_router.route('/menu/seasons')
+    def show_seasons_menu(self):
+        pass
+
+    @plugin_router.route('/menu/seasons/<year>/<season>')
+    def show_season_menu(self, year, season):
+        pass
+
     @plugin_router.route('/menu/search')
     def show_search_menu(self):
         pass

@@ -33,7 +33,7 @@ class Kodi19Proxy(Kodi18Proxy):
     class ListItem(Kodi18Proxy.ListItem):
         def __init__(self, label='', label2='', path='', offscreen=False):
             self.list_item = xbmcgui.ListItem(label=label, label2=label2, path=path, offscreen=offscreen)
-            self.videoTag = self.list_item.getVideoInfoTag()
+            self.videoTag: xbmc.InfoTagVideo = self.list_item.getVideoInfoTag()
 
         def add_stream_info(self, type, info):
             video = self.videoTag
@@ -82,4 +82,6 @@ class Kodi19Proxy(Kodi18Proxy):
             elif flag == WatchedStatus.WATCHED:
                 self.videoTag.setPlaycount(1)
             elif flag == WatchedStatus.PARTIAL and plugin_addon.getSetting('file_resume') == 'true':
-                self.videoTag.setResumePoint(float(resume_time), float(total_time))
+                self.list_item.setProperty('ResumeTime', str(resume_time))
+                if total_time > 0:
+                    self.list_item.setProperty('TotalTime', str(total_time))

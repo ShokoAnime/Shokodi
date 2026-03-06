@@ -207,6 +207,56 @@ class BasePythonProxy:
             eh.exception(ErrorPriority.NORMAL if suppress else ErrorPriority.HIGH, data_out)
         return data_out
 
+    def patch_data(self, url, data_in, suppress=False, custom_timeout=int(plugin_addon.getSetting('timeout'))):
+        """
+        Send a PATCH request to the server (used for JSON Patch documents).
+        Args:
+            url: the URL to send the data to
+            data_in: the JSON Patch document string
+            suppress: swallow the errors
+            custom_timeout: if not given timeout from plugin setting will be used
+        Returns: The response from the server
+        """
+        import lib.error_handler as eh
+        from lib.error_handler import ErrorPriority
+        if data_in is None:
+            data_in = b''
+
+        headers = {
+            'Content-Type': 'application/json-patch+json',
+            'Accept': 'application/json',
+            'Accept-Encoding': 'gzip',
+        }
+
+        apikey = plugin_addon.getSetting('apikey')
+        if apikey is not None and apikey != '':
+            headers['apikey'] = apikey
+
+        eh.spam('PATCHing Data ---')
+        eh.spam('URL:', url)
+        eh.spam('PATCH Body:', data_in)
+
+        req = Request(self.decode(url), self.encode(data_in), headers, method='PATCH')
+        data_out = None
+        try:
+            response = urlopen(req, timeout=custom_timeout)
+            if response.info().get('Content-Encoding') == 'gzip':
+                try:
+                    buf = BytesIO(response.read())
+                    f = gzip.GzipFile(fileobj=buf)
+                    data_out = self.decode(f.read())
+                except:
+                    eh.exception(ErrorPriority.NORMAL)
+            else:
+                data_out = self.decode(response.read())
+            response.close()
+        except timeout:
+            if custom_timeout == int(plugin_addon.getSetting('timeout')):
+                eh.exception(ErrorPriority.NORMAL if suppress else ErrorPriority.HIGH)
+        except:
+            eh.exception(ErrorPriority.NORMAL if suppress else ErrorPriority.HIGH, data_out)
+        return data_out
+
     def parse_parameters(self, input_string):
         """Parses a parameter string starting at the first ? found in inputString
 
