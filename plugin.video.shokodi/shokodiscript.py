@@ -128,7 +128,11 @@ class ShokodiScript(ScriptRoutes):
         ep = Episode(ep_id, build_full_object=True)
         items = [(x.name, x.id) for x in ep]
         selected_id = lib.utils.model_utils.show_file_list(items)
-        shokodiplayer.play_video(file_id=selected_id, ep_id=ep_id)
+        if selected_id == 0:
+            return
+        selected_file = ep.get_file_with_id(selected_id)
+        resume = selected_file is not None and selected_file.resume_time > 0
+        shokodiplayer.play_video(file_id=selected_id, ep_id=ep_id, resume=resume)
 
     @Try(ErrorPriority.BLOCKING)
     def rescan_file(self, file_id):

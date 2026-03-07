@@ -2,8 +2,7 @@ import sys
 import traceback
 import zipfile
 from collections import defaultdict
-from distutils.version import LooseVersion
-from shutil import copy2
+from shutil import copy2, copytree, rmtree
 import xml.etree.ElementTree as ET
 from zipfile import ZipFile
 import os
@@ -68,26 +67,32 @@ def get_news(path):
                 continue
             if line.startswith('!--'):
                 try:
-                    current_version = LooseVersion(line.replace('!--', '').strip())
+                    current_version = line.replace('!--', '').strip()
                     # current line is version so go to next line
                     continue
                 except:
                     pass
             if current_version is None:
                 continue
-            changelog[current_version.vstring].append(line)
+            changelog[current_version].append(line)
         except:
             pass
     changelog.default_factory = None
 
+    def parse_version(v):
+        try:
+            return tuple(int(x) for x in v.split('.'))
+        except (ValueError, AttributeError):
+            return (0,)
+
     # build the text based on previous version.
     # This is important, as someone might open kodi for the first time in a while and skip several versions
-    max_version = (LooseVersion('0'), list())
+    max_version = ('0', list())
     for k, v in changelog.items():
-        if LooseVersion(k) > max_version[0]:
-            max_version = (LooseVersion(k), list(v))
+        if parse_version(k) > parse_version(max_version[0]):
+            max_version = (k, list(v))
 
-    changelog_text = 'Version ' + max_version[0].vstring
+    changelog_text = 'Version ' + max_version[0]
     changelog_values = max_version[1]
     for line in changelog_values:
         changelog_text += '[CR]- ' + line
@@ -197,5 +202,26 @@ def get_addon_version(xml_file):
     return version
 
 
+def copy_to_kodi():
+    root_path = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+    kodi_addons = os.path.join(os.path.expanduser('~'), 'AppData', 'Roaming', 'Kodi', 'addons')
+    for directory in shokodi_directory:
+        src = os.path.join(root_path, directory)
+        dst = os.path.join(kodi_addons, directory)
+        addon_xml_src = os.path.join(src, addon_xml_matrix)
+        try:
+            replace_news(addon_xml_src)
+            if os.path.exists(dst):
+                rmtree(dst)
+            copytree(src, dst, ignore=lambda _d, files: [f for f in files if f in ('.git', '__pycache__')])
+            copy2(addon_xml_src, os.path.join(dst, 'addon.xml'))
+            print(f'Copied {directory} to {dst}')
+        finally:
+            restore_backup(addon_xml_src)
+
+
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == 'copy':
+        copy_to_kodi()
+    else:
+        main()

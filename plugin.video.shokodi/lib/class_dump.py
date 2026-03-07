@@ -42,10 +42,17 @@ def dump(obj):
     return json.dumps(dump_class(obj))
 
 
-def dump_class(obj):
+def dump_class(obj, _seen=None):
     result = {}
     if obj is None:
         return result
+
+    if _seen is None:
+        _seen = set()
+    obj_id = id(obj)
+    if obj_id in _seen:
+        return '<circular>'
+    _seen.add(obj_id)
 
     members = [attr for attr in dir(obj) if not callable(getattr(obj, attr)) and not attr.startswith("__")]
     for key in members:
@@ -53,37 +60,37 @@ def dump_class(obj):
         if isinstance(value, (basestring, int, bool, float)):
             result[key] = value
         elif isinstance(value, (list, set, tuple)):
-            result[key] = dump_iterable(value)
+            result[key] = dump_iterable(value, _seen)
         elif isinstance(value, (dict, defaultdict)):
-            result[key] = dump_dictionary(value)
+            result[key] = dump_dictionary(value, _seen)
         else:
-            result[key] = dump_class(value)
+            result[key] = dump_class(value, _seen)
     return result
 
 
-def dump_iterable(obj):
+def dump_iterable(obj, _seen=None):
     result = []
     for item in obj:
         if isinstance(item, (basestring, int, bool, float)):
             result.append(item)
         elif isinstance(item, (list, set, tuple)):
-            result.append(dump_iterable(item))
+            result.append(dump_iterable(item, _seen))
         elif isinstance(item, (dict, defaultdict)):
-            result.append(dump_dictionary(item))
+            result.append(dump_dictionary(item, _seen))
         else:
-            result.append(dump_class(item))
+            result.append(dump_class(item, _seen))
     return result
 
 
-def dump_dictionary(obj):
+def dump_dictionary(obj, _seen=None):
     result = {}
     for key, value in obj.items():
         if isinstance(value, (basestring, int, bool, float)):
             result[key] = value
         elif isinstance(value, (list, set, tuple)):
-            result[key] = dump_iterable(value)
+            result[key] = dump_iterable(value, _seen)
         elif isinstance(value, (dict, defaultdict)):
-            result[key] = dump_dictionary(value)
+            result[key] = dump_dictionary(value, _seen)
         else:
-            result[key] = dump_class(value)
+            result[key] = dump_class(value, _seen)
     return result

@@ -102,10 +102,10 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=Non
         series = get_series_for_episode(ep_id)
         ep.series_id = series.id
         ep.series_name = series.name
-        if resume:
-            ep.resume = True
         item = ep.get_listitem()
         f = ep.get_file_with_id(file_id)
+        if resume and f is not None and f.resume_time > 0:
+            item.setProperty('StartOffset', str(f.resume_time))
     else:
         f = None
         if episode is not None:

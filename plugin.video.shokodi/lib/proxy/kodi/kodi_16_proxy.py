@@ -241,10 +241,13 @@ class Kodi16Proxy:
                 infolabels['overlay'] = 5
                 if total_time > 0:
                     self.list_item.setProperty('TotalTime', str(total_time))
-            elif flag == WatchedStatus.PARTIAL and plugin_addon.getSetting('file_resume') == 'true':
-                self.list_item.setProperty('ResumeTime', str(resume_time))
-                if total_time > 0:
-                    self.list_item.setProperty('TotalTime', str(total_time))
+            elif flag == WatchedStatus.PARTIAL:
+                infolabels['playcount'] = 0
+                infolabels['overlay'] = 7
+                if plugin_addon.getSetting('file_resume') == 'true' and resume_time > 0:
+                    self.list_item.setProperty('ResumeTime', str(resume_time))
+                    if total_time > 0:
+                        self.list_item.setProperty('TotalTime', str(total_time))
 
         def resume(self):
             resume = self.list_item.getProperty('ResumeTime')

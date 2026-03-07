@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python build.py copy)",
+      "Bash(curl -s \"http://15.129.1.6:8111/api/file?id=130312&apikey=9476b490-feb8-48fa-baeb-14b93a6b4c26\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k: d[k] for k in [''id'',''offset'',''resume_time''] if k in d}, indent=2\\)\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); keys=list\\(d.keys\\(\\)\\); print\\(keys\\)\")",
+      "Bash(curl -s -X POST \"http://15.129.1.6:8111/api/file/offset\" -H \"Content-Type: application/json\" -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" -d '{\"\"id\"\":130312,\"\"offset\"\":604505}')",
+      "Bash(curl -s -X POST \"http://15.129.1.6:8111/api/file/offset\" -H \"Content-Type: application/json\" -H \"apikey: 9476b490-feb8-48fa-baeb-14b93a6b4c26\" -d '{\"\"id\"\":130312,\"\"offset\"\":10000000}')",
+      "Bash(pip show kodistubs)",
+      "Bash(pip3 show kodistubs)",
+      "Bash(xargs ls)"
+    ]
+  }
+}

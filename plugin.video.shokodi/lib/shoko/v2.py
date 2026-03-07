@@ -568,9 +568,12 @@ class Group(Directory):
         li.set_rating('anidb', float(infolabels.get('rating', 0.0)), infolabels.get('votes', 0), True)
         li.set_info(type='video', infoLabels=infolabels)
         li.set_cast(self.actors)
-        li.set_property('TotalEpisodes', str(self.get_total_episodes()))
-        li.set_property('WatchedEpisodes', str(self.get_watched_episodes()))
-        li.set_property('UnWatchedEpisodes', str(self.get_total_episodes() - self.get_watched_episodes()))
+        total_ep = self.get_total_episodes()
+        watched_ep = self.get_watched_episodes()
+        li.set_property('WatchedEpisodes', str(watched_ep))
+        if total_ep > 0:
+            li.set_property('TotalEpisodes', str(total_ep))
+            li.set_property('UnWatchedEpisodes', str(total_ep - watched_ep))
         context = self.get_context_menu_items()
         if context is not None and len(context) > 0:
             li.add_context_menu_items(context)
@@ -592,6 +595,7 @@ class Group(Directory):
             'cast': cast,
             'castandrole': roles,
             'mediatype': 'tvshow',
+            'episode': self.get_total_episodes(),
         }
 
         return infolabels
@@ -731,9 +735,12 @@ class Series(Directory):
         li.set_rating('anidb', float(infolabels.get('rating', 0.0)), infolabels.get('votes', 0), True)
         li.set_info(type='video', infoLabels=infolabels)
         li.set_cast(self.actors)
-        li.set_property('TotalEpisodes', str(self.get_total_episodes()))
-        li.set_property('WatchedEpisodes', str(self.get_watched_episodes()))
-        li.set_property('UnWatchedEpisodes', str(self.get_total_episodes() - self.get_watched_episodes()))
+        total_ep = self.get_total_episodes()
+        watched_ep = self.get_watched_episodes()
+        li.set_property('WatchedEpisodes', str(watched_ep))
+        if total_ep > 0:
+            li.set_property('TotalEpisodes', str(total_ep))
+            li.set_property('UnWatchedEpisodes', str(total_ep - watched_ep))
         if self.hash is not None:
             li.set_property('hash', self.hash)
         context = self.get_context_menu_items()
@@ -755,7 +762,7 @@ class Series(Directory):
             'genre': self.tags,
             # 'country': string / list
             'year': self.year,
-            # 'episode': int
+            'episode': self.get_total_episodes(),
             'season': self.season,
             # 'sortepisode': int,
             'sortseason': self.season,
@@ -766,7 +773,6 @@ class Series(Directory):
             # 'tracknumber: int
             'rating': self.rating,
             'userrating': self.user_rating,
-            # 'watched': <-- deprecaded, don't use
             # 'playcount': int,
             # 'overlay': int,
             'cast': cast,
@@ -973,9 +979,12 @@ class SeriesTypeList(Series):
         li.set_rating('anidb', float(infolabels.get('rating', 0.0)), infolabels.get('votes', 0), True)
         li.set_info(type='video', infoLabels=infolabels)
         li.set_cast(self.actors)
-        li.set_property('TotalEpisodes', str(self.get_total_episodes()))
-        li.set_property('WatchedEpisodes', str(self.get_watched_episodes()))
-        li.set_property('UnWatchedEpisodes', str(self.get_total_episodes() - self.get_watched_episodes()))
+        total_ep = self.get_total_episodes()
+        watched_ep = self.get_watched_episodes()
+        li.set_property('WatchedEpisodes', str(watched_ep))
+        if total_ep > 0:
+            li.set_property('TotalEpisodes', str(total_ep))
+            li.set_property('UnWatchedEpisodes', str(total_ep - watched_ep))
         context = self.get_context_menu_items()
         if context is not None and len(context) > 0:
             li.add_context_menu_items(context)
@@ -1112,6 +1121,8 @@ class Episode(Directory):
                 self.item_type = 'movie'
 
         Directory.__init__(self, json_node, True)
+        if not self.fanart and series is not None:
+            self.fanart = series.fanart
         # don't redownload info on an okay object
         if build_full_object and self.size < 0:
             json_node = self.get_full_object()
@@ -1178,6 +1189,16 @@ class Episode(Directory):
                 return f
         return None
 
+    def get_resume_file(self):
+        """
+        :return: the first file with a non-zero resume_time, or get_file() as fallback
+        :rtype: File
+        """
+        for f in self.items:
+            if f is not None and f.resume_time > 0:
+                return f
+        return self.get_file()
+
     def get_api_url(self):
         # this one doesn't matter much atm, but I'll prolly copy and paste for APIv3, so I'll leave it in
         url = self.base_url()
@@ -1193,7 +1214,7 @@ class Episode(Directory):
     def is_watched(self):
         if self.watched:
             return WatchedStatus.WATCHED
-        f = self.get_file()
+        f = self.get_resume_file()
         if f is not None and f.resume_time > 0:
             return WatchedStatus.PARTIAL
         return WatchedStatus.UNWATCHED
@@ -1212,11 +1233,12 @@ class Episode(Directory):
         infolabels = self.get_infolabels()
 
         # set watched flags
+        resume_file = self.get_resume_file()
         if self.watched:
             li.set_watched_flags(infolabels, WatchedStatus.WATCHED, total_time=self.get_file().duration)
-        elif self.get_file() is not None and self.get_file().resume_time > 0:
-            li.set_watched_flags(infolabels, WatchedStatus.PARTIAL, resume_time=self.get_file().resume_time,
-                                 total_time=self.get_file().duration)
+        elif resume_file is not None and resume_file.resume_time > 0:
+            li.set_watched_flags(infolabels, WatchedStatus.PARTIAL, resume_time=resume_file.resume_time,
+                                 total_time=resume_file.duration)
         else:
             li.set_watched_flags(infolabels, WatchedStatus.UNWATCHED, total_time=self.get_file().duration)
 
@@ -1352,10 +1374,11 @@ class Episode(Directory):
             # context_menu.append((localize(30065), 'Action(Select)'))
 
         # Resume
-        if self.get_file() is not None and self.get_file().resume_time > 0 \
+        resume_file = self.get_resume_file()
+        if resume_file is not None and resume_file.resume_time > 0 \
                 and plugin_addon.getSetting('file_resume') == 'true':
-            label = localize(30141) + ' (%s)' % time.strftime('%H:%M:%S', time.gmtime(self.get_file().resume_time))
-            url = 'RunPlugin(%s)' % plugin_router.url_for(PluginRoutes.resume_video, self.id, self.get_file().id)
+            label = localize(30141) + ' (%s)' % time.strftime('%H:%M:%S', time.gmtime(resume_file.resume_time))
+            url = 'RunPlugin(%s)' % plugin_router.url_for(PluginRoutes.resume_video, self.id, resume_file.id)
             context_menu.append((label, url))
 
         # Play (No Scrobble)
@@ -1596,7 +1619,7 @@ class File(Directory):
     def set_resume_time(self, current_time):
         """
         sync offset of played file
-        :param current_time: current time in seconds
+        :param current_time: current time in milliseconds
         """
         offset_url = server + '/api/file/offset'
         offset_body = '{"id":%i,"offset":%i}' % (self.id, current_time)
@@ -1616,7 +1639,6 @@ class Sizes(object):
         self.local_total = 0
         self.watched_episodes = 0
         self.watched_specials = 0
-        self.watched_total = 0
         self.total_episodes = 0
         self.total_specials = 0
         self.total = 0
@@ -1631,7 +1653,6 @@ def get_sizes(json_node):
     watched_sizes = json_node.get('watched_sizes', {})
     result.watched_episodes = pyproxy.safe_int(watched_sizes.get('Episodes', 0))
     result.watched_specials = pyproxy.safe_int(watched_sizes.get('Specials', 0))
-    result.watched_total = pyproxy.safe_int(json_node.get('watchedsize', 0))
     total_sizes = json_node.get('total_sizes', {})
     result.total_episodes = pyproxy.safe_int(total_sizes.get('Episodes', 0))
     result.total_specials = pyproxy.safe_int(total_sizes.get('Specials', 0))

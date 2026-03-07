@@ -81,5 +81,8 @@ class Kodi19Proxy(Kodi18Proxy):
                 self.videoTag.setPlaycount(0)
             elif flag == WatchedStatus.WATCHED:
                 self.videoTag.setPlaycount(1)
-            elif flag == WatchedStatus.PARTIAL and plugin_addon.getSetting('file_resume') == 'true':
-                self.videoTag.setResumePoint(float(resume_time), float(total_time))
+            elif flag == WatchedStatus.PARTIAL:
+                infolabels['playcount'] = 0
+                infolabels['overlay'] = 7
+                if plugin_addon.getSetting('file_resume') == 'true' and resume_time > 0:
+                    self.videoTag.setResumePoint(float(resume_time), float(total_time))

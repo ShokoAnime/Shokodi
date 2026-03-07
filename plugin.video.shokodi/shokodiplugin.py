@@ -313,6 +313,9 @@ class ShokodiPlugin(PluginRoutes):
             if plugin_addon.getSetting('pick_file') == 'true':
                 items = [(x.name, x.id) for x in ep]
                 selected_id = model_utils.show_file_list(items)
+                if resume and selected_id != 0:
+                    selected_file = ep.get_file_with_id(selected_id)
+                    resume = selected_file is not None and selected_file.resume_time > 0
             else:
                 selected_id = ep.get_file().id
         else:
