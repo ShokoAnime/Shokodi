@@ -73,6 +73,11 @@ def remove_missing_files():
     perform_server_action('remove_missing_files', refresh='awhile')
 
 
+def _port_suffix(port):
+    """Return ':<port>' for a non-zero port, or '' so the port is omitted from the URL."""
+    return ':%i' % port if port else ''
+
+
 def get_server_status(ip=plugin_addon.getSetting('ipaddress'), port=plugin_addon.getSetting('port')):
     """
     Try to query server for status, display messages as needed
@@ -83,10 +88,9 @@ def get_server_status(ip=plugin_addon.getSetting('ipaddress'), port=plugin_addon
         port = plugin_addon.getSetting('port')
     if pyproxy.is_string(port):
         port = pyproxy.safe_int(port)
-        port = port if port != 0 else 8111
 
     schema = 'https' if plugin_addon.getSetting('use_https') == 'true' else 'http'
-    url = '%s://%s:%i/api/init/status' % (schema, ip, port)
+    url = '%s://%s%s/api/init/status' % (schema, ip, _port_suffix(port))
     try:
         # this should throw if there's an error code
         response = pyproxy.get_json(url)
@@ -204,14 +208,13 @@ def can_connect(ip=None, port=None):
         port = plugin_addon.getSetting('port')
     if pyproxy.is_string(port):
         port = pyproxy.safe_int(port)
-        port = port if port != 0 else 8111
 
     if ip is None:
         ip = plugin_addon.getSetting('ipaddress')
     try:
         # this handles the case of errors as well
         schema = 'https' if plugin_addon.getSetting('use_https') == 'true' else 'http'
-        json_file = pyproxy.get_json('%s://%s:%i/api/version' % (schema, ip, port))
+        json_file = pyproxy.get_json('%s://%s%s/api/version' % (schema, ip, _port_suffix(port)))
         if json_file is None:
             return False
         return True

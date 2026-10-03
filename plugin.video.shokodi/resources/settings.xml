@@ -119,6 +119,6 @@
         <setting label="30086" type="text" id="remote_ip" default="localhost" visible="System.HasAddon(script.module.pydevd-pycharm)" enable="System.HasAddon(script.module.pydevd-pycharm)"/>
         <setting label="30066" type="bool" id="request_nocast" default="false"/>
 		<setting label="30169" type="bool" id="fix_seiyuu_pic" default="false"/>
-		<setting label="30145" type="bool" id="use_hhtps" default="false"/>
+		<setting label="30145" type="bool" id="use_https" default="false"/>
     </category>
 </settings>
