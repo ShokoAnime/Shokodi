@@ -1,0 +1,81 @@
+name: Release
+
+# Bumps the version, tags, creates a GitHub Release, and publishes the Kodi
+# repository (addons.xml + zips) to /shokodi in ShokoAnime/shokoanime.github.io
+# (GitHub Pages), using the PAGES_DEPLOY_KEY secret.
+on:
+  workflow_dispatch:
+    inputs:
+      part:
+        description: Version part to bump
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+      news:
+        description: Release notes (one line per change). Shown in Kodi's addon info and the changelog.
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency: release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump version
+        id: bump
+        run: python tools/release.py bump --part "$PART" --news "$NEWS"
+        env:
+          PART: ${{ inputs.part }}
+          NEWS: ${{ inputs.news }}
+
+      - name: Build zips
+        run: python tools/release.py package --out dist
+
+      - name: Commit and tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add plugin.video.shokodi/addon_matrix.xml plugin.video.shokodi/changelog.txt
+          git commit -m "Release ${{ steps.bump.outputs.version }}"
+          git tag "v${{ steps.bump.outputs.version }}"
+          git push origin HEAD "v${{ steps.bump.outputs.version }}"
+
+      - name: GitHub Release
+        run: |
+          gh release create "v${{ steps.bump.outputs.version }}" \
+            "dist/plugin.video.shokodi-${{ steps.bump.outputs.version }}.zip" \
+            --title "${{ steps.bump.outputs.version }}" --notes "$NEWS"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEWS: ${{ inputs.news }}
+
+      - name: Check out Pages site
+        uses: actions/checkout@v4
+        with:
+          repository: ShokoAnime/shokoanime.github.io
+          ssh-key: ${{ secrets.PAGES_DEPLOY_KEY }}
+          path: site
+
+      - name: Update Kodi repository
+        run: |
+          mkdir -p site/shokodi/Future/plugin.video.shokodi site/shokodi/Future/repository.shokodi
+          cp dist/plugin.video.shokodi-*.zip site/shokodi/Future/plugin.video.shokodi/
+          cp dist/repository.shokodi-*.zip site/shokodi/Future/repository.shokodi/
+          # Stable URL for first-time installs (linked from the README)
+          cp dist/repository.shokodi-*.zip site/shokodi/repository.shokodi.zip
+          python tools/release.py index site/shokodi/Future
+
+      - name: Publish
+        working-directory: site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Shokodi ${{ steps.bump.outputs.version }}"
+          git push

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.shokodi" name="Shokodi Repository" version="2.0.0" provider-name="da3dsoul">
+<addon id="repository.shokodi" name="Shokodi Repository" version="2.1.0" provider-name="da3dsoul">
 	<extension point="xbmc.addon.repository" name="Shokodi Repository">
 		<dir maxversion="18.9.0">
-			<info compressed="false">https://da3dsoul.dev/shokodi/Legacy/addons.xml</info>
-			<checksum>https://da3dsoul.dev/shokodi/Legacy/addons.xml.md5</checksum>
-			<datadir zip="true">https://da3dsoul.dev/shokodi/Legacy</datadir>
+			<info compressed="false">https://shokoanime.github.io/shokodi/Legacy/addons.xml</info>
+			<checksum>https://shokoanime.github.io/shokodi/Legacy/addons.xml.md5</checksum>
+			<datadir zip="true">https://shokoanime.github.io/shokodi/Legacy</datadir>
 			<hashes>false</hashes>
 		</dir>
 		<dir minversion="19.0.0">
-			<info compressed="false">https://da3dsoul.dev/shokodi/Future/addons.xml</info>
-			<checksum>https://da3dsoul.dev/shokodi/Future/addons.xml.md5</checksum>
-			<datadir zip="true">https://da3dsoul.dev/shokodi/Future</datadir>
+			<info compressed="false">https://shokoanime.github.io/shokodi/Future/addons.xml</info>
+			<checksum>https://shokoanime.github.io/shokodi/Future/addons.xml.md5</checksum>
+			<datadir zip="true">https://shokoanime.github.io/shokodi/Future</datadir>
 			<hashes>false</hashes>
 		</dir>
 	</extension>

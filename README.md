@@ -33,7 +33,7 @@ Also screw those guys. They make our lives so hard sometimes. Pray they never be
 ## Installation
 
 There are two ways to install Shokodi.\
-The first is to install the [repository](https://da3dsoul.dev/shokodi/repository.shokodi.zip) and let it install and upate everything for you. It also has a modified version of Estuary with a different default layout and some extra perks.\
+The first is to install the [repository](https://shokoanime.github.io/shokodi/repository.shokodi.zip) and let it install and upate everything for you. It also has a modified version of Estuary with a different default layout and some extra perks.\
 The other way is to clone this repository using  `git clone --recursive https://github.com/shokoanime/Shokodi`, running build.py with Python, and then manually installing each zip in order of dependency. Generally, you should only use this method if you need to and know what you are doing.
 
 ---------------------------------------------------------
