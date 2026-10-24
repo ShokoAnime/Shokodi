@@ -3,6 +3,9 @@
 # This will have all relevant news going back a long time.
 # Initially only starting at 3.0.8
 # version numbers start with !--
+!-- 3.6.126
+Move to GitHub Repository Hosting
+
 !-- 3.5.4
 More Localization
 New Calendar Style with Series Info
