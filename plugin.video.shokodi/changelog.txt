@@ -3,6 +3,9 @@
 # This will have all relevant news going back a long time.
 # Initially only starting at 3.0.8
 # version numbers start with !--
+!-- 3.6.128
+Fix the Shoko menu item and its dialog (Run Import, Remove Missing Files, Manage Downloads); fix errors when playing downloaded episodes offline
+
 !-- 3.6.127
 Add offline mode: cached menus, queued watched-state sync, episode/series downloads, and offline playback of downloaded files
 

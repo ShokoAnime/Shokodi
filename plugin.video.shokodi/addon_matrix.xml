@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.shokodi" name="Shokodi" version="3.6.127" provider-name="da3dsoul">
+<addon id="plugin.video.shokodi" name="Shokodi" version="3.6.128" provider-name="da3dsoul">
 	<requires>
 		<import addon="xbmc.python" version="3.0.0" />
 		<import addon="script.module.web-pdb" optional="true"/>
@@ -14,7 +14,7 @@
 		<summary lang="en_GB">Shokodi is an official Kodi plugin for Shoko.</summary>
 		<description lang="en_GB">Shokodi was designed with one thing in mind: watching anime. It does not have many features, but they should all work.</description>
 		<disclaimer lang="en_GB">This plugin requires Shoko to work. It does not stream or download anime for you</disclaimer>
-		<news>Add offline mode: cached menus, queued watched-state sync, episode/series downloads, and offline playback of downloaded files</news>
+		<news>Fix the Shoko menu item and its dialog (Run Import, Remove Missing Files, Manage Downloads); fix errors when playing downloaded episodes offline</news>
 		<platform>all</platform>
 		<language>en</language>
 		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
