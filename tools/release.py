@@ -119,9 +119,33 @@ def package(args):
     print('Built', plugin_zip, repo_zip)
 
 
+ASSET_TAGS = ('icon', 'fanart', 'banner', 'clearlogo', 'clearart', 'screenshot')
+
+
+def extract_assets(zip_path, dest, addon_id, xml):
+    """
+    Kodi downloads an addon's artwork from <datadir>/<id>/<path in addon.xml>, not from the zip,
+    so the files named in <assets> (or the default icon.png and fanart.jpg) have to sit beside the zips.
+    """
+    wanted = {'icon.png', 'fanart.jpg'}
+    for tag in ASSET_TAGS:
+        wanted.update(m.strip() for m in re.findall(r'<%s>([^<]+)</%s>' % (tag, tag), xml))
+    with zipfile.ZipFile(zip_path) as z:
+        names = set(z.namelist())
+        for rel in sorted(wanted):
+            member = f'{addon_id}/{rel}'
+            if member not in names:
+                continue
+            target = os.path.join(dest, *rel.split('/'))
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            with open(target, 'wb') as f:
+                f.write(z.read(member))
+
+
 def index(args):
     """Rebuild addons.xml from the newest zip of every addon found under args.tree."""
     newest = {}
+    newest_zip = {}
     for addon_id in sorted(os.listdir(args.tree)):
         folder = os.path.join(args.tree, addon_id)
         if not os.path.isdir(folder):
@@ -134,6 +158,7 @@ def index(args):
             version = VERSION_RE.search(xml).group(2)
             if addon_id not in newest or version_key(version) > version_key(newest[addon_id][0]):
                 newest[addon_id] = (version, xml)
+                newest_zip[addon_id] = os.path.join(folder, name)
 
     out = ['<?xml version="1.0" encoding="UTF-8"?>', '<addons>']
     for _, (_, xml) in sorted(newest.items()):
@@ -146,6 +171,8 @@ def index(args):
         f.write(data)
     with open(os.path.join(args.tree, 'addons.xml.md5'), 'w', newline='') as f:
         f.write(hashlib.md5(data).hexdigest())
+    for addon_id, zip_path in sorted(newest_zip.items()):
+        extract_assets(zip_path, os.path.join(args.tree, addon_id), addon_id, newest[addon_id][1])
     print('Indexed', ', '.join(f'{k} {v[0]}' for k, v in sorted(newest.items())))
 
 

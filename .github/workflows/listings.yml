@@ -1,4 +1,4 @@
-name: Publish directory listings
+name: Publish repository artwork and listings
 
 # Regenerates the index.html listings in /shokodi on the Pages site, without cutting a release.
 on:
@@ -17,6 +17,9 @@ jobs:
           ssh-key: ${{ secrets.PAGES_DEPLOY_KEY }}
           path: site
 
+      - name: Extract addon artwork and rebuild the index
+        run: python tools/release.py index site/shokodi/Future
+
       - name: Write listings
         run: python tools/release.py listings site/shokodi
 
@@ -26,5 +29,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || git commit -m "Shokodi directory listings"
+          git diff --cached --quiet || git commit -m "Shokodi artwork and directory listings"
           git push
