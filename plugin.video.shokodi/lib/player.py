@@ -7,7 +7,6 @@ from lib import error_handler as eh
 from lib.error_handler import spam, log, ErrorPriority
 from lib.offline import state
 from lib.proxy.kodi import kodi_proxy
-from script_routes import ScriptRoutes
 
 import xbmc
 
@@ -40,7 +39,7 @@ def finished_episode(ep_id, file_id, current_time, total_time):
         offline = state.is_offline()
         if int(ep_id) != 0 and not offline and plugin_addon.getSetting('vote_always') == 'true':
             spam('vote_always, voting on episode')
-            kodi_proxy.executebuiltin(script_router.url_for(ScriptRoutes.vote_for_episode, ep_id))
+            kodi_proxy.executebuiltin(script_router.url_for('vote_for_episode', ep_id))
 
         if ep_id != 0:
             from lib.shoko.v2 import Episode
@@ -56,7 +55,7 @@ def finished_episode(ep_id, file_id, current_time, total_time):
                     # voting should be only when you really watch full series
                     spam('vote_on_series, mark: %s / %s' % (series.sizes.watched_episodes, series.sizes.total_episodes))
                     if series.sizes.watched_episodes - series.sizes.total_episodes == 0:
-                        kodi_proxy.executebuiltin(script_router.url_for(ScriptRoutes.vote_for_series, series.id))
+                        kodi_proxy.executebuiltin(script_router.url_for('vote_for_series', series.id))
                 except:
                     eh.exception(ErrorPriority.NORMAL)
         elif file_id != 0:
@@ -64,7 +63,7 @@ def finished_episode(ep_id, file_id, current_time, total_time):
             pass
 
         # refresh only when we really did watch episode, this way we wait until all action after watching are executed
-        kodi_proxy.executebuiltin(script_router.url_for(ScriptRoutes.arbiter, wait=10, arg='Container.Refresh'))
+        kodi_proxy.executebuiltin(script_router.url_for('arbiter', wait=10, arg='Container.Refresh'))
 
 
 def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=None):

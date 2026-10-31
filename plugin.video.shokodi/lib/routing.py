@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import inspect
+import os
 import re
 import sys
 
@@ -37,7 +38,8 @@ def print_this(msg):
 try:
     import xbmc
     import xbmcaddon
-    _addon_id = xbmcaddon.Addon().getAddonInfo('id')
+    # the script is run by file path, so Kodi can't work out the addon on its own
+    _addon_id = 'plugin.video.shokodi'
 
     def log(msg):
         msg = "[%s][routing] %s" % (_addon_id, msg)
@@ -47,9 +49,16 @@ except ImportError:
         print_this(msg)
 
 
+def _script_file():
+    """
+    The script is run by its file instead of by add-on id, because declaring it in addon.xml
+    makes Kodi list the add-on under Programs
+    """
+    return os.path.join(xbmcaddon.Addon(_addon_id).getAddonInfo('path'), 'shokodiscript.py')
+
+
 class RoutingError(Exception):
     pass
-
 
 class Addon(object):
     """
@@ -112,18 +121,19 @@ class Addon(object):
 
     def url_for(self, func, *args, **kwargs):
         """
-        Construct and returns an URL for view function with give arguments.
+        Construct and returns an URL for a route, given the handler or its name, with the given arguments.
         """
+        name = func if isinstance(func, str) else func.__name__
         for key in self._rules.keys():
-            if func.__name__ != key.__name__:
+            if name != key.__name__:
                 continue
 
             for rule in self._rules[key]:  # type: UrlRule
-                path = rule.make_path(func, *args, **kwargs)
+                path = rule.make_path(key, *args, **kwargs)
                 if path is not None:
                     return self.url_for_path(path)
         raise RoutingError("No known paths to '{0}' with args {1} and "
-                           "kwargs {2}".format(func.__name__, args, kwargs))
+                           "kwargs {2}".format(name, args, kwargs))
 
     def url_for_path(self, path):
         """
@@ -187,7 +197,6 @@ class Addon(object):
         # type: (Addon) -> list[UrlRule]
         return self._rules.values()
 
-
 class Plugin(Addon):
     """
     A routing handler bound to a kodi plugin
@@ -211,7 +220,6 @@ class Plugin(Addon):
         if len(argv) > 2:
             self.args = parse_qs(argv[2].lstrip('?'))
         self._dispatch(self.path)
-
 
 class Script(Addon):
     """
@@ -244,20 +252,20 @@ class Script(Addon):
 
     def url_for(self, func, *args, **kwargs):
         """
-        Construct and returns an URL for view function with give arguments.
+        Construct and returns an URL for a route, given the handler or its name, with the given arguments.
         """
+        name = func if isinstance(func, str) else func.__name__
         for key in self._rules.keys():
-            if func.__name__ != key.__name__:
+            if name != key.__name__:
                 continue
 
             for rule in self._rules[key]:  # type: UrlRule
-                path = rule.make_path(func, *args, **kwargs)
+                path = rule.make_path(key, *args, **kwargs)
                 if path is not None:
                     path = path if path.startswith('/') else '/' + path
-                    return 'RunScript(%s,%s)' % (_addon_id, path)
+                    return 'RunScript(%s,%s)' % (_script_file(), path)
         raise RoutingError("No known paths to '{0}' with args {1} and "
-                           "kwargs {2}".format(func.__name__, args, kwargs))
-
+                           "kwargs {2}".format(name, args, kwargs))
 
 class UrlRule:
     def __init__(self, pattern):
@@ -336,7 +344,6 @@ class UrlRule:
 
     def __str__(self):
         return "Rule(pattern=%s, keywords=%s)" % (self._pattern, ",".join([str(x[0]) + ":" + str(x[1]) for x in self._keywords]))
-
 
 def try_convert(value):
     """

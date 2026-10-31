@@ -7,9 +7,6 @@
 	<extension point="xbmc.python.pluginsource" library="shokodiplugin.py">
 		<provides>video</provides>
 	</extension>
-	<extension point="xbmc.python.script" library="shokodiscript.py">
-		<provides>executable</provides>
-	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en_GB">Shokodi is an official Kodi plugin for Shoko.</summary>
 		<description lang="en_GB">Shokodi was designed with one thing in mind: watching anime. It does not have many features, but they should all work.</description>

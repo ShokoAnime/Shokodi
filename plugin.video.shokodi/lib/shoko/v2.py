@@ -16,8 +16,6 @@ from lib.proxy.kodi import kodi_proxy
 from lib.proxy.kodi.enums import WatchedStatus
 from lib.proxy.kodi.unique_ids import UniqueIds
 from lib.proxy.python import proxy as pyproxy
-from plugin_routes import PluginRoutes
-from script_routes import ScriptRoutes
 
 localize = plugin_addon.getLocalizedString
 
@@ -397,7 +395,7 @@ class Filter(Directory):
         """
         Directory.__init__(self, json_node, get_children)
         # we are making this overrideable for Unsorted and such
-        self.plugin_url = plugin_router.url_for(PluginRoutes.show_filter_menu, self.id)
+        self.plugin_url = plugin_router.url_for('show_filter_menu', self.id)
         self.directory_filter = False
 
         if build_full_object:
@@ -405,7 +403,7 @@ class Filter(Directory):
             if self.size < 0:
                 # First, download basic info
                 json_node = self.get_full_object()
-                self.plugin_url = plugin_router.url_for(PluginRoutes.show_filter_menu, self.id)
+                self.plugin_url = plugin_router.url_for('show_filter_menu', self.id)
                 Directory.__init__(self, json_node, get_children)
                 self.directory_filter = json_node.get('type', 'filter') == 'filters'
             # then download children, optimized for type
@@ -463,7 +461,7 @@ class Filter(Directory):
             self.name = 'Unsorted Files'
             self.sort_index = 6
             self.apply_image_override('unsort.png')
-            self.plugin_url = plugin_router.url_for(PluginRoutes.show_unsorted_menu)
+            self.plugin_url = plugin_router.url_for('show_unsorted_menu')
 
     def process_children(self, json_node):
         items = json_node.get('filters', [])
@@ -560,7 +558,7 @@ class Group(Directory):
         return 'group'
 
     def get_plugin_url(self):
-        return plugin_router.url_for(PluginRoutes.show_group_menu, self.id, self.filter_id)
+        return plugin_router.url_for('show_group_menu', self.id, self.filter_id)
 
     def get_listitem(self):
         """
@@ -622,9 +620,9 @@ class Group(Directory):
 
         # Mark as watched/unwatched
         watched_item = (
-        localize(30126), script_router.url_for(ScriptRoutes.set_group_watched_status, self.id, True))
+        localize(30126), script_router.url_for('set_group_watched_status', self.id, True))
         unwatched_item = (
-        localize(30127), script_router.url_for(ScriptRoutes.set_group_watched_status, self.id, False))
+        localize(30127), script_router.url_for('set_group_watched_status', self.id, False))
         if plugin_addon.getSetting('context_krypton_watched') == 'true':
             watched = self.is_watched()
             if watched == WatchedStatus.WATCHED:
@@ -715,7 +713,7 @@ class Series(Directory):
 
     def get_plugin_url(self):
         try:
-            return plugin_router.url_for(PluginRoutes.show_series_menu, self.id)
+            return plugin_router.url_for('show_series_menu', self.id)
         except:
             return str(self.id)
 
@@ -863,8 +861,8 @@ class Series(Directory):
         context_menu = []
 
         # Mark as watched/unwatched
-        watched_item = (localize(30126), script_router.url_for(ScriptRoutes.set_series_watched_status, self.id, True))
-        unwatched_item = (localize(30127), script_router.url_for(ScriptRoutes.set_series_watched_status, self.id, False))
+        watched_item = (localize(30126), script_router.url_for('set_series_watched_status', self.id, True))
+        unwatched_item = (localize(30127), script_router.url_for('set_series_watched_status', self.id, False))
         if plugin_addon.getSetting('context_krypton_watched') == 'true':
             watched = self.is_watched()
             if watched == WatchedStatus.WATCHED:
@@ -881,11 +879,11 @@ class Series(Directory):
         # Download
         from lib.offline import state
         if not state.is_offline():
-            context_menu.append((localize(30362), script_router.url_for(ScriptRoutes.download_series, self.id)))
+            context_menu.append((localize(30362), script_router.url_for('download_series', self.id)))
 
         # Vote Series
         if plugin_addon.getSetting('context_show_vote_Series') == 'true':
-            context_menu.append((localize(30124), script_router.url_for(ScriptRoutes.vote_for_series, self.id)))
+            context_menu.append((localize(30124), script_router.url_for('vote_for_series', self.id)))
 
         # TODO Things to add: View Cast, Play All, Related, Similar
 
@@ -977,7 +975,7 @@ class SeriesTypeList(Series):
                 pass
 
     def get_plugin_url(self):
-        return plugin_router.url_for(PluginRoutes.show_series_episode_types_menu, self.id, self.episode_type)
+        return plugin_router.url_for('show_series_episode_types_menu', self.id, self.episode_type)
 
     def get_listitem(self, url=None):
         """
@@ -1227,7 +1225,7 @@ class Episode(Directory):
         return 'ep'
 
     def get_plugin_url(self):
-        return plugin_router.url_for(PluginRoutes.play_video, ep_id=self.id)
+        return plugin_router.url_for('play_video', ep_id=self.id)
 
     def is_watched(self):
         if self.watched:
@@ -1387,7 +1385,7 @@ class Episode(Directory):
         # Play
         if plugin_addon.getSetting('context_show_play') == 'true':
             # I change this to play, because with 'show info' this does not play file
-            url = 'RunPlugin(%s)' % plugin_router.url_for(PluginRoutes.play_video, self.id, self.get_file().id)
+            url = 'RunPlugin(%s)' % plugin_router.url_for('play_video', self.id, self.get_file().id)
             context_menu.append((localize(30065), url))
             # context_menu.append((localize(30065), 'Action(Select)'))
 
@@ -1396,23 +1394,23 @@ class Episode(Directory):
         if resume_file is not None and resume_file.resume_time > 0 \
                 and plugin_addon.getSetting('file_resume') == 'true':
             label = localize(30141) + ' (%s)' % time.strftime('%H:%M:%S', time.gmtime(resume_file.resume_time))
-            url = 'RunPlugin(%s)' % plugin_router.url_for(PluginRoutes.resume_video, self.id, resume_file.id)
+            url = 'RunPlugin(%s)' % plugin_router.url_for('resume_video', self.id, resume_file.id)
             context_menu.append((label, url))
 
         # Play (No Scrobble)
         if plugin_addon.getSetting('context_show_play_no_watch') == 'true':
             context_menu.append((localize(30132), 'RunPlugin(%s)' %
-                                 plugin_router.url_for(PluginRoutes.play_video_without_marking, self.id,
+                                 plugin_router.url_for('play_video_without_marking', self.id,
                                                        self.get_file().id)))
 
         # Inspect
         if plugin_addon.getSetting('context_pick_file') == 'true' and len(self.items) > 1:
-            context_menu.append((localize(30133), script_router.url_for(ScriptRoutes.file_list, self.id)))
+            context_menu.append((localize(30133), script_router.url_for('file_list', self.id)))
 
         # Mark as watched/unwatched
-        watched_item = (localize(30128), script_router.url_for(ScriptRoutes.set_episode_watched_status,
+        watched_item = (localize(30128), script_router.url_for('set_episode_watched_status',
                                                                ep_id=self.id, watched=True))
-        unwatched_item = (localize(30129), script_router.url_for(ScriptRoutes.set_episode_watched_status, ep_id=self.id,
+        unwatched_item = (localize(30129), script_router.url_for('set_episode_watched_status', ep_id=self.id,
                                                                  watched=False))
         if plugin_addon.getSetting('context_krypton_watched') == 'true':
             if self.watched:
@@ -1431,16 +1429,16 @@ class Episode(Directory):
         # Download
         from lib.offline import state
         if not state.is_offline():
-            context_menu.append((localize(30362), script_router.url_for(ScriptRoutes.download_episode, self.id)))
+            context_menu.append((localize(30362), script_router.url_for('download_episode', self.id)))
 
         # Vote Episode
         if plugin_addon.getSetting('context_show_vote_Episode') == 'true':
-            context_menu.append((localize(30125), script_router.url_for(ScriptRoutes.vote_for_episode, self.id)))
+            context_menu.append((localize(30125), script_router.url_for('vote_for_episode', self.id)))
 
         # Vote Series
         if plugin_addon.getSetting('context_show_vote_Series') == 'true' and self.series_id != 0:
             context_menu.append(
-                (localize(30124), script_router.url_for(ScriptRoutes.vote_for_series, self.series_id)))
+                (localize(30124), script_router.url_for('vote_for_series', self.series_id)))
 
         # the default ones that say the rest are kodi's
         context_menu += Directory.get_context_menu_items(self)
@@ -1573,7 +1571,7 @@ class File(Directory):
         return 'file'
 
     def get_plugin_url(self):
-        return plugin_router.url_for(PluginRoutes.play_video_without_marking, file_id=self.id)
+        return plugin_router.url_for('play_video_without_marking', file_id=self.id)
 
     @property
     def url_for_player(self):
@@ -1631,8 +1629,8 @@ class File(Directory):
 
     def get_context_menu_items(self):
         context_menu = [
-            (localize(30120), script_router.url_for(ScriptRoutes.rescan_file, self.id)),
-            (localize(30121), script_router.url_for(ScriptRoutes.rehash_file, self.id))
+            (localize(30120), script_router.url_for('rescan_file', self.id)),
+            (localize(30121), script_router.url_for('rehash_file', self.id))
         ]
         # the default ones that say the rest are kodi's
         context_menu += Directory.get_context_menu_items(self)
