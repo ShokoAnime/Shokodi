@@ -12,6 +12,7 @@ import os
 import re
 import sys
 import zipfile
+from urllib.parse import quote
 from xml.sax.saxutils import escape
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
@@ -148,6 +149,28 @@ def index(args):
     print('Indexed', ', '.join(f'{k} {v[0]}' for k, v in sorted(newest.items())))
 
 
+def listings(args):
+    """
+    Write an index.html into args.tree and every folder under it. GitHub Pages doesn't list directories, and
+    Kodi's file manager needs a listing to browse a repository source.
+    """
+    count = 0
+    for dirpath, dirnames, filenames in os.walk(args.tree):
+        dirnames[:] = sorted(d for d in dirnames if not d.startswith('.'))
+        entries = [d + '/' for d in dirnames]
+        entries += sorted(n for n in filenames if n != 'index.html' and not n.startswith('.'))
+        rel = os.path.relpath(dirpath, args.tree).replace(os.sep, '/')
+        title = '/' + ('' if rel == '.' else rel + '/')
+        rows = [] if rel == '.' else ['<a href="../">../</a>']
+        rows += ['<a href="%s">%s</a>' % (quote(e), escape(e)) for e in entries]
+        html = ('<!DOCTYPE html>\n<html>\n<head><meta charset="utf-8"><title>Index of %s</title></head>\n'
+                '<body>\n<h1>Index of %s</h1>\n<pre>\n%s\n</pre>\n</body>\n</html>\n'
+                % (escape(title), escape(title), '\n'.join(rows)))
+        write(os.path.join(dirpath, 'index.html'), html)
+        count += 1
+    print('Wrote', count, 'directory listings')
+
+
 def main():
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest='cmd', required=True)
@@ -162,6 +185,9 @@ def main():
     i = sub.add_parser('index')
     i.add_argument('tree')
     i.set_defaults(fn=index)
+    l = sub.add_parser('listings')
+    l.add_argument('tree')
+    l.set_defaults(fn=listings)
     args = p.parse_args()
     args.fn(args)
 

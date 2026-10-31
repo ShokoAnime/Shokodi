@@ -1,0 +1,30 @@
+name: Publish directory listings
+
+# Regenerates the index.html listings in /shokodi on the Pages site, without cutting a release.
+on:
+  workflow_dispatch:
+
+jobs:
+  listings:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out Pages site
+        uses: actions/checkout@v4
+        with:
+          repository: ShokoAnime/shokoanime.github.io
+          ssh-key: ${{ secrets.PAGES_DEPLOY_KEY }}
+          path: site
+
+      - name: Write listings
+        run: python tools/release.py listings site/shokodi
+
+      - name: Publish
+        working-directory: site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Shokodi directory listings"
+          git push

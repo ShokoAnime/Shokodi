@@ -70,6 +70,7 @@ jobs:
           # Stable URL for first-time installs (linked from the README)
           cp dist/repository.shokodi-*.zip site/shokodi/repository.shokodi.zip
           python tools/release.py index site/shokodi/Future
+          python tools/release.py listings site/shokodi
 
       - name: Publish
         working-directory: site
