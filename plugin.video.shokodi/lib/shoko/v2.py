@@ -148,7 +148,14 @@ class Directory(object):
         url += '/watch' if watched else '/unwatch'
         url = pyproxy.set_parameter(url, 'id', self.id)
         if plugin_addon.getSetting('syncwatched') == 'true':
-            pyproxy.get_json(url)
+            from lib.offline import state, sync_queue
+            if not state.is_offline():
+                pyproxy.get_json(url)
+            # get_json flags us offline if the server didn't answer. Keep the latest state to send it later
+            if state.is_offline():
+                sync_queue.enqueue(self.url_prefix(), self.id, watched)
+                kodi_proxy.Dialog.notification(localize(30200), localize(30370))
+                return
         else:
             kodi_proxy.executebuiltin('Action(ToggleWatched)')
 
@@ -529,6 +536,8 @@ class Group(Directory):
         self.votes = pyproxy.safe_int(json_node.get('votes', 0))
         self.actors = model_utils.get_cast_info(json_node)
         self.sizes = get_sizes(json_node)
+        from lib.offline import sync_queue
+        sync_queue.apply_to_sizes("group", self.id, self.sizes)
         self.tags = model_utils.get_tags(json_node.get('tags', {}))
         self.overview = model_utils.make_text_nice(pyproxy.decode(json_node.get('summary', '')))
 
@@ -674,6 +683,8 @@ class Series(Directory):
             fix_seiyuu_pic = True if plugin_addon.getSetting('fix_seiyuu_pic') == 'true' else False
         self.actors = model_utils.get_cast_info(json_node, fix_seiyuu_pic)
         self.sizes = get_sizes(json_node)
+        from lib.offline import sync_queue
+        sync_queue.apply_to_sizes("serie", self.id, self.sizes)
         self.tags = model_utils.get_tags(json_node.get('tags', {}))
         self.is_movie = json_node.get('ismovie', 0) == 1
         if self.is_movie:
@@ -866,6 +877,11 @@ class Series(Directory):
         else:
             context_menu.append(watched_item)
             context_menu.append(unwatched_item)
+
+        # Download
+        from lib.offline import state
+        if not state.is_offline():
+            context_menu.append((localize(30362), script_router.url_for(ScriptRoutes.download_series, self.id)))
 
         # Vote Series
         if plugin_addon.getSetting('context_show_vote_Series') == 'true':
@@ -1146,6 +1162,8 @@ class Episode(Directory):
         self.alternate_name = model_utils.get_title(json_node, 'x-jat', 'main')
 
         self.watched = pyproxy.safe_int(json_node.get('view', 0)) != 0
+        from lib.offline import sync_queue
+        sync_queue.apply_to_episode(self)
         self.year = pyproxy.safe_int(json_node.get('year', ''))
 
         self.rating = float(str(json_node.get('rating', '0')).replace(',', '.'))
@@ -1410,6 +1428,11 @@ class Episode(Directory):
             # context_menu.append((localize(30130), 'TO BE ADDED TO SCRIPT'))
             pass
 
+        # Download
+        from lib.offline import state
+        if not state.is_offline():
+            context_menu.append((localize(30362), script_router.url_for(ScriptRoutes.download_episode, self.id)))
+
         # Vote Episode
         if plugin_addon.getSetting('context_show_vote_Episode') == 'true':
             context_menu.append((localize(30125), script_router.url_for(ScriptRoutes.vote_for_episode, self.id)))
@@ -1554,6 +1577,11 @@ class File(Directory):
 
     @property
     def url_for_player(self):
+        from lib.offline import state, downloads
+        if state.is_offline():
+            downloaded = downloads.get_path(self.id)
+            if downloaded is not None:
+                return downloaded
         if os.path.isfile(pyproxy.encode(self.server_path)):
             if self.server_path.startswith(u'\\\\'):
                 return u'smb:' + self.server_path.replace('\\', '/')
@@ -1621,6 +1649,10 @@ class File(Directory):
         sync offset of played file
         :param current_time: current time in milliseconds
         """
+        from lib.offline import state
+        if state.is_offline():
+            # only watched states are kept for later
+            return
         offset_url = server + '/api/file/offset'
         offset_body = '{"id":%i,"offset":%i}' % (self.id, current_time)
         pyproxy.post_data(offset_url, offset_body)

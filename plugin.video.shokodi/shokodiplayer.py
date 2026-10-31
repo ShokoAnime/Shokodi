@@ -5,6 +5,7 @@ from threading import Thread
 from lib.utils.globalvars import *
 from lib import error_handler as eh
 from lib.error_handler import spam, log, ErrorPriority
+from lib.offline import state
 from lib.proxy.kodi import kodi_proxy
 from script_routes import ScriptRoutes
 
@@ -36,7 +37,8 @@ def finished_episode(ep_id, file_id, current_time, total_time):
                                                                                             (total_time * mark)))
 
     if _finished:
-        if int(ep_id) != 0 and plugin_addon.getSetting('vote_always') == 'true':
+        offline = state.is_offline()
+        if int(ep_id) != 0 and not offline and plugin_addon.getSetting('vote_always') == 'true':
             spam('vote_always, voting on episode')
             kodi_proxy.executebuiltin(script_router.url_for(ScriptRoutes.vote_for_episode, ep_id))
 
@@ -47,7 +49,7 @@ def finished_episode(ep_id, file_id, current_time, total_time):
             ep.set_watched_status(True)
 
             # vote on finished series
-            if plugin_addon.getSetting('vote_on_series') == 'true':
+            if not offline and plugin_addon.getSetting('vote_on_series') == 'true':
                 try:
                     from lib.shoko.v2 import get_series_for_episode
                     series = get_series_for_episode(ep_id)
@@ -99,9 +101,11 @@ def play_video(file_id, ep_id=0, mark_as_watched=True, resume=False, episode=Non
             ep_id = episode.id
         else:
             ep = Episode(ep_id, build_full_object=True)
-        series = get_series_for_episode(ep_id)
-        ep.series_id = series.id
-        ep.series_name = series.name
+        # the series is only extra info for the player, so it isn't worth a failed request offline
+        if not state.is_offline():
+            series = get_series_for_episode(ep_id)
+            ep.series_id = series.id
+            ep.series_name = series.name
         item = ep.get_listitem()
         f = ep.get_file_with_id(file_id)
         if resume and f is not None and f.resume_time > 0:

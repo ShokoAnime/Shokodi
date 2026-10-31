@@ -244,25 +244,60 @@ class BasePythonProxy:
     def isnumeric(self, value):
         pass
 
+    # set once the server failed to answer in this process, so that the rest of the menu is served from the cache
+    # without waiting on a timeout for every request
+    _server_unreachable = False
+
     def get_json(self, url_in):
         """
-        use 'get' to return json body as string
+        use 'get' to return json body as string.
+        The server is always asked first. If it can't be reached, the last cached response is returned instead
         :param url_in:
         :return:
         """
         import lib.error_handler as eh
         from lib.error_handler import ErrorPriority
+        from lib.offline import cache, state
+        if self._server_unreachable and cache.is_cacheable(url_in):
+            cached = cache.get(url_in)
+            if cached is not None:
+                return cached
         try:
             time_out = plugin_addon.getSetting('timeout')
+            if state.is_offline() and cache.has_any():
+                # we were offline recently. Don't make the user wait out a long timeout to find that out again
+                time_out = min(int(time_out or 5), 5)
             if self.api_key is None or self.api_key == '':
                 apikey = plugin_addon.getSetting('apikey')
             else:
                 apikey = self.api_key
 
             body = self.get_data(url_in, None, time_out, apikey)
+            self._server_unreachable = False
+            state.set_offline(False)
+            try:
+                cache.put(url_in, body)
+            except:
+                eh.exception(ErrorPriority.LOW)
 
         except HTTPError as err:
+            # a gateway error means the server (or its proxy) is down, which is the same as being offline
+            if err.code in (502, 503, 504):
+                cached = cache.get(url_in)
+                if cached is not None:
+                    self._server_unreachable = True
+                    state.set_offline(True)
+                    return cached
             raise err
+        except (IOError, OSError):
+            # connection refused, no route, timeout, etc
+            self._server_unreachable = True
+            state.set_offline(True)
+            eh.exception(ErrorPriority.NORMAL)
+            body = cache.get(url_in)
+            if body is None and cache.is_cacheable(url_in):
+                # a menu could not be loaded, and there was nothing cached to show instead
+                eh.exception(ErrorPriority.HIGH)
         except:
             eh.exception(ErrorPriority.HIGH)
             body = None

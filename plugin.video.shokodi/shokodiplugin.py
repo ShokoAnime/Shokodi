@@ -41,6 +41,10 @@ class ShokodiPlugin(PluginRoutes):
 
     @Try(error_priority=ErrorPriority.BLOCKING, except_func=fail_menu)
     def show_main_menu(self):
+        from lib.offline import state, sync_queue
+        # we only got here with a server if it answered, so this is when the offline changes can be sent
+        if not state.is_offline() and sync_queue.pending_count() > 0:
+            sync_queue.sync()
         from lib.shoko.v2 import Filter
         f = Filter(0, build_full_object=True)
         self.plugin_dir.set_content('tvshows')
@@ -306,20 +310,41 @@ class ShokodiPlugin(PluginRoutes):
         # this prevents the spinning wheel
         self.fail_menu()
 
+        from lib.offline import state, downloads
+        offline = state.is_offline()
         if ep_id > 0 and file_id == 0:
             from lib.shoko.v2 import Episode
-            ep = Episode(ep_id, build_full_object=True)
+            try:
+                ep = Episode(ep_id, build_full_object=True)
+            except:
+                if not offline:
+                    raise
+                # never opened while online, so there's nothing cached to say which files it has
+                error_handler.exception(ErrorPriority.NORMAL)
+                kodi_proxy.Dialog.ok(plugin_localize(30365), plugin_localize(30371))
+                return
+            # offline, only the downloaded files can be played
+            files = [x for x in ep if not offline or downloads.get_path(x.id) is not None]
+            if len(files) == 0:
+                kodi_proxy.Dialog.ok(plugin_localize(30365), plugin_localize(30371))
+                return
             # follow pick_file setting
             if plugin_addon.getSetting('pick_file') == 'true':
-                items = [(x.name, x.id) for x in ep]
+                items = [(x.name, x.id) for x in files]
                 selected_id = model_utils.show_file_list(items)
                 if resume and selected_id != 0:
                     selected_file = ep.get_file_with_id(selected_id)
                     resume = selected_file is not None and selected_file.resume_time > 0
             else:
-                selected_id = ep.get_file().id
+                selected_id = files[0].id
         else:
             selected_id = file_id
+
+        if offline and selected_id == 0:
+            return
+        if offline and downloads.get_path(selected_id) is None:
+            kodi_proxy.Dialog.ok(plugin_localize(30365), plugin_localize(30371))
+            return
 
         # all of real work is done here
         shokodiplayer.play_video(file_id=selected_id, ep_id=ep_id, mark_as_watched=mark_as_watched, resume=resume)
@@ -351,6 +376,13 @@ class ShokodiPlugin(PluginRoutes):
         debug.debug_init()
         # stage 1 - check connection
         if not connection_handler.can_connect():
+            from lib.offline import cache, state
+            if cache.has_any():
+                # offline mode: the menus come from the cache, and there's nothing to tell the user
+                state.set_offline(True)
+                plugin_router.run()
+                debug.print_profiler()
+                return
             self.fail_menu()
             kodi_proxy.Dialog.ok(plugin_localize(30159), plugin_localize(30154))
             from lib.windows import wizard

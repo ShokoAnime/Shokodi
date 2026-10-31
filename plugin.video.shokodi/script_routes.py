@@ -85,3 +85,15 @@ class ScriptRoutes(object):
     @script_router.route('/menu/episode/move_to_item/<index>/')
     def move_to_index(self, index):
         pass
+
+    @script_router.route('/download/episode/<ep_id>')
+    def download_episode(self, ep_id):
+        pass
+
+    @script_router.route('/download/series/<series_id>')
+    def download_series(self, series_id):
+        pass
+
+    @script_router.route('/downloads/manage')
+    def manage_downloads(self):
+        pass

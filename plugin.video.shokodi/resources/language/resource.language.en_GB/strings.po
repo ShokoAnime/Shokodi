@@ -1141,3 +1141,78 @@ msgstr "Run Import"
 msgctxt "#30353"
 msgid "You didn't rate all the episodes for this Series"
 msgstr "You didn't rate all the episodes for this Series"
+
+#: offline
+msgctxt "#30360"
+msgid "Sending offline watched changes"
+msgstr "Sending offline watched changes"
+
+#: offline
+msgctxt "#30362"
+msgid "Download"
+msgstr "Download"
+
+#: offline
+msgctxt "#30363"
+msgid "Downloading"
+msgstr "Downloading"
+
+#: offline
+msgctxt "#30364"
+msgid "Download complete"
+msgstr "Download complete"
+
+#: offline
+msgctxt "#30365"
+msgid "Manage Downloads"
+msgstr "Manage Downloads"
+
+#: offline
+msgctxt "#30366"
+msgid "There are no downloaded files"
+msgstr "There are no downloaded files"
+
+#: offline
+msgctxt "#30367"
+msgid "Select files to delete"
+msgstr "Select files to delete"
+
+#: offline
+msgctxt "#30368"
+msgid "Delete %i selected file(s)?"
+msgstr "Delete %i selected file(s)?"
+
+#: offline
+msgctxt "#30369"
+msgid "Download folder (blank for the default)"
+msgstr "Download folder (blank for the default)"
+
+#: offline
+msgctxt "#30370"
+msgid "Saved. Watched status will sync when the server is reachable"
+msgstr "Saved. Watched status will sync when the server is reachable"
+
+#: offline
+msgctxt "#30371"
+msgid "This file isn't downloaded, and the server is unreachable"
+msgstr "This file isn't downloaded, and the server is unreachable"
+
+#: offline
+msgctxt "#30372"
+msgid "Download cancelled"
+msgstr "Download cancelled"
+
+#: offline
+msgctxt "#30373"
+msgid "Everything is already downloaded"
+msgstr "Everything is already downloaded"
+
+#: offline
+msgctxt "#30375"
+msgid "Deleted"
+msgstr "Deleted"
+
+#: offline
+msgctxt "#30377"
+msgid "Download failed: %s"
+msgstr "Download failed: %s"

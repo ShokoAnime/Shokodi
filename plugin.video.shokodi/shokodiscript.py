@@ -50,10 +50,15 @@ class ShokodiScript(ScriptRoutes):
         # Remove Missing
         # Import Folders?
         # various other actions
-        items = [
-            (plugin_addon.getLocalizedString(30049), connection_handler.run_import, []),
-            (plugin_addon.getLocalizedString(30042), connection_handler.remove_missing_files, [])
-        ]
+        from lib.offline import state, downloads
+        items = []
+        # these are server actions, so they only make sense with a server
+        if not state.is_offline():
+            items += [
+                (plugin_addon.getLocalizedString(30049), connection_handler.run_import, []),
+                (plugin_addon.getLocalizedString(30042), connection_handler.remove_missing_files, [])
+            ]
+        items.append((plugin_addon.getLocalizedString(30365), downloads.manage, []))
 
         options = []
         for item in items:
@@ -165,6 +170,38 @@ class ShokodiScript(ScriptRoutes):
         group = Group(group_id)
         group.set_watched_status(watched)
         kodi_proxy.Dialog.refresh()
+
+    @Try(ErrorPriority.BLOCKING)
+    def download_episode(self, ep_id):
+        from lib.offline import downloads
+        from lib.shoko.v2 import Episode
+        from lib.shoko.v2 import get_series_for_episode
+        ep = Episode(ep_id, build_full_object=True)
+        downloads.download(self._download_items(ep, get_series_for_episode(ep_id).name))
+
+    @Try(ErrorPriority.BLOCKING)
+    def download_series(self, series_id):
+        from lib.offline import downloads
+        from lib.shoko.v2 import Series, Episode
+        series = Series(series_id, build_full_object=True, get_children=True)
+        items = []
+        for listed in series.items:
+            # the listing may not carry the files, so ask for the whole episode
+            ep = Episode(listed.id, series=series, build_full_object=True)
+            items += self._download_items(ep, series.name)
+        downloads.download(items)
+
+    @staticmethod
+    def _download_items(ep, series_name):
+        title = ep.name
+        if ep.episode_number:
+            title = '%s %s' % (ep.episode_number, title)
+        return [(f, title, series_name) for f in ep.items]
+
+    @Try(ErrorPriority.BLOCKING)
+    def manage_downloads(self):
+        from lib.offline import downloads
+        downloads.manage()
 
     def move_to_index(self, index):
         kodi_proxy.Util.move_to_index(index)

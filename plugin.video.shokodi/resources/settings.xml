@@ -109,6 +109,7 @@
         <setting label="30014" type="bool" id="pick_file" default="true"/>
         <setting label="30027" type="number" id="player_sleep" default="5000"/>
         <setting label="30004" type="number" id="timeout" default="60"/>
+        <setting label="30369" type="folder" id="download_path" source="auto" option="writeable" default=""/>
         <setting type="bool" id="kodi18" default="false" visible="false"/>
         <setting label="30149" type="bool" id="external_player" default="false" visible="eq(-1,false)"/>
     </category>
