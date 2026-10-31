@@ -55,8 +55,8 @@ class ShokodiScript(ScriptRoutes):
         # these are server actions, so they only make sense with a server
         if not state.is_offline():
             items += [
-                (plugin_addon.getLocalizedString(30049), connection_handler.run_import, []),
-                (plugin_addon.getLocalizedString(30042), connection_handler.remove_missing_files, [])
+                (plugin_addon.getLocalizedString(30349), connection_handler.run_import, []),
+                (plugin_addon.getLocalizedString(30122), connection_handler.remove_missing_files, [])
             ]
         items.append((plugin_addon.getLocalizedString(30365), downloads.manage, []))
 
@@ -66,7 +66,7 @@ class ShokodiScript(ScriptRoutes):
 
         result = kodi_proxy.Dialog.context(options)
         if result >= 0:
-            action, args = items[result][1]
+            _, action, args = items[result]
             action(*args)
 
     def remove_search_term(self, query):

@@ -92,8 +92,9 @@ class ShokodiPlugin(PluginRoutes):
         # 'Unsort': 5, 'Settings' (both): 7, 'Shoko Menu': 8, 'Search': 9, Experiment: 99}
 
         if plugin_addon.getSetting('show_shoko') == 'true':
+            # a bare RunScript() path would be handed to the player, so go through the plugin to run it
             item = CustomItem(plugin_localize(30115), 'settings.png',
-                              script_router.url_for(ScriptRoutes.shoko_menu))
+                              url_for(self.run_script, script_router.url_for(ScriptRoutes.shoko_menu)))
             item.sort_index = 8
             item.is_kodi_folder = False
             items.append(item)
